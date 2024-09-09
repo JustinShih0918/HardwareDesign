@@ -6,6 +6,12 @@ module practice_2(
   output wire P,
   output wire Pn
 );
-  // Write your code here
-  
+  wire nand_1;
+  wire nand_2;
+
+  nand(nand_1, D, G);
+  nand(nand_2, ~D, G);
+  nand(P, nand_1, Pn);
+  nand(Pn, nand_2, P);
+
 endmodule

@@ -8,7 +8,12 @@ module practice_2_t();
     // TODO
     // Connect your practice_2 module here with "G", "D", "P", and "Pn".
     // Please connect it by port name but not order
-    
+    practice_2 p2(
+        .G(G),
+        .D(D),
+        .P(P),
+        .Pn(Pn)
+    )
     //====================================
 
     golden_2 golden_latch(.G(G), .D(D), .P(expected_P), .Pn(expected_Pn));
