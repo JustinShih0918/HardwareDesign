@@ -13,7 +13,7 @@ module practice_2_t();
         .D(D),
         .P(P),
         .Pn(Pn)
-    )
+    );
     //====================================
 
     golden_2 golden_latch(.G(G), .D(D), .P(expected_P), .Pn(expected_Pn));
