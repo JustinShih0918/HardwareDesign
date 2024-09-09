@@ -8,7 +8,7 @@ module practice_1 (
     wire xor_ab;
 
     xor_gate gate1(a, b, xor_ab);
-    xor_gete gate2(xor_ab, c, out);
+    xor_gate gate2(xor_ab, c, out);
 
 endmodule
 
