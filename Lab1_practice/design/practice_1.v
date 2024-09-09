@@ -6,13 +6,9 @@ module practice_1 (
     output wire out
 );
     wire xor_ab;
-    wire tmp1;
-    wire tmp2;
 
-    xor_gate gate(a,b,xor_ab);
-    and (tmp1, c, ~xor_ab);
-    and (tmp2, c, xor_ab);
-    or (out, tmp1, tmp2);
+    xor_gate gate1(a, b, xor_ab);
+    xor_gete gate2(xor_ab, c, out);
 
 endmodule
 
