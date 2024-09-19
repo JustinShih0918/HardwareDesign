@@ -9,15 +9,28 @@ module lab2_1(
     output reg signed [`WIDTH*2-1:0] out // You can modify "reg" to "wire" if needed
 );
     reg signed [`WIDTH*2-1:0] out_tmp;
-    assign out_tmp = (ctrl == 0) ? A * B : (A < B) ? 16'B1 : 16'B0;
+
     always @(posedge clk) begin
         if(rst) begin
-            out_tmp <= 16'B0;
-            out <= out_tmp;
+            out_tmp = 16'B0;
+        end
+        else if(ctrl == 0) begin
+            out_tmp = A * B;
         end
         else begin
-            out <=out_tmp;
+            if(A < B) begin
+                out_tmp = 16'B1;
+            end
+            else begin
+                out_tmp = -1;
+            end
         end
+    end
+
+    always @(posedge clk) begin
+        $display("A=%d, B=%d, ctrl=%d, out=%d", A, B, ctrl, out_tmp);
+        out <= out_tmp;
+
     end
 
     //Your design here
