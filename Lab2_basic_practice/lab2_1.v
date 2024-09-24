@@ -30,7 +30,6 @@ module lab2_1(
     always @(posedge clk) begin
         $display("A=%d, B=%d, ctrl=%d, out=%d", A, B, ctrl, out_tmp);
         out <= out_tmp;
-
     end
 
     //Your design here
