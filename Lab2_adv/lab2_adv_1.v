@@ -8,7 +8,7 @@ module lab2_adv_1 (
     output reg err,
     output reg cor
 );
-    wire [3:0] h;
+    reg [3:0] h;
     always @* begin
         h[0] = code[0] ^ code[2] ^ code[4] ^ code[6] ^ code[8] ^ code[10];
         h[1] = code[1] ^ code[2] ^ code[5] ^ code[6] ^ code[9] ^ code[10];
