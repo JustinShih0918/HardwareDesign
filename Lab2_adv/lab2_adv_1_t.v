@@ -56,11 +56,19 @@ module lab2_adv_1_t ();
     //write some code here to change the input of the moudle above
     integer i;
     initial begin
-        $DELAY(35);
+        #35;
         for(i = 0; i < 8; i = i + 1) begin
             code = test_case[i];
             #10;
         end
+    end
+
+    initial begin
+        rst_n = 1;
+        #10;
+        rst_n = 0;
+        #25;
+        rst_n = 1;
     end
     //====================================
     
