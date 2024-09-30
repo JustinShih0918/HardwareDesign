@@ -20,7 +20,7 @@ module lab2_adv_1 (
         $display("code_de: %b", code_de);
     end
 
-    always @(posedge clk, negedge rst_n) begin
+    always @(posedge clk) begin
         if(rst_n == 1'b0) begin //reset
             out = 4'b0;
             raw_data = 8'b0;
