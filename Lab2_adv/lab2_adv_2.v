@@ -13,7 +13,7 @@ module lab2_adv_2(
 
     // encode the raw data
     wire pn;
-    assign pn =  (raw_data[4] + raw_data[3] + raw_data[2] + raw_data[1] + raw_data[0]) % 2;
+    assign pn =  (encoded_data[1] + encoded_data[2] + encoded_data[3] + encoded_data[4] + encoded_data[5] + encoded_data[6] + encoded_data[7] + encoded_data[8] + encoded_data[9]) % 2;
     always @* begin
         encoded_data[9] = raw_data[4] ^ raw_data[3] ^ raw_data[1] ^ raw_data[0];
         encoded_data[8] = raw_data[4] ^ raw_data[2] ^ raw_data[1];
@@ -22,7 +22,7 @@ module lab2_adv_2(
         encoded_data[5] = raw_data[3];
         encoded_data[4] = raw_data[2];
         encoded_data[3] = raw_data[1];
-        encoded_data[2] = raw_data[0] ^ pn;
+        encoded_data[2] = raw_data[0];
         encoded_data[1] = raw_data[0];
         encoded_data[0] = pn;
     end
