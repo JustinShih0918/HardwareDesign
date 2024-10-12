@@ -5,18 +5,20 @@ module lab3_advanced (
     input wire left,
     input wire up,
     input wire down,
-    output reg [3:0] DIGIT,
-    output reg [6:0] DISPLAY
+    output wire [3:0] DIGIT,
+    output wire [6:0] DISPLAY
 );
     wire [3:0] digit;
     wire [6:0] display;
     SevenSegment seven_segment(
-        .display(DISPLAY),
-        .digit(DIGIT),
+        .display(digit),
+        .digit(display),
         .nums(nums),
         .rst(rst),
         .clk(clk)
     );
+    assign DIGIT = digit;
+    assign DISPLAY = display;
 
     // Clock Divider
     wire clk_27;
@@ -122,21 +124,21 @@ module lab3_advanced (
     Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(record), .display(tmp_display));
 
     always @(*) begin
-        DIGIT = 4'b1110;
+        digit = 4'b1110;
         case (state)
             INITIAL: begin
                 en_half_second_counter = 0;
                 en_one_second_counter = 1;
-                DISPLAY = G;
+                display = G;
                 head = LEFT;
             end
             MOVING: begin
                 en_one_second_counter = 0;
-                case (DISPLAY)
+                case (display)
                     A: begin
                         if(head == RIGHT) begin
                             if(pb_out_right) begin
-                                DISPLAY = B;
+                                display = B;
                                 head = DOWN;
                                 cor_pos_index = cor_B;
                             end
@@ -144,7 +146,7 @@ module lab3_advanced (
                         end
                         else if(head == LEFT) begin
                             if(pb_out_left) begin
-                                DISPLAY = F;
+                                display = F;
                                 head = DOWN;
                                 cor_pos_index = cor_F;
                             end
@@ -155,7 +157,7 @@ module lab3_advanced (
                     B: begin
                         if(head == UP) begin
                             if(pb_out_left) begin
-                                DISPLAY = A;
+                                display = A;
                                 head = LEFT;
                                 cor_pos_index = cor_A;
                             end 
@@ -163,12 +165,12 @@ module lab3_advanced (
                         end
                         else if(head == DOWN) begin
                             if(pb_out_right) begin
-                                DISPLAY = G;
+                                display = G;
                                 head = LEFT;
                                 cor_pos_index = cor_G;
                             end
                             else if(pb_out_up) begin
-                                DISPLAY = C;
+                                display = C;
                                 head = DOWN;
                                 cor_pos_index = cor_C;
                             end
@@ -179,12 +181,12 @@ module lab3_advanced (
                     C: begin
                         if(head == UP) begin
                             if(pb_out_left) begin
-                                DISPLAY = G;
+                                display = G;
                                 head = LEFT;
                                 cor_pos_index = cor_G;
                             end
                             else if(pb_out_up) begin
-                                DISPLAY = B;
+                                display = B;
                                 head = UP;
                                 cor_pos_index = cor_B;
                             end
@@ -192,7 +194,7 @@ module lab3_advanced (
                         end
                         else if(head == DOWN) begin
                             if(pb_out_right) begin
-                                DISPLAY = D;
+                                display = D;
                                 head = DOWN;
                                 cor_pos_index = cor_D;
                             end
@@ -203,7 +205,7 @@ module lab3_advanced (
                     D: begin
                         if(head == RIGHT) begin
                             if(pb_out_left) begin
-                                DISPLAY = C;
+                                display = C;
                                 head = UP;
                                 cor_pos_index = cor_C;
                             end
@@ -211,7 +213,7 @@ module lab3_advanced (
                         end
                         else if(head == LEFT) begin
                             if(pb_out_right) begin
-                                DISPLAY = E;
+                                display = E;
                                 head = UP;
                                 cor_pos_index = cor_E;
                             end
@@ -222,12 +224,12 @@ module lab3_advanced (
                     E: begin
                         if(head == UP) begin
                             if(pb_out_right) begin
-                                DISPLAY = G;
+                                display = G;
                                 head = RIGHT;
                                 cor_pos_index = cor_G;
                             end
                             else if(pb_out_up) begin
-                                DISPLAY = F;
+                                display = F;
                                 head = UP;
                                 cor_pos_index = cor_F;
                             end
@@ -235,7 +237,7 @@ module lab3_advanced (
                         end
                         else if(head == DOWN) begin
                             if(pb_out_left) begin
-                                DISPLAY = D;
+                                display = D;
                                 head = RIGHT;
                                 cor_pos_index = cor_D;
                             end
@@ -246,7 +248,7 @@ module lab3_advanced (
                     F: begin
                         if(head == UP) begin
                             if(pb_out_right) begin
-                                DISPLAY = A;
+                                display = A;
                                 head = RIGHT;
                                 cor_pos_index = cor_A;
                             end
@@ -254,7 +256,7 @@ module lab3_advanced (
                         end
                         else if(head == DOWN) begin
                             if(pb_out_left) begin
-                                DISPLAY = G;
+                                display = G;
                                 head = RIGHT;
                                 cor_pos_index = cor_G;
                             end
@@ -265,12 +267,12 @@ module lab3_advanced (
                     G: begin
                         if(head == RIGHT) begin
                             if(pb_out_left) begin
-                                DISPLAY = B;
+                                display = B;
                                 head = UP;
                                 cor_pos_index = cor_B;
                             end
                             else if(pb_out_right) begin
-                                DISPLAY = C;
+                                display = C;
                                 head = DOWN;
                                 cor_pos_index = cor_C;
                             end
@@ -278,12 +280,12 @@ module lab3_advanced (
                         end
                         else if(head == LEFT) begin
                             if(pb_out_left) begin
-                                DISPLAY = E;
+                                display = E;
                                 head = DOWN;
                                 cor_pos_index = cor_E;
                             end
                             else if(pb_out_right) begin
-                                DISPLAY = F;
+                                display = F;
                                 head = UP;
                                 cor_pos_index = cor_F;
                             end
@@ -447,7 +449,7 @@ module lab3_advanced (
                     default: begin
                     end
                 endcase
-                DISPLAY = tmp_display;
+                display = tmp_display;
                 if(record == 6'b000000) en_half_second_counter = 1;
             end
             default: begin
