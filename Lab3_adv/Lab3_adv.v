@@ -8,15 +8,9 @@ module lab3_advanced (
     output wire [3:0] DIGIT,
     output wire [6:0] DISPLAY
 );
-    wire [3:0] digit;
-    wire [6:0] display;
-    SevenSegment seven_segment(
-        .display(digit),
-        .digit(display),
-        .nums(nums),
-        .rst(rst),
-        .clk(clk)
-    );
+    reg [3:0] digit;
+    reg [6:0] display;
+
     assign DIGIT = digit;
     assign DISPLAY = display;
 
@@ -37,10 +31,10 @@ module lab3_advanced (
     debounce debounce_down(.clk(clk), .pb(down), .pb_debounced(pb_debounced_down));
 
     // one pulse
-    reg pb_out_right;
-    reg pb_out_left;
-    reg pb_out_up;
-    reg pb_out_down;
+    wire pb_out_right;
+    wire pb_out_left;
+    wire pb_out_up;
+    wire pb_out_down;
     one_pulse one_pulse_right(.clk(clk), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
     one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
     one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
@@ -112,7 +106,7 @@ module lab3_advanced (
     parameter G = 7'b0111111;
 
     reg [6:0] record;
-    reg [6:0] tmp_display;
+    wire [6:0] tmp_display;
     reg [3:0] cor_pos_index;
     parameter cor_A = 0;
     parameter cor_B = 1;
@@ -202,7 +196,7 @@ module lab3_advanced (
                         end
                         else;
                     end
-                    D: begin
+                    7'b1110111: begin
                         if(head == RIGHT) begin
                             if(pb_out_left) begin
                                 display = C;
@@ -451,6 +445,7 @@ module lab3_advanced (
                 endcase
                 display = tmp_display;
                 if(record == 6'b000000) en_half_second_counter = 1;
+                else en_half_second_counter = 0;
             end
             default: begin
             end
@@ -458,61 +453,6 @@ module lab3_advanced (
     end
     
 
-endmodule
-
-// In this lab, you only need to control the rightmost seven-segment display, passing the 7-bit nums directly to control it.
-module SevenSegment(
-	output reg [6:0] display,
-	output reg [3:0] digit, 
-	input wire [6:0] nums,
-	input wire rst,
-	input wire clk  // Input 100Mhz clock
-);
-    
-    reg [15:0] clk_divider;
-    reg [6:0] display_num;
-    
-    always @ (posedge clk, posedge rst) begin
-    	if (rst) begin
-    		clk_divider <= 15'b0;
-    	end else begin
-    		clk_divider <= clk_divider + 15'b1;
-    	end
-    end
-    
-    always @ (posedge clk_divider[15], posedge rst) begin
-    	if (rst) begin
-    		display_num <= 7'b1111111;
-    		digit <= 4'b1111;
-    	end else begin
-    		case (digit)
-    			4'b1110 : begin
-    					display_num <= 7'b1111111;
-    					digit <= 4'b1101;
-    				end
-    			4'b1101 : begin
-						display_num <= 7'b1111111;
-						digit <= 4'b1011;
-					end
-    			4'b1011 : begin
-						display_num <= 7'b1111111;
-						digit <= 4'b0111;
-					end
-    			4'b0111 : begin
-						display_num <= nums;
-						digit <= 4'b1110;
-					end
-    			default : begin
-						display_num <= 7'b1111111;
-						digit <= 4'b1110;
-					end				
-    		endcase
-    	end
-    end
-    
-    always @ (*) begin
-        display = display_num;
-    end
 endmodule
 
 // Clock Divider Module
@@ -563,7 +503,7 @@ endmodule
 
 // Flashing
 module Flashing(
-    input wire idx,
+    input wire [3:0] idx,
     input wire clk,
     input wire [6:0] record,
     output reg [6:0] display
