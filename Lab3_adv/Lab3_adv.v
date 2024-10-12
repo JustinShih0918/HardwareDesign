@@ -5,9 +5,11 @@ module lab3_advanced (
     input wire left,
     input wire up,
     input wire down,
-    output [3:0] DIGIT,
-    output [6:0] DISPLAY
+    output reg [3:0] DIGIT,
+    output reg [6:0] DISPLAY
 );
+    wire [3:0] digit;
+    wire [6:0] display;
     SevenSegment seven_segment(
         .display(DISPLAY),
         .digit(DIGIT),
@@ -60,9 +62,10 @@ module lab3_advanced (
     // one second counter
     reg [15:0] one_second_counter;
     reg en_one_second_counter;
+
     always @(posedge clk_27) begin
-        if(en_one_second_counter) counter <= counter + 16'b1;
-        else counter <= 16'b0;
+        if(en_one_second_counter) one_second_counter <= one_second_counter + 16'b1;
+        else one_second_counter <= 16'b0;
     end
 
     // 0.5 second counter
@@ -288,12 +291,13 @@ module lab3_advanced (
                         end
                         else;
                     end
-                    default: 
+                    default: begin
+                    end
                 endcase
             end
             FALLING: begin
                 record[cor_pos_index] = 0;
-                case(cor_pos_index):
+                case(cor_pos_index)
                     cor_A: begin
                         if(head == RIGHT) begin
                             if(pb_out_right) begin
@@ -440,7 +444,8 @@ module lab3_advanced (
                         else;
                         record[cor_G] = 0;
                     end
-                    default: 
+                    default: begin
+                    end
                 endcase
                 DISPLAY = tmp_display;
                 if(record == 6'b000000) en_half_second_counter = 1;
@@ -512,7 +517,6 @@ endmodule
 module clock_divider #(parameter n = 25)(clk, clk_div);
     input clk;
     output clk_div;
-    parameter n = 25;
     reg[n-1:0] num;
     wire[n-1:0] next_num;
     always @(posedge clk) begin
@@ -563,8 +567,8 @@ module Flashing(
     output reg [6:0] display
 );
     always @(posedge clk) begin
-        record[idx] = ~record[idx];
         display = record;
+        display[idx] = ~display[idx];
     end
 endmodule
 
