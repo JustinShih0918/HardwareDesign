@@ -191,7 +191,7 @@ module lab3_advanced (
                         end
                         else;
                     end
-                    7'b1110111: begin
+                    D: begin
                         if(head == RIGHT) begin
                             if(pb_out_left) begin
                                 DISPLAY = C;
@@ -351,7 +351,7 @@ module lab3_advanced (
                         else;
                         record[cor_C] = 0;
                     end
-                    D: begin
+                    cor_D: begin
                         if(head == RIGHT) begin
                             if(pb_out_left) begin
                                 cor_pos_index = cor_C;
@@ -369,7 +369,7 @@ module lab3_advanced (
                         else;
                         record[cor_D] = 0;
                     end
-                    E: begin
+                    cor_E: begin
                         if(head == UP) begin
                             if(pb_out_right) begin
                                 cor_pos_index = cor_G;
@@ -391,7 +391,7 @@ module lab3_advanced (
                         else;
                         record[cor_E] = 0;
                     end
-                    F: begin
+                    cor_F: begin
                         if(head == UP) begin
                             if(pb_out_right) begin
                                 cor_pos_index = cor_A;
@@ -409,7 +409,7 @@ module lab3_advanced (
                         else;
                         record[cor_F] = 0;
                     end
-                    G: begin
+                    cor_G: begin
                         if(head == RIGHT) begin
                             if(pb_out_left) begin
                                 cor_pos_index = cor_B;
