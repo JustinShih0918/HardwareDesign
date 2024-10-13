@@ -104,7 +104,367 @@ module lab3_advanced (
         endcase
     end
 
-    
+    // FSM behavior
+    reg [1:0] head;
+    parameter RIGHT = 0;
+    parameter LEFT = 1;
+    parameter UP = 2;
+    parameter DOWN = 3;
+
+    parameter A = 7'b1111110;
+    parameter B = 7'b1111101;
+    parameter C = 7'b1111011;
+    parameter D = 7'b1110111;
+    parameter E = 7'b1101111;
+    parameter F = 7'b1011111;
+    parameter G = 7'b0111111;
+
+    reg [6:0] record;
+    wire [6:0] tmp_display;
+    reg [3:0] cor_pos_index;
+    parameter cor_A = 0;
+    parameter cor_B = 1;
+    parameter cor_C = 2;
+    parameter cor_D = 3;
+    parameter cor_E = 4;
+    parameter cor_F = 5;
+    parameter cor_G = 6;
+    Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(record), .display(tmp_display));
+
+    always @(*) begin
+        DIGIT = 4'b1110;
+        case (state)
+            INITIAL: begin
+                en_half_second_counter = 0;
+                en_one_second_counter = 1;
+                DISPLAY = G;
+                head = LEFT;
+            end
+            MOVING: begin
+                en_one_second_counter = 0;
+                case (DISPLAY)
+                    A: begin
+                        if(head == RIGHT) begin
+                            if(pb_out_right) begin
+                                DISPLAY = B;
+                                head = DOWN;
+                                cor_pos_index = cor_B;
+                            end
+                            else;
+                        end
+                        else if(head == LEFT) begin
+                            if(pb_out_left) begin
+                                DISPLAY = F;
+                                head = DOWN;
+                                cor_pos_index = cor_F;
+                            end
+                            else;
+                        end
+                        else;
+                    end 
+                    B: begin
+                        if(head == UP) begin
+                            if(pb_out_left) begin
+                                DISPLAY = A;
+                                head = LEFT;
+                                cor_pos_index = cor_A;
+                            end 
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_right) begin
+                                DISPLAY = G;
+                                head = LEFT;
+                                cor_pos_index = cor_G;
+                            end
+                            else if(pb_out_up) begin
+                                DISPLAY = C;
+                                head = DOWN;
+                                cor_pos_index = cor_C;
+                            end
+                            else;
+                        end
+                        else;
+                    end
+                    C: begin
+                        if(head == UP) begin
+                            if(pb_out_left) begin
+                                DISPLAY = G;
+                                head = LEFT;
+                                cor_pos_index = cor_G;
+                            end
+                            else if(pb_out_up) begin
+                                DISPLAY = B;
+                                head = UP;
+                                cor_pos_index = cor_B;
+                            end
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_right) begin
+                                DISPLAY = D;
+                                head = DOWN;
+                                cor_pos_index = cor_D;
+                            end
+                            else;
+                        end
+                        else;
+                    end
+                    D: begin
+                        if(head == RIGHT) begin
+                            if(pb_out_left) begin
+                                DISPLAY = C;
+                                head = UP;
+                                cor_pos_index = cor_C;
+                            end
+                            else;
+                        end
+                        else if(head == LEFT) begin
+                            if(pb_out_right) begin
+                                DISPLAY = E;
+                                head = UP;
+                                cor_pos_index = cor_E;
+                            end
+                            else;
+                        end
+                        else;
+                    end
+                    E: begin
+                        if(head == UP) begin
+                            if(pb_out_right) begin
+                                DISPLAY = G;
+                                head = RIGHT;
+                                cor_pos_index = cor_G;
+                            end
+                            else if(pb_out_up) begin
+                                DISPLAY = F;
+                                head = UP;
+                                cor_pos_index = cor_F;
+                            end
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_left) begin
+                                DISPLAY = D;
+                                head = RIGHT;
+                                cor_pos_index = cor_D;
+                            end
+                            else;
+                        end
+                        else;
+                    end
+                    F: begin
+                        if(head == UP) begin
+                            if(pb_out_right) begin
+                                DISPLAY = A;
+                                head = RIGHT;
+                                cor_pos_index = cor_A;
+                            end
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_left) begin
+                                DISPLAY = G;
+                                head = RIGHT;
+                                cor_pos_index = cor_G;
+                            end
+                            else;
+                        end
+                        else;
+                    end
+                    G: begin
+                        if(head == RIGHT) begin
+                            if(pb_out_left) begin
+                                DISPLAY = B;
+                                head = UP;
+                                cor_pos_index = cor_B;
+                            end
+                            else if(pb_out_right) begin
+                                DISPLAY = C;
+                                head = DOWN;
+                                cor_pos_index = cor_C;
+                            end
+                            else;
+                        end
+                        else if(head == LEFT) begin
+                            if(pb_out_left) begin
+                                DISPLAY = E;
+                                head = DOWN;
+                                cor_pos_index = cor_E;
+                            end
+                            else if(pb_out_right) begin
+                                DISPLAY = F;
+                                head = UP;
+                                cor_pos_index = cor_F;
+                            end
+                            else;
+                        end
+                        else;
+                    end
+                    default: begin
+                    end
+                endcase
+            end
+            FALLING: begin
+                record[cor_pos_index] = 0;
+                case(cor_pos_index)
+                    cor_A: begin
+                        if(head == RIGHT) begin
+                            if(pb_out_right) begin
+                                cor_pos_index = cor_B;
+                                head = DOWN;
+                            end
+                            else;
+                        end
+                        else if(head == LEFT) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_F;
+                                head = DOWN;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_A] = 0;
+                    end 
+                    cor_B: begin
+                        if(head == UP) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_A;
+                                head = LEFT;
+                            end 
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_right) begin
+                                cor_pos_index = cor_G;
+                                head = LEFT;
+                            end
+                            else if(pb_out_up) begin
+                                cor_pos_index = cor_C;
+                                head = DOWN;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_B] = 0;
+                    end
+                    cor_C: begin
+                        if(head == UP) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_G;
+                                head = LEFT;
+                            end
+                            else if(pb_out_up) begin
+                                cor_pos_index = cor_B;
+                                head = UP;
+                            end
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_right) begin
+                                cor_pos_index = cor_D;
+                                head = DOWN;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_C] = 0;
+                    end
+                    cor_D: begin
+                        if(head == RIGHT) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_C;
+                                head = UP;
+                            end
+                            else;
+                        end
+                        else if(head == LEFT) begin
+                            if(pb_out_right) begin
+                                cor_pos_index = cor_E;
+                                head = UP;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_D] = 0;
+                    end
+                    cor_E: begin
+                        if(head == UP) begin
+                            if(pb_out_right) begin
+                                cor_pos_index = cor_G;
+                                head = RIGHT;
+                            end
+                            else if(pb_out_up) begin
+                                cor_pos_index = cor_F;
+                                head = UP;
+                            end
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_D;
+                                head = RIGHT;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_E] = 0;
+                    end
+                    cor_F: begin
+                        if(head == UP) begin
+                            if(pb_out_right) begin
+                                cor_pos_index = cor_A;
+                                head = RIGHT;
+                            end
+                            else;
+                        end
+                        else if(head == DOWN) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_G;
+                                head = RIGHT;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_F] = 0;
+                    end
+                    cor_G: begin
+                        if(head == RIGHT) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_B;
+                                head = UP;
+                            end
+                            else if(pb_out_right) begin
+                                cor_pos_index = cor_C;
+                                head = DOWN;
+                            end
+                            else;
+                        end
+                        else if(head == LEFT) begin
+                            if(pb_out_left) begin
+                                cor_pos_index = cor_E;
+                                head = DOWN;
+                            end
+                            else if(pb_out_right) begin
+                                cor_pos_index = cor_F;
+                                head = UP;
+                            end
+                            else;
+                        end
+                        else;
+                        record[cor_G] = 0;
+                    end
+                    default: begin
+                    end
+                endcase
+                DISPLAY = tmp_display;
+                if(record == 6'b000000) en_half_second_counter = 1;
+                else en_half_second_counter = 0;
+            end
+            default: begin
+            end
+        endcase
+    end
     
 
 endmodule
