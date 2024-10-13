@@ -42,15 +42,15 @@ module lab3_advanced (
     one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
     one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
     one_pulse one_pulse_down(.clk(clk), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
-    assign RB = pb_debounced_right;
-    assign LB = pb_debounced_left;
-    assign UB = pb_debounced_up;
-    assign DB = pb_debounced_down;
+    assign RB = pb_out_right;
+    assign LB = pb_out_left;
+    assign UB = pb_out_up;
+    assign DB = pb_out_down;
 
-    assign r = right;
-    assign l = left;
-    assign u = up;
-    assign d = down;
+    assign r = pb_debounced_right;
+    assign l = pb_debounced_left;
+    assign u = pb_debounced_up;
+    assign d = pb_debounced_down;
 
     // FSM
     reg [1:0] state, next_state;
