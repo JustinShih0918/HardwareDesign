@@ -81,6 +81,7 @@ module lab3_advanced (
                 else next_state = INITIAL;
             end
             MOVING: begin
+                state_out = 2'b01;
                 next_state = MOVING;
             end
             FALLING: begin
@@ -95,6 +96,7 @@ module lab3_advanced (
     reg [1:0] head;
     assign pos = head;
     assign DISPLAY = 7'b1111110;
+    reg [6:0] dis_next;
     parameter RIGHT = 0;
     parameter LEFT = 1;
     parameter UP = 2;
@@ -120,6 +122,11 @@ module lab3_advanced (
     parameter cor_G = 6;
     Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(record), .display(tmp_display));
 
+    always @(posedge clk_20, posedge rst) begin
+        if(rst) display <= 7'b1111111;
+        else display <= dis_next;
+    end
+
     always @(*) begin
         DIGIT = 4'b1110;
         if(state == INITIAL) begin
@@ -128,14 +135,15 @@ module lab3_advanced (
             head = LEFT;
             record = 0;
             cor_pos_index = cor_G;
-            display = G;
+            dis_next = G;
         end
         else if(state == MOVING) begin
-            if(pb_out_right) display = A;
-            else if(pb_out_left) display = B;
-            else if(pb_out_up) display = C;
-            else if(pb_out_down) display = D;
-            else display = display;
+            en_one_second_counter = 0;
+            if(pb_out_right) dis_next <= A;
+            else if(pb_out_left) dis_next <= B;
+            else if(pb_out_up) dis_next <= C;
+            else if(pb_out_down) dis_next <= D;
+            else dis_next <= display;
         end
         else begin
             
