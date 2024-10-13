@@ -38,10 +38,11 @@ module lab3_advanced (
     wire pb_out_left;
     wire pb_out_up;
     wire pb_out_down;
-    one_pulse one_pulse_right(.clk(clk), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
-    one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
-    one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
-    one_pulse one_pulse_down(.clk(clk), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
+    one_pulse one_pulse_right(.clk(clk), .rst(rst), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
+    one_pulse one_pulse_left(.clk(clk), .rst(rst), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
+    one_pulse one_pulse_up(.clk(clk), .rst(rst), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
+    one_pulse one_pulse_down(.clk(clk), .rst(rst), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
+
     assign RB = pb_out_right;
     assign LB = pb_out_left;
     assign UB = pb_out_up;
