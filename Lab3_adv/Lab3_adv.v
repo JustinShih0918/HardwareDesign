@@ -94,9 +94,12 @@ module lab3_advanced (
 
     // FSM behavior
     reg [1:0] head;
+    reg [1:0] next_head;
+    reg [6:0] next_display;
+
     assign pos = head;
-    assign DISPLAY = 7'b1111110;
-    reg [6:0] dis_next;
+    assign DISPLAY = display;
+
     parameter RIGHT = 0;
     parameter LEFT = 1;
     parameter UP = 2;
@@ -111,8 +114,10 @@ module lab3_advanced (
     parameter G = 7'b0111111;
 
     reg [6:0] record;
+    reg [6:0] next_record;
     wire [6:0] tmp_display;
     reg [3:0] cor_pos_index;
+    reg [3:0] next_pos_index;
     parameter cor_A = 0;
     parameter cor_B = 1;
     parameter cor_C = 2;
@@ -124,6 +129,9 @@ module lab3_advanced (
 
     always @(posedge clk_20) begin
         display <= dis_next;
+        record <= next_record;
+        head <= next_head;
+        cor_pos_index <= next_pos_index;
     end
 
     always @(*) begin
@@ -138,15 +146,129 @@ module lab3_advanced (
         end
         else if(state == MOVING) begin
             en_one_second_counter = 0;
-            if(display == G) begin
-                if(pb_out_right) begin
-                    dis_next = F;
-                end
-            end 
-            else if(display == F) begin
-                if(pb_out_left) dis_next = G;
-            end
-            else;
+            case (display)
+                    A: begin
+                        if(pb_out_right && head == RIGHT) begin
+                            next_display = B;
+                            next_head = DOWN;
+                            next_pos_index = cor_B;
+                        end
+                        else if(pb_out_left && head == LEFT) begin
+                            next_display = F;
+                            next_head = DOWN;
+                            next_pos_index = cor_F;
+                        end
+                        else;
+                    end 
+                    B: begin
+                        if(pb_out_left && head == UP) begin
+                            next_display = A;
+                            next_head = LEFT;
+                            next_pos_index = cor_A;
+                        end
+                        else if(pb_out_right && head == DOWN) begin
+                            next_display = G;
+                            next_head = LEFT;
+                            next_pos_index = cor_G;
+                        end
+                        else if(pb_out_up && head == DOWN) begin
+                            next_display = C;
+                            next_head = DOWN;
+                            next_pos_index = cor_C;
+                        end
+                        else;
+                    end
+                    C: begin
+                        if(pb_out_left && head == UP) begin
+                            next_display = G;
+                            next_head = LEFT;
+                            next_pos_index = cor_G;
+                        end
+                        else if(pb_out_up && head == UP) begin
+                            next_display = B;
+                            next_head = UP;
+                            next_pos_index = cor_B;
+                        end
+                        else if(pb_out_right && head == DOWN) begin
+                            next_display = D;
+                            next_head = DOWN;
+                            next_pos_index = cor_D;
+                        end
+                        else;
+                    end
+                    D: begin
+                        if(pb_out_left && head == RIGHT) begin
+                            next_display = C;
+                            next_head = UP;
+                            next_pos_index = cor_C;
+                        end
+                        else if(pb_out_right && head == LEFT) begin
+                            next_display = E;
+                            next_head = UP;
+                            next_pos_index = cor_E;
+                        end
+                        else;
+                    end
+                    E: begin
+                        if(pb_out_right && head == UP) begin
+                            next_display = G;
+                            next_head = RIGHT;
+                            next_pos_index = cor_G;
+                        end
+                        else if(pb_out_up && head == UP) begin
+                            next_display = F;
+                            next_head = UP;
+                            next_pos_index = cor_F;
+                        end
+                        else if(pb_out_left && head == DOWN) begin
+                            next_display = D;
+                            next_head = RIGHT;
+                            next_pos_index = cor_D;
+                        end
+                        else;
+                    end
+                    F: begin
+                        if(pb_out_right && head == UP) begin
+                            next_display = A;
+                            next_head = RIGHT;
+                            next_pos_index = cor_A;
+                        end
+                        else if(pb_out_left && head == DOWN) begin
+                            next_display = G;
+                            next_head = RIGHT;
+                            next_pos_index = cor_G;
+                        end
+                        else;
+                    end
+                    G: begin
+                        if(pb_out_left && head == RIGHT) begin
+                            next_display = B;
+                            next_head = UP;
+                            next_pos_index = cor_B;
+                        end
+                        else if(pb_out_right && head == RIGHT) begin
+                            next_display = C;
+                            next_head = DOWN;
+                            next_pos_index = cor_C;
+                        end
+                        else if(pb_out_left && head == LEFT) begin
+                            next_display = E;
+                            next_head = DOWN;
+                            next_pos_index = cor_E;
+                        end
+                        else if(pb_out_right && head == LEFT) begin
+                            next_display = F;
+                            next_head = UP;
+                            next_pos_index = cor_F;
+                        end
+                        else;
+                    end
+                    default: begin
+                        next_display <= display
+                        next_head <= head;
+                        next_pos_index = cor_pos_index;
+                    end
+                endcase
         end
         else begin
             
