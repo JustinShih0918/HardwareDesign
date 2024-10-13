@@ -10,7 +10,8 @@ module lab3_advanced (
     output reg init,
     output reg move,
     output reg fall,
-    output wire [1:0] pos
+    output wire [1:0] pos,
+    output wire [6:0] displayLed
 );
 
     // Clock Divider
@@ -103,6 +104,7 @@ module lab3_advanced (
     // FSM behavior
     reg [1:0] head;
     assign pos = head;
+    assign displayLed = DISPLAY;
     parameter RIGHT = 0;
     parameter LEFT = 1;
     parameter UP = 2;
