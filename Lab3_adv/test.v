@@ -121,19 +121,19 @@
 //     assign clk_div = num[n-1];
 // endmodule
 
-// // Debounce Module
-// module debounce (
-//     input wire clk,
-//     input wire pb,
-//     output wire pb_debounced
-// );
-//     reg [3:0] shift_reg;
-//     always @(posedge clk) begin
-//         shift_reg[3:1] <= shift_reg[2:0];
-//         shift_reg[0] <= pb;
-//     end
-//     assign pb_debounced = (shift_reg == 4'b1111) ? 1'b1 : 1'b0;
-// endmodule
+// Debounce Module
+module debounce (
+    input wire clk,
+    input wire pb,
+    output wire pb_debounced
+);
+    reg [3:0] shift_reg;
+    always @(posedge clk) begin
+        shift_reg[3:1] <= shift_reg[2:0];
+        shift_reg[0] <= pb;
+    end
+    assign pb_debounced = (shift_reg == 4'b1111) ? 1'b1 : 1'b0;
+endmodule
 
 // One Pulse Module
 module one_pulse (
