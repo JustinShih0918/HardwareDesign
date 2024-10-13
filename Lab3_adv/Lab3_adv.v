@@ -104,7 +104,7 @@ module lab3_advanced (
     reg [1:0] head;
     reg [6:0] display;
     assign pos = head;
-    assign DISPLAY = display;
+    assign DISPLAY = 7'b1111110;
     parameter RIGHT = 0;
     parameter LEFT = 1;
     parameter UP = 2;
