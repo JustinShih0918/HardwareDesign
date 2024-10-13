@@ -122,9 +122,8 @@ module lab3_advanced (
     parameter cor_G = 6;
     Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(record), .display(tmp_display));
 
-    always @(posedge clk_20, posedge rst) begin
-        if(rst) display <= 7'b1111111;
-        else display <= dis_next;
+    always @(posedge clk_20) begin
+        display <= dis_next;
     end
 
     always @(*) begin
