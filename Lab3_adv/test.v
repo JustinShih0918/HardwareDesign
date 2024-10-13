@@ -10,7 +10,8 @@ module lab3_advanced (
     output reg init,
     output reg move,
     output reg fall,
-    output wire [1:0] pos,
+    output reg [6:0] display,
+    output wire [1:0] pos
 );
 
     // Clock Divider
@@ -103,8 +104,8 @@ module lab3_advanced (
     // FSM behavior
     reg [1:0] head;
     reg [6:0] display;
-    assign DISPLAY = display;
     assign pos = head;
+    assign DISPLAY = 7'b1111110;
     parameter RIGHT = 0;
     parameter LEFT = 1;
     parameter UP = 2;
@@ -143,164 +144,125 @@ module lab3_advanced (
                 en_one_second_counter = 0;
                 case (display)
                     A: begin
-                        if(head == RIGHT) begin
-                            if(pb_out_right) begin
-                                display = B;
-                                head = DOWN;
-                                cor_pos_index = cor_B;
-                            end
-                            else;
+                        if(pb_out_right && head == RIGHT) begin
+                            display = B;
+                            head = DOWN;
+                            cor_pos_index = cor_B;
                         end
-                        else if(head == LEFT) begin
-                            if(pb_out_left) begin
-                                display = F;
-                                head = DOWN;
-                                cor_pos_index = cor_F;
-                            end
-                            else;
+                        else if(pb_out_left && head == LEFT) begin
+                            display = F;
+                            head = DOWN;
+                            cor_pos_index = cor_F;
                         end
                         else;
                     end 
                     B: begin
-                        if(head == UP) begin
-                            if(pb_out_left) begin
-                                display = A;
-                                head = LEFT;
-                                cor_pos_index = cor_A;
-                            end 
-                            else;
+                        if(pb_out_left && head == UP) begin
+                            display = A;
+                            head = LEFT;
+                            cor_pos_index = cor_A;
                         end
-                        else if(head == DOWN) begin
-                            if(pb_out_right) begin
-                                display = G;
-                                head = LEFT;
-                                cor_pos_index = cor_G;
-                            end
-                            else if(pb_out_up) begin
-                                display = C;
-                                head = DOWN;
-                                cor_pos_index = cor_C;
-                            end
-                            else;
+                        else if(pb_out_right && head == DOWN) begin
+                            display = G;
+                            head = LEFT;
+                            cor_pos_index = cor_G;
+                        end
+                        else if(pb_out_up && head == DOWN) begin
+                            display = C;
+                            head = DOWN;
+                            cor_pos_index = cor_C;
                         end
                         else;
                     end
                     C: begin
-                        if(head == UP) begin
-                            if(pb_out_left) begin
-                                display = G;
-                                head = LEFT;
-                                cor_pos_index = cor_G;
-                            end
-                            else if(pb_out_up) begin
-                                display = B;
-                                head = UP;
-                                cor_pos_index = cor_B;
-                            end
-                            else;
+                        if(pb_out_left && head == UP) begin
+                            display = G;
+                            head = LEFT;
+                            cor_pos_index = cor_G;
                         end
-                        else if(head == DOWN) begin
-                            if(pb_out_right) begin
-                                display = D;
-                                head = DOWN;
-                                cor_pos_index = cor_D;
-                            end
-                            else;
+                        else if(pb_out_up && head == UP) begin
+                            display = B;
+                            head = UP;
+                            cor_pos_index = cor_B;
+                        end
+                        else if(pb_out_right && head == DOWN) begin
+                            display = D;
+                            head = DOWN;
+                            cor_pos_index = cor_D;
                         end
                         else;
                     end
                     D: begin
-                        if(head == RIGHT) begin
-                            if(pb_out_left) begin
-                                display = C;
-                                head = UP;
-                                cor_pos_index = cor_C;
-                            end
-                            else;
+                        if(pb_out_left && head == RIGHT) begin
+                            display = C;
+                            head = UP;
+                            cor_pos_index = cor_C;
                         end
-                        else if(head == LEFT) begin
-                            if(pb_out_right) begin
-                                display = E;
-                                head = UP;
-                                cor_pos_index = cor_E;
-                            end
-                            else;
+                        else if(pb_out_right && head == LEFT) begin
+                            display = E;
+                            head = UP;
+                            cor_pos_index = cor_E;
                         end
                         else;
                     end
                     E: begin
-                        if(head == UP) begin
-                            if(pb_out_right) begin
-                                display = G;
-                                head = RIGHT;
-                                cor_pos_index = cor_G;
-                            end
-                            else if(pb_out_up) begin
-                                display = F;
-                                head = UP;
-                                cor_pos_index = cor_F;
-                            end
-                            else;
+                        if(pb_out_right && head == UP) begin
+                            display = G;
+                            head = RIGHT;
+                            cor_pos_index = cor_G;
                         end
-                        else if(head == DOWN) begin
-                            if(pb_out_left) begin
-                                display = D;
-                                head = RIGHT;
-                                cor_pos_index = cor_D;
-                            end
-                            else;
+                        else if(pb_out_up && head == UP) begin
+                            display = F;
+                            head = UP;
+                            cor_pos_index = cor_F;
+                        end
+                        else if(pb_out_left && head == DOWN) begin
+                            display = D;
+                            head = RIGHT;
+                            cor_pos_index = cor_D;
                         end
                         else;
                     end
                     F: begin
-                        if(head == UP) begin
-                            if(pb_out_right) begin
-                                display = A;
-                                head = RIGHT;
-                                cor_pos_index = cor_A;
-                            end
-                            else;
+                        if(pb_out_right && head == UP) begin
+                            display = A;
+                            head = RIGHT;
+                            cor_pos_index = cor_A;
                         end
-                        else if(head == DOWN) begin
-                            if(pb_out_left) begin
-                                display = G;
-                                head = RIGHT;
-                                cor_pos_index = cor_G;
-                            end
-                            else;
+                        else if(pb_out_left && head == DOWN) begin
+                            display = G;
+                            head = RIGHT;
+                            cor_pos_index = cor_G;
                         end
                         else;
                     end
                     G: begin
-                        if(head == RIGHT) begin
-                            if(pb_out_left) begin
-                                display = B;
-                                head = UP;
-                                cor_pos_index = cor_B;
-                            end
-                            else if(pb_out_right) begin
-                                display = C;
-                                head = DOWN;
-                                cor_pos_index = cor_C;
-                            end
-                            else;
+                        if(pb_out_left && head == RIGHT) begin
+                            display = B;
+                            head = UP;
+                            cor_pos_index = cor_B;
                         end
-                        else if(head == LEFT) begin
-                            if(pb_out_left) begin
-                                display = E;
-                                head = DOWN;
-                                cor_pos_index = cor_E;
-                            end
-                            else if(pb_out_right) begin
-                                display = F;
-                                head = UP;
-                                cor_pos_index = cor_F;
-                            end
-                            else;
+                        else if(pb_out_right && head == RIGHT) begin
+                            display = C;
+                            head = DOWN;
+                            cor_pos_index = cor_C;
+                        end
+                        else if(pb_out_left && head == LEFT) begin
+                            display = E;
+                            head = DOWN;
+                            cor_pos_index = cor_E;
+                        end
+                        else if(pb_out_right && head == LEFT) begin
+                            display = F;
+                            head = UP;
+                            cor_pos_index = cor_F;
                         end
                         else;
                     end
                     default: begin
+                        display = G;
+                        head = LEFT;
+                        cor_pos_index = cor_G;
                     end
                 endcase
                 record = 7'b1111111;
