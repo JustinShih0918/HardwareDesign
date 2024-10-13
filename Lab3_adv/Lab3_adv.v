@@ -13,7 +13,7 @@ module lab3_advanced (
     output wire DB,
     output reg init,
     output reg move,
-    output reg fall,
+    output reg fall
 );
 
     // Clock Divider
