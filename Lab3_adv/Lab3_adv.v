@@ -76,23 +76,14 @@ module lab3_advanced (
     always @(*) begin
         case (state)
             INITIAL: begin
-                init = 1;
-                move = 0;
-                fall = 0;
                 if(one_second_counter >= 3) next_state = MOVING;
                 else next_state = INITIAL;
             end
             MOVING: begin
-                init = 0;
-                move = 1;
-                fall = 0;
                 if(pb_out_down) next_state = FALLING;
                 else next_state = MOVING;
             end
             FALLING: begin
-                init = 0;
-                move = 0;
-                fall = 1;
                 if(half_second_counter >= 1) next_state = INITIAL;
                 else next_state = FALLING;
             end
@@ -136,7 +127,7 @@ module lab3_advanced (
                 en_one_second_counter = 1;
                 display = G;
                 head = LEFT;
-                mode = 4b'0000;
+                mode = 4'b0000;
             end
             MOVING: begin
                 en_one_second_counter = 0;
