@@ -1,85 +1,71 @@
-module tb_debounce_one_pulse;
+`timescale 1ns / 1ps
 
-    // Clock and reset
+module tb_lab3_advanced;
+
+    // Inputs
     reg clk;
-    reg reset;
-    
-    // Inputs (button press simulation)
-    reg right, left, up, down;
-    
-    // Debounced outputs
-    wire pb_debounced_right;
-    wire pb_debounced_left;
-    wire pb_debounced_up;
-    wire pb_debounced_down;
-    
-    // One pulse outputs
-    wire pb_out_right;
-    wire pb_out_left;
-    wire pb_out_up;
-    wire pb_out_down;
+    reg rst;
+    reg right;
+    reg left;
+    reg up;
+    reg down;
 
-    // Instantiate debounce modules
-    debounce debounce_right(.clk(clk), .pb(right), .pb_debounced(pb_debounced_right));
-    debounce debounce_left(.clk(clk), .pb(left), .pb_debounced(pb_debounced_left));
-    debounce debounce_up(.clk(clk), .pb(up), .pb_debounced(pb_debounced_up));
-    debounce debounce_down(.clk(clk), .pb(down), .pb_debounced(pb_debounced_down));
+    // Outputs
+    wire [3:0] DIGIT;
+    wire [6:0] DISPLAY;
+    wire [6:0] display;
+    wire [1:0] pos;
+    wire [1:0] state_out;
 
-    // Instantiate one pulse modules
-    one_pulse one_pulse_right(.clk(clk), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
-    one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
-    one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
-    one_pulse one_pulse_down(.clk(clk), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
+    // Instantiate the Unit Under Test (UUT)
+    lab3_advanced uut (
+        .clk(clk),
+        .rst(rst),
+        .right(right),
+        .left(left),
+        .up(up),
+        .down(down),
+        .DIGIT(DIGIT),
+        .DISPLAY(DISPLAY),
+        .display(display),
+        .pos(pos),
+        .state_out(state_out)
+    );
 
-    // Clock generation (10ns period => 100MHz)
-    always #5 clk = ~clk;
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // 100 MHz clock
+    end
 
-    // Test sequence
+    // Stimulus process
     initial begin
         // Initialize inputs
-        clk = 0;
+        rst = 1;
         right = 0;
         left = 0;
         up = 0;
         down = 0;
-        
-        // Test debounce and one-pulse for "down" button press
+
+        // Wait for global reset
         #10;
-        down = 1;   // Press the down button
-        #50;
-        down = 0;   // Release the down button
-        #50;
+        rst = 0;
 
-        // Test debounce and one-pulse for "up" button press
+        // Test Case 1: Check initial state
+        #100;  // Allow some time for the FSM to initialize
+        $display("Initial state: display = %b, head = %b", display, uut.head);
+
+        // Test Case 2: Simulate multiple right button presses
+        repeat(4) begin
+            #10; right = 1; // Press right button
+            #10; right = 0; // Release right button
+            #1000000000; // Wait for the next state change (adjust as necessary)
+            $display("After right press: display = %b, head = %b", display, uut.head);
+        end
+
+        // Finish simulation
         #10;
-        up = 1;     // Press the up button
-        #50;
-        up = 0;     // Release the up button
-        #50;
-
-        // Test debounce and one-pulse for "right" button press
-        #10;
-        right = 1;  // Press the right button
-        #50;
-        right = 0;  // Release the right button
-        #50;
-
-        // Test debounce and one-pulse for "left" button press
-        #10;
-        left = 1;   // Press the left button
-        #50;
-        left = 0;   // Release the left button
-        #50;
-
-        // Finish the simulation
-        #100;
-        $stop;
-    end
-
-    // Monitor signals to check the outputs
-    initial begin
-        $monitor("Time: %0d | right=%b left=%b up=%b down=%b | pb_out_right=%b pb_out_left=%b pb_out_up=%b pb_out_down=%b",
-                 $time, right, left, up, down, pb_out_right, pb_out_left, pb_out_up, pb_out_down);
+        $finish;
     end
 
 endmodule
