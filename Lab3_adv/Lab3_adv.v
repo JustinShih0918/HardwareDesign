@@ -18,12 +18,10 @@ module lab3_advanced (
     wire clk_26;
     wire clk_20;
     wire clk_22;
-    wire clk_19;
     clock_divider #(.n(27)) clk27(.clk(clk), .clk_div(clk_27));
     clock_divider #(.n(26)) clk26(.clk(clk), .clk_div(clk_26));
     clock_divider #(.n(20)) clk20(.clk(clk), .clk_div(clk_20));
     clock_divider #(.n(22)) clk21(.clk(clk), .clk_div(clk_22));
-    clock_divider #(.n(19)) clk18(.clk(clk), .clk_div(clk_19));
 
     // debounce
     wire pb_debounced_right;
@@ -70,14 +68,6 @@ module lab3_advanced (
         else one_second_counter <= 16'b0;
     end
 
-    // 0.5 second counter
-    reg [15:0] half_second_counter;
-    reg en_half_second_counter;
-    always @(posedge clk_26) begin
-        if(en_half_second_counter) half_second_counter <= half_second_counter + 16'b1;
-        else half_second_counter <= 16'b0;
-    end
-
     // FSM state transition
     always @(*) begin
         case (state)
@@ -93,7 +83,7 @@ module lab3_advanced (
             end
             FALLING: begin
                 state_out = 2'b10;
-                if(half_second_counter >= 1) next_state = INITIAL;
+                if(one_second_counter >= 2) next_state = INITIAL;
                 else next_state = FALLING;
             end
         endcase
@@ -133,7 +123,7 @@ module lab3_advanced (
     parameter cor_E = 4;
     parameter cor_F = 5;
     parameter cor_G = 6;
-    Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(record), .display(tmp_display));
+    Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(next_record), .display(tmp_display));
 
     always @(posedge clk_20, posedge rst) begin
         if(rst) begin
@@ -159,7 +149,6 @@ module lab3_advanced (
         invalid_move = 0;
         if(state == INITIAL) begin
             en_one_second_counter <= 1;
-            en_half_second_counter <= 0;
             next_head <= LEFT;
             next_record <= 7'b1111111;
             next_pos_index <= cor_G;
@@ -329,7 +318,7 @@ module lab3_advanced (
                     next_head = LEFT;
                     next_pos_index = cor_G;
                 end
-                else if(display == cor_D && head == RIGHT) begin
+                else if(cor_pos_index == cor_D && head == RIGHT) begin
                     next_head = UP;
                     next_pos_index = cor_C;
                 end
@@ -372,6 +361,8 @@ module lab3_advanced (
                 end
                 else invalid_move <= 1;
             end
+            else if(record == 7'b0000000) en_one_second_counter = 1;
+            else en_one_second_counter = 0;
             next_record[next_pos_index] = 0;
             next_display = tmp_display;
         end
@@ -420,7 +411,6 @@ module one_pulse (
         end else begin
             pb_out <= 1'b0;
         end
-        
         pb_in_delay <= pb_in;
     end
 endmodule
@@ -430,19 +420,16 @@ module Flashing(
     input wire [3:0] idx,
     input wire clk,
     input wire [6:0] record,
-    output reg [6:0] display
+    output wire [6:0] display
 );
     reg [6:0] tmp_display;
-    
-    integer i;
-    always @(*) begin
-        for(i = 0; i < 7; i = i + 1) begin
-            if(idx == i) tmp_display[i] = ~record[i];
-            else tmp_display[i] = record[i];
-        end
-    end
 
     always @(posedge clk) begin
-        display = tmp_display;
+        tmp_display <= record;
+
+        if (idx < 7) begin
+            tmp_display[idx] <= ~tmp_display[idx];
+        end
     end
+    assign display = tmp_display;
 endmodule
