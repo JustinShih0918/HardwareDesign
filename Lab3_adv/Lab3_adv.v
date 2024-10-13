@@ -281,7 +281,6 @@ module lab3_advanced (
         end
         else begin
             next_record[cor_pos_index] = 0;
-            next_display = tmp_display;
             if(pb_out_right) begin
                 if (cor_pos_index == cor_A && head == RIGHT) begin
                     next_head <= DOWN;
@@ -374,6 +373,7 @@ module lab3_advanced (
                 else invalid_move <= 1;
             end
             next_record[next_pos_index] = 0;
+            next_display = next_record;
         end
     end
     
