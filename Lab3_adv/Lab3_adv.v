@@ -168,6 +168,7 @@ module lab3_advanced (
         end
         else if(state == MOVING) begin
             en_one_second_counter = 0;
+            next_record = display;
             if(pb_out_right) begin
                 if (display == A && head == RIGHT) begin
                     next_display <= B;
@@ -276,9 +277,6 @@ module lab3_advanced (
                     next_pos_index = cor_E;
                 end
                 else invalid_move <= 1;
-            end
-            else if(pb_out_down) begin
-                next_record = display;
             end
         end
         else begin
@@ -434,8 +432,17 @@ module Flashing(
     input wire [6:0] record,
     output reg [6:0] display
 );
+    reg [6:0] tmp_display;
+    
+    integer i;
+    always @(*) begin
+        for(i = 0; i < 7; i = i + 1) begin
+            if(idx == i) tmp_display[i] = ~record[i];
+            else tmp_display[i] = record[i];
+        end
+    end
+
     always @(posedge clk) begin
-        display = record;
-        display[idx] = ~display[idx];
+        display = tmp_display
     end
 endmodule
