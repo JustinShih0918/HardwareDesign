@@ -20,8 +20,10 @@ module lab3_advanced (
     // Clock Divider
     wire clk_27;
     wire clk_26;
+    wire clk_20;
     clock_divider #(.n(27)) clk27(.clk(clk), .clk_div(clk_27));
     clock_divider #(.n(26)) clk26(.clk(clk), .clk_div(clk_26));
+    clock_divider #(.n(20)) clk20(.clk(clk), .clk_div(clk_20));
 
     // debounce
     wire pb_debounced_right;
@@ -38,10 +40,10 @@ module lab3_advanced (
     wire pb_out_left;
     wire pb_out_up;
     wire pb_out_down;
-    one_pulse one_pulse_right(.clk(clk), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
-    one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
-    one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
-    one_pulse one_pulse_down(.clk(clk), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
+    one_pulse one_pulse_right(.clk(clk_20), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
+    one_pulse one_pulse_left(.clk(clk_20), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
+    one_pulse one_pulse_up(.clk(clk_20), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
+    one_pulse one_pulse_down(.clk(clk_20), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
     assign RB = pb_out_right;
     assign LB = pb_out_left;
     assign UB = pb_out_up;
@@ -58,7 +60,7 @@ module lab3_advanced (
     parameter MOVING = 1;
     parameter FALLING = 2;
 
-    always @(posedge clk, posedge rst) begin
+    always @(posedge clk_20, posedge rst) begin
         if(rst) begin
             state = INITIAL;
         end
