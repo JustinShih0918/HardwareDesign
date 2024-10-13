@@ -7,11 +7,9 @@ module lab3_advanced (
     input wire down,
     output reg [3:0] DIGIT,
     output wire [6:0] DISPLAY,
-    output reg init,
-    output reg move,
-    output reg fall,
     output reg [6:0] display,
-    output wire [1:0] pos
+    output wire [1:0] pos,
+    output reg [3:0] mode
 );
 
     // Clock Divider
@@ -138,6 +136,7 @@ module lab3_advanced (
                 en_one_second_counter = 1;
                 display = G;
                 head = LEFT;
+                mode = 4b'0000;
             end
             MOVING: begin
                 en_one_second_counter = 0;
@@ -147,11 +146,13 @@ module lab3_advanced (
                             display = B;
                             head = DOWN;
                             cor_pos_index = cor_B;
+                            mode = 1;
                         end
                         else if(pb_out_left && head == LEFT) begin
                             display = F;
                             head = DOWN;
                             cor_pos_index = cor_F;
+                            mode = 2;
                         end
                         else;
                     end 
@@ -160,16 +161,19 @@ module lab3_advanced (
                             display = A;
                             head = LEFT;
                             cor_pos_index = cor_A;
+                            mode = 3;
                         end
                         else if(pb_out_right && head == DOWN) begin
                             display = G;
                             head = LEFT;
                             cor_pos_index = cor_G;
+                            mode = 4;
                         end
                         else if(pb_out_up && head == DOWN) begin
                             display = C;
                             head = DOWN;
                             cor_pos_index = cor_C;
+                            mode = 5;
                         end
                         else;
                     end
@@ -178,16 +182,19 @@ module lab3_advanced (
                             display = G;
                             head = LEFT;
                             cor_pos_index = cor_G;
+                            mode = 6;
                         end
                         else if(pb_out_up && head == UP) begin
                             display = B;
                             head = UP;
                             cor_pos_index = cor_B;
+                            mode = 7;
                         end
                         else if(pb_out_right && head == DOWN) begin
                             display = D;
                             head = DOWN;
                             cor_pos_index = cor_D;
+                            mode = 8;
                         end
                         else;
                     end
@@ -196,11 +203,13 @@ module lab3_advanced (
                             display = C;
                             head = UP;
                             cor_pos_index = cor_C;
+                            mode = 9;
                         end
                         else if(pb_out_right && head == LEFT) begin
                             display = E;
                             head = UP;
                             cor_pos_index = cor_E;
+                            mode = 10;
                         end
                         else;
                     end
@@ -209,16 +218,19 @@ module lab3_advanced (
                             display = G;
                             head = RIGHT;
                             cor_pos_index = cor_G;
+                            mode = 11;
                         end
                         else if(pb_out_up && head == UP) begin
                             display = F;
                             head = UP;
                             cor_pos_index = cor_F;
+                            mode = 12;
                         end
                         else if(pb_out_left && head == DOWN) begin
                             display = D;
                             head = RIGHT;
                             cor_pos_index = cor_D;
+                            mode = 13;
                         end
                         else;
                     end
@@ -227,11 +239,13 @@ module lab3_advanced (
                             display = A;
                             head = RIGHT;
                             cor_pos_index = cor_A;
+                            mode = 14;
                         end
                         else if(pb_out_left && head == DOWN) begin
                             display = G;
                             head = RIGHT;
                             cor_pos_index = cor_G;
+                            mode = 15;
                         end
                         else;
                     end
@@ -240,21 +254,25 @@ module lab3_advanced (
                             display = B;
                             head = UP;
                             cor_pos_index = cor_B;
+                            mode = 16;
                         end
                         else if(pb_out_right && head == RIGHT) begin
                             display = C;
                             head = DOWN;
                             cor_pos_index = cor_C;
+                            mode = 17;
                         end
                         else if(pb_out_left && head == LEFT) begin
                             display = E;
                             head = DOWN;
                             cor_pos_index = cor_E;
+                            mode = 18;
                         end
                         else if(pb_out_right && head == LEFT) begin
                             display = F;
                             head = UP;
                             cor_pos_index = cor_F;
+                            mode = 19;
                         end
                         else;
                     end
@@ -262,6 +280,7 @@ module lab3_advanced (
                         display = G;
                         head = LEFT;
                         cor_pos_index = cor_G;
+                        mode = 0;
                     end
                 endcase
                 record = 7'b1111111;
