@@ -6,7 +6,7 @@ module lab3_advanced (
     input wire up,
     input wire down,
     output reg [3:0] DIGIT,
-    output reg [6:0] DISPLAY,
+    output wire [6:0] DISPLAY,
     output reg init,
     output reg move,
     output reg fall,
@@ -102,7 +102,7 @@ module lab3_advanced (
 
     // FSM behavior
     reg [1:0] head;
-    reg [6:0] display
+    reg [6:0] display;
     assign pos = head;
     assign DISPLAY = display;
     parameter RIGHT = 0;
