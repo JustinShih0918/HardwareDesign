@@ -10,7 +10,7 @@ module lab3_advanced (
     output reg [6:0] display,
     output wire [1:0] pos,
     output reg [1:0] state_out,
-    output reg invaild_move
+    output reg invalid_move
 );
 
     // Clock Divider
@@ -153,6 +153,7 @@ module lab3_advanced (
         DIGIT = 4'b1110;
         next_display = display;
         next_head = head;
+        invalid_move = 0;
         if(state == INITIAL) begin
             en_one_second_counter <= 1;
             en_half_second_counter <= 0;
@@ -160,7 +161,7 @@ module lab3_advanced (
             next_record <= 0;
             next_pos_index <= cor_G;
             next_display <= G;
-            invaild_move <= 0;
+            invalid_move <= 0;
         end
         else if(state == MOVING) begin
             en_one_second_counter = 0;
@@ -205,7 +206,7 @@ module lab3_advanced (
                     next_head <= UP;
                     next_pos_index <= cor_F;
                 end
-                else invaild_move <= 1;
+                else invalid_move <= 1;
             end
             else if(pb_out_left) begin
                 if(display == A && head == LEFT) begin
@@ -248,7 +249,7 @@ module lab3_advanced (
                     next_head = UP;
                     next_pos_index = cor_B;
                 end
-                else invaild_move <= 1;
+                else invalid_move <= 1;
             end
             else if(pb_out_up) begin
                 if(display == B && head == DOWN) begin
@@ -271,7 +272,7 @@ module lab3_advanced (
                     next_head = DOWN;
                     next_pos_index = cor_E;
                 end
-                else invaild_move <= 1;
+                else invalid_move <= 1;
             end
             
         end
