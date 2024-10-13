@@ -34,10 +34,10 @@ module lab3_advanced (
     debounce debounce_down(.clk(clk), .pb(down), .pb_debounced(pb_debounced_down));
 
     // one pulse
-    wire pb_out_right;
-    wire pb_out_left;
-    wire pb_out_up;
-    wire pb_out_down;
+    reg pb_out_right;
+    reg pb_out_left;
+    reg pb_out_up;
+    reg pb_out_down;
     one_pulse one_pulse_right(.clk(clk), .pb_in(pb_debounced_right), .pb_out(pb_out_right));
     one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
     one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
