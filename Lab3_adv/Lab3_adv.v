@@ -47,10 +47,10 @@ module lab3_advanced (
     assign UB = pb_out_up;
     assign DB = pb_out_down;
 
-    assign r = right;
-    assign l = left;
-    assign u = up;
-    assign d = down;
+    assign r = pb_debounced_right;
+    assign l = pb_debounced_left;
+    assign u = pb_debounced_up;
+    assign d = pb_debounced_down;
 
     // FSM
     reg [1:0] state, next_state;
@@ -147,8 +147,7 @@ module one_pulse (
         end else begin
             pb_out <= 1'b0;
         end
-    end
-    always @(posedge clk) begin
+        
         pb_in_delay <= pb_in;
     end
 endmodule
