@@ -9,7 +9,8 @@ module lab3_advanced (
     output wire [6:0] DISPLAY,
     output reg [6:0] display,
     output wire [1:0] pos,
-    output reg [1:0] state_out
+    output reg [1:0] state_out,
+    output reg invaild_move;
 );
 
     // Clock Divider
@@ -118,6 +119,7 @@ module lab3_advanced (
     parameter F = 7'b1011111;
     parameter G = 7'b0111111;
 
+    
     reg [6:0] record;
     reg [6:0] next_record;
     wire [6:0] tmp_display;
@@ -158,6 +160,7 @@ module lab3_advanced (
             next_record <= 0;
             next_pos_index <= cor_G;
             next_display <= G;
+            invaild_move <= 0;
         end
         else if(state == MOVING) begin
             en_one_second_counter = 0;
@@ -202,7 +205,7 @@ module lab3_advanced (
                     next_head <= UP;
                     next_pos_index <= cor_F;
                 end
-                else;
+                else invaild_move <= 1;
             end
             else if(pb_out_left) begin
                 if(display == A && head == LEFT) begin
@@ -245,6 +248,30 @@ module lab3_advanced (
                     next_head = UP;
                     next_pos_index = cor_B;
                 end
+                else invaild_move <= 1;
+            end
+            else if(pb_out_up) begin
+                if(display == B && head == DOWN) begin
+                    next_display = C;
+                    next_head = DOWN;
+                    next_pos_index = cor_C;
+                end
+                else if(display == C && head == UP) begin
+                    next_display = B;
+                    next_head = UP;
+                    next_pos_index = cor_B;
+                end
+                else if(display == E && head == UP) begin
+                    next_display = F;
+                    next_head = UP;
+                    next_pos_index = cor_F;
+                end
+                else if(display == F && head == DOWN) begin
+                    next_display = E;
+                    next_head = DOWN;
+                    next_pos_index = cor_E;
+                end
+                else invaild_move <= 1;
             end
             
         end
