@@ -443,6 +443,6 @@ module Flashing(
     end
 
     always @(posedge clk) begin
-        display = tmp_display
+        display = tmp_display;
     end
 endmodule
