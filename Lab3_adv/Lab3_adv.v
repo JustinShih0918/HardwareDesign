@@ -5,8 +5,12 @@ module lab3_advanced (
     input wire left,
     input wire up,
     input wire down,
-    output wire [3:0] DIGIT,
-    output wire [6:0] DISPLAY
+    output reg [3:0] DIGIT,
+    output reg [6:0] DISPLAY,
+    output wire RB,
+    output wire LB,
+    output wire UB,
+    output wire DB
 );
 
     // Clock Divider
@@ -34,6 +38,10 @@ module lab3_advanced (
     one_pulse one_pulse_left(.clk(clk), .pb_in(pb_debounced_left), .pb_out(pb_out_left));
     one_pulse one_pulse_up(.clk(clk), .pb_in(pb_debounced_up), .pb_out(pb_out_up));
     one_pulse one_pulse_down(.clk(clk), .pb_in(pb_debounced_down), .pb_out(pb_out_down));
+    assign RB = pb_out_right;
+    assign LB = pb_out_left;
+    assign UB = pb_out_up;
+    assign DB = pb_out_down;
 
     // FSM
     reg [1:0] state, next_state;
