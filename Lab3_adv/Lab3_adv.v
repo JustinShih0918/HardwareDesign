@@ -139,11 +139,15 @@ module lab3_advanced (
         end
         else if(state == MOVING) begin
             en_one_second_counter = 0;
-            if(pb_out_right) dis_next <= A;
-            else if(pb_out_left) dis_next <= B;
-            else if(pb_out_up) dis_next <= C;
-            else if(pb_out_down) dis_next <= D;
-            else dis_next <= display;
+            if(display == G) begin
+                if(pb_out_right) begin
+                    dis_next = F;
+                end
+            end 
+            else if(display == F) begin
+                if(pb_out_left) dis_next = G;
+            end
+            else;
         end
         else begin
             
