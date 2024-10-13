@@ -11,7 +11,6 @@ module lab3_advanced (
     output reg move,
     output reg fall,
     output wire [1:0] pos,
-    output wire [6:0] displayLed
 );
 
     // Clock Divider
