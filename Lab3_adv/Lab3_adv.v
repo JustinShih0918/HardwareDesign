@@ -6,7 +6,7 @@ module lab3_advanced (
     input wire up,
     input wire down,
     output reg [3:0] DIGIT,
-    output wire [6:0] DISPLAY,
+    output wire [6:0] display_Led,
     output reg init,
     output reg move,
     output reg fall,
@@ -104,7 +104,7 @@ module lab3_advanced (
     reg [1:0] head;
     reg [6:0] display;
     assign pos = head;
-    assign DISPLAY = 7'b1111110;
+    assign display_Led = 7'b1111110;
     parameter RIGHT = 0;
     parameter LEFT = 1;
     parameter UP = 2;
