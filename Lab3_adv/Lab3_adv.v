@@ -304,6 +304,7 @@ module lab3_advanced (
                     default: begin
                     end
                 endcase
+                record = 7'b1111111;
             end
             FALLING: begin
                 record[cor_pos_index] = 0;
@@ -514,3 +515,15 @@ module one_pulse (
     end
 endmodule
 
+// Flashing
+module Flashing(
+    input wire [3:0] idx,
+    input wire clk,
+    input wire [6:0] record,
+    output reg [6:0] display
+);
+    always @(posedge clk) begin
+        display = record;
+        display[idx] = ~display[idx];
+    end
+endmodule
