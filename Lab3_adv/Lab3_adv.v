@@ -7,14 +7,13 @@ module lab3_advanced (
     input wire down,
     output reg [3:0] DIGIT,
     output reg [6:0] DISPLAY,
-    output wire r,
-    output wire l,
-    output wire u,
-    output wire d,
     output wire RB,
     output wire LB,
     output wire UB,
-    output wire DB
+    output wire DB,
+    output reg init,
+    output reg move,
+    output reg fall,
 );
 
     // Clock Divider
@@ -48,11 +47,6 @@ module lab3_advanced (
     assign LB = pb_out_left;
     assign UB = pb_out_up;
     assign DB = pb_out_down;
-
-    assign r = pb_debounced_right;
-    assign l = pb_debounced_left;
-    assign u = pb_debounced_up;
-    assign d = pb_debounced_down;
 
     // FSM
     reg [1:0] state, next_state;
@@ -90,14 +84,23 @@ module lab3_advanced (
     always @(*) begin
         case (state)
             INITIAL: begin
+                init = 1;
+                move = 0;
+                fall = 0;
                 if(one_second_counter >= 3) next_state = MOVING;
                 else next_state = INITIAL;
             end
             MOVING: begin
+                init = 0;
+                move = 1;
+                fall = 0;
                 if(pb_out_down) next_state = FALLING;
                 else next_state = MOVING;
             end
             FALLING: begin
+                init = 0;
+                move = 0;
+                fall = 1;
                 if(half_second_counter >= 1) next_state = INITIAL;
                 else next_state = FALLING;
             end
