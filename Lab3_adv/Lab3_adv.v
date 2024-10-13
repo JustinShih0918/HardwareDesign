@@ -196,7 +196,48 @@ module lab3_advanced (
                     next_pos_index = cor_F;
                 end
             end
-            else;
+            else if(pb_out_left) begin
+                if(display == A && head == LEFT) begin
+                    next_display = F;
+                    next_head = DOWN;
+                    next_pos_index = cor_F;
+                end
+                else if(display == B && head == UP) begin
+                    next_display = A;
+                    next_head = LEFT;
+                    next_pos_index = cor_A;
+                end
+                else if(display == C && head == UP) begin
+                    next_display = G;
+                    next_head = LEFT;
+                    next_pos_index = cor_G;
+                end
+                else if(display == D && head == RIGHT) begin
+                    next_display = C;
+                    next_head = UP;
+                    next_pos_index = cor_C;
+                end
+                else if(display == E && head == DOWN) begin
+                    next_display = D;
+                    next_head = RIGHT;
+                    next_pos_index = cor_D;
+                end
+                else if(display == F && head == DOWN) begin
+                    next_display = G;
+                    next_head = RIGHT;
+                    next_pos_index = cor_G;
+                end
+                else if(display == G && head == LEFT) begin
+                    next_display = E;
+                    next_head = DOWN;
+                    next_pos_index = cor_E;
+                end
+                else if(display == G && head == RIGHT) begin
+                    next_display = B;
+                    next_head = UP;
+                    next_pos_index = cor_B;
+                end
+            end
             
         end
         else begin
