@@ -301,6 +301,9 @@ module lab3_advanced (
                         else;
                     end
                     default: begin
+                        display = G;
+                        head = LEFT;
+                        cor_pos_index = cor_G;
                     end
                 endcase
                 record = 7'b1111111;
