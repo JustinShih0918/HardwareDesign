@@ -277,6 +277,9 @@ module lab3_advanced (
                 end
                 else invalid_move <= 1;
             end
+            else if(pb_out_down) begin
+                next_record = display;
+            end
         end
         else begin
             next_record[cor_pos_index] = 0;
