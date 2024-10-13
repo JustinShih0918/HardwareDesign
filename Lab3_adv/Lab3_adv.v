@@ -81,9 +81,7 @@ module lab3_advanced (
                 else next_state = INITIAL;
             end
             MOVING: begin
-                state_out = 2'b01;
-                if(pb_out_down) next_state = FALLING;
-                else next_state = MOVING;
+                next_state = MOVING;
             end
             FALLING: begin
                 state_out = 2'b10;
@@ -124,6 +122,24 @@ module lab3_advanced (
 
     always @(*) begin
         DIGIT = 4'b1110;
+        if(state == INITIAL) begin
+            en_one_second_counter = 1;
+            en_half_second_counter = 0;
+            head = LEFT;
+            record = 0;
+            cor_pos_index = cor_G;
+            display = G;
+        end
+        else if(state == MOVING) begin
+            if(pb_out_right) display = A;
+            else if(pb_out_left) display = B;
+            else if(pb_out_up) display = C;
+            else if(pb_out_down) display = D;
+            else display = display;
+        end
+        else begin
+            
+        end
     end
     
 
