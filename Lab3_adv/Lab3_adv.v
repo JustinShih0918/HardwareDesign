@@ -114,6 +114,7 @@ module lab3_advanced (
     reg [6:0] record;
     reg [6:0] next_record;
     wire [6:0] tmp_display;
+    wire [6:0] move_display;
     reg [3:0] cor_pos_index;
     reg [3:0] next_pos_index;
     parameter cor_A = 0;
@@ -124,6 +125,7 @@ module lab3_advanced (
     parameter cor_F = 5;
     parameter cor_G = 6;
     Flashing flash(.idx(cor_pos_index), .clk(clk_26), .record(next_record), .display(tmp_display));
+    Flashing flash_move(.idx(cor_pos_index), .clk(clk_26), .record(next_record), .display(move_display));
 
     always @(posedge clk_20, posedge rst) begin
         if(rst) begin
@@ -157,116 +159,116 @@ module lab3_advanced (
         end
         else if(state == MOVING) begin
             en_one_second_counter = 0;
-            next_record = display;
             if(pb_out_right) begin
-                if (display == A && head == RIGHT) begin
-                    next_display <= B;
+                if (cor_pos_index == cor_A && head == RIGHT) begin
+                    next_record <= B;
                     next_head <= DOWN;
                     next_pos_index <= cor_B;
                 end
-                else if(display == B && head == DOWN) begin
-                    next_display <= G;
+                else if(cor_pos_index == cor_B && head == DOWN) begin
+                    next_record <= G;
                     next_head <= LEFT;
                     next_pos_index <= cor_G;
                 end
-                else if(display == C && head == DOWN) begin
-                    next_display <= D;
+                else if(cor_pos_index == cor_C && head == DOWN) begin
+                    next_record <= D;
                     next_head <= LEFT;
                     next_pos_index <= cor_D;
                 end
-                else if(display == D && head == LEFT) begin
-                    next_display <= E;
+                else if(cor_pos_index == cor_D && head == LEFT) begin
+                    next_record <= E;
                     next_head <= UP;
                     next_pos_index <= cor_E;
                 end
-                else if(display == E && head == UP) begin
-                    next_display <= G;
+                else if(cor_pos_index == cor_E && head == UP) begin
+                    next_record <= G;
                     next_head <= RIGHT;
                     next_pos_index <= cor_G;
                 end
-                else if(display == F && head == UP) begin
-                    next_display <= A;
+                else if(cor_pos_index == cor_F && head == UP) begin
+                    next_record <= A;
                     next_head <= RIGHT;
                     next_pos_index <= cor_A;
                 end
-                else if(display == G && head == RIGHT) begin
-                    next_display <= C;
+                else if(cor_pos_index == cor_G && head == RIGHT) begin
+                    next_record <= C;
                     next_head <= DOWN;
                     next_pos_index <= cor_C;
                 end
-                else if(display == G && head == LEFT) begin
-                    next_display <= F;
+                else if(cor_pos_index == cor_G && head == LEFT) begin
+                    next_record <= F;
                     next_head <= UP;
                     next_pos_index <= cor_F;
                 end
                 else invalid_move <= 1;
             end
             else if(pb_out_left) begin
-                if(display == A && head == LEFT) begin
-                    next_display = F;
+                if(cor_pos_index == cor_A && head == LEFT) begin
+                    next_record = F;
                     next_head = DOWN;
                     next_pos_index = cor_F;
                 end
-                else if(display == B && head == UP) begin
-                    next_display = A;
+                else if(cor_pos_index == cor_B && head == UP) begin
+                    next_record = A;
                     next_head = LEFT;
                     next_pos_index = cor_A;
                 end
-                else if(display == C && head == UP) begin
-                    next_display = G;
+                else if(cor_pos_index == cor_C && head == UP) begin
+                    next_record = G;
                     next_head = LEFT;
                     next_pos_index = cor_G;
                 end
-                else if(display == D && head == RIGHT) begin
-                    next_display = C;
+                else if(cor_pos_index == cor_D && head == RIGHT) begin
+                    next_record = C;
                     next_head = UP;
                     next_pos_index = cor_C;
                 end
-                else if(display == E && head == DOWN) begin
-                    next_display = D;
+                else if(cor_pos_index == cor_E && head == DOWN) begin
+                    next_record = D;
                     next_head = RIGHT;
                     next_pos_index = cor_D;
                 end
-                else if(display == F && head == DOWN) begin
-                    next_display = G;
+                else if(cor_pos_index == cor_F && head == DOWN) begin
+                    next_record = G;
                     next_head = RIGHT;
                     next_pos_index = cor_G;
                 end
-                else if(display == G && head == LEFT) begin
-                    next_display = E;
+                else if(cor_pos_index == cor_G && head == LEFT) begin
+                    next_record = E;
                     next_head = DOWN;
                     next_pos_index = cor_E;
                 end
-                else if(display == G && head == RIGHT) begin
-                    next_display = B;
+                else if(cor_pos_index == cor_G && head == RIGHT) begin
+                    next_record = B;
                     next_head = UP;
                     next_pos_index = cor_B;
                 end
                 else invalid_move <= 1;
             end
             else if(pb_out_up) begin
-                if(display == B && head == DOWN) begin
-                    next_display = C;
+                if(cor_pos_index == cor_B && head == DOWN) begin
+                    next_record = C;
                     next_head = DOWN;
                     next_pos_index = cor_C;
                 end
-                else if(display == C && head == UP) begin
-                    next_display = B;
+                else if(cor_pos_index == cor_C && head == UP) begin
+                    next_record = B;
                     next_head = UP;
                     next_pos_index = cor_B;
                 end
-                else if(display == E && head == UP) begin
-                    next_display = F;
+                else if(cor_pos_index == cor_E && head == UP) begin
+                    next_record = F;
                     next_head = UP;
                     next_pos_index = cor_F;
                 end
-                else if(display == F && head == DOWN) begin
-                    next_display = E;
+                else if(cor_pos_index == cor_F && head == DOWN) begin
+                    next_record = E;
                     next_head = DOWN;
                     next_pos_index = cor_E;
                 end
                 else invalid_move <= 1;
             end
+            next_display = move_display;
         end
         else begin
             next_record[cor_pos_index] = 0;
