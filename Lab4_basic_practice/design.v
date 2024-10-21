@@ -13,9 +13,9 @@ module lab4_practice (
     wire debounced_btnL;
     wire debounced_btnR;
     wire debounced_rst;
-    debounce d_btnL(.clk(clk_22), .pb(btnL), .pb_debounced(debounced_btnL));
-    debounce d_btnR(.clk(clk_22), .pb(btnR), .pb_debounced(debounced_btnR));
-    debounce d_rst(.clk(clk_22), .pb(rst), .pb_debounced(debounced_rst));
+    debounce d_btnL(.clk(clk_22), .pb_in(btnL), .pb_debounced(debounced_btnL));
+    debounce d_btnR(.clk(clk_22), .pb_in(btnR), .pb_debounced(debounced_btnR));
+    debounce d_rst(.clk(clk_22), .pb_in(rst), .pb_debounced(debounced_rst));
 
     wire pb_out_btnL;
     wire pb_out_btnR;
