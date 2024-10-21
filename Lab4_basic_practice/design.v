@@ -71,7 +71,7 @@ module lab4_practice (
                 else if(pb_out_btnR) begin
                     if(cur_idx != 16) begin
                         next_idx <= cur_idx + 1;
-                        next_led[cur_idx] <= 0;
+                        next_led[next_idx] <= 0;
                         if(next_idx == 16) next_state <= LEFT;
                         else next_state <= LR;
                     end
@@ -83,7 +83,7 @@ module lab4_practice (
                 if(pb_out_btnR) begin
                     if(cur_idx == 0) begin
                         next_idx <= cur_idx + 1;
-                        next_led[cur_idx] <= 0;
+                        next_led[next_idx] <= 0;
                         next_state <= LR;
                     end
                 end
