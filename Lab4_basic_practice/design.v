@@ -24,41 +24,93 @@ module lab4_practice (
     one_pulse op_btnR(.clk(clk_20), .pb(debounced_btnR), .pb_out(pb_out_btnR));
     one_pulse op_rst(.clk(clk_20), .pb(debounced_rst), .pb_out(pb_out_rst));
 
+
+    parameter RST = 0;
+    parameter LEFT = 1;
+    parameter LR = 2;
+    parameter RIGHT = 3;
+
+    reg [1:0] state;
+    reg [1:0] next_state;
     reg [15:0] next_led;
     reg [3:0] next_idx;
     reg [3:0] cur_idx;
-    integer  i;
+    integer i;
+    
+    always @(posedge clk_20, posedge pb_out_rst) begin
+        if(pb_out_rst) state <= RST;
+        else state <= next_state;
+    end
+
+    always @* begin
+        case (state)
+            RST: begin
+                if(pb_out_rst) next_state <= RST;
+                else next_state <= LEFT;
+            end
+            LEFT: begin
+                if(LED[0] == 0) next_state <= LEFT;
+                else if(LED[15]) next_state <= RIGHT;
+                else next_state <= LR; 
+            end
+            LR: begin
+                if(LED[0] == 0) next_state <= LEFT;
+                else if(LED[15])next_state <= RIGHT;
+                else next_state <= LR;
+            end
+            RIGHT: begin
+                if(LED[15] == 0) next_state <= RIGHT;
+                else if(LED[0]) next_state <= LEFT;
+                else next_state <= LR;
+            end
+            default: 
+                next_state <= RST;
+        endcase
+    end
+
+    always @(posedge clk_20) begin
+        LED <= next_led;
+        cur_idx <= next_idx;
+    end
+
     always @* begin
         next_led = LED;
         next_idx = cur_idx;
-        if(pb_out_btnL && !pb_out_btnR && !debounced_btnR) begin
-            if(cur_idx > 0) next_idx = cur_idx - 1;
-            else next_idx = cur_idx;
-        end
-        else if(pb_out_btnR && !pb_out_btnL && !debounced_btnL) begin
-            if(cur_idx < 15) next_idx = cur_idx + 1;
-            else next_idx = cur_idx;
-        end
-        else next_idx = cur_idx;
-
-        if(next_idx == 16 || next_idx == -1) next_led = 16'b0000_0000_0000_0000;
-        else begin
-            for(i = 15; i >= 0 ; i = i - 1) begin
-                if(i >= next_idx) next_led[i] = 1;
-                else next_led[i] = 0;
+        case (state)
+            RST: begin
+                next_led = 16'b0000_0000_0000_0000;
+                next_idx = 0;
             end
-        end
-    end
-
-    always @(posedge clk_20, posedge pb_out_rst) begin
-        if(pb_out_rst) begin
-            cur_idx <= 16;
-            LEB <= 16'b0000_0000_0000_0000;
-        end
-        else begin
-            cur_idx <= next_idx;
-            LED <= next_led;
-        end
+            LEFT: begin
+                if(pb_out_btnL) begin
+                    next_led = 16'b1000_0000_0000_0000;
+                    next_idx = 15;
+                end
+                else;
+            end
+            LR: begin
+                if(pb_out_btnL) begin
+                    next_idx = cur_idx - 1;
+                    next_led[next_idx] = 1;
+                end
+                else if(pb_out_btnR) begin
+                    next_idx = cur_idx + 1;
+                    next_led[next_idx] = 0;
+                end
+                else;
+            end
+            RIGHT: begin
+                if(pb_out_btnR) begin
+                    next_led = 16'b1111_1111_1111_1111;
+                    next_idx = 0;
+                end
+                else;
+            end
+            default: begin
+                next_led = 16'b0000_0000_0000_0000;
+                next_idx = 4'b0000;
+            end
+        endcase
     end
 
 
