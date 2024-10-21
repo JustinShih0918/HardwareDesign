@@ -51,44 +51,47 @@ module lab4_practice (
                 next_state <= LEFT;
             end
             LEFT: begin
-                if(pb_out_btnL) begin
+                if(pb_out_btnL && !debounced_btnR) begin
                     if(cur_idx == 16) begin
                         next_idx <= cur_idx - 1;
                         next_led[next_idx] <= 1;
                         next_state <= LR; 
                     end
                 end
-                else;
+                else next_state <= LEFT;
             end
             LR: begin
-                if(pb_out_btnL) begin
+                if(pb_out_btnL && !debounced_btnR) begin
                     if(cur_idx != 0) begin
                         next_idx <= cur_idx - 1;
                         next_led[next_idx] <= 1;
                         if(next_idx == 0) next_state <= RIGHT;
                         else next_state <= LR;
                     end
-                else if(pb_out_btnR) begin
+                end
+                else if(pb_out_btnR && !debounced_btnL) begin
                     if(cur_idx != 16) begin
                         next_idx <= cur_idx + 1;
-                        next_led[next_idx] <= 0;
+                        next_led[cur_idx] <= 0;
                         if(next_idx == 16) next_state <= LEFT;
                         else next_state <= LR;
                     end
                 end
-                else;
+                else begin
+                    next_state <= LR;
                 end
             end
             RIGHT: begin
-                if(pb_out_btnR) begin
+                if(pb_out_btnR && !debounced_btnL) begin
                     if(cur_idx == 0) begin
                         next_idx <= cur_idx + 1;
-                        next_led[next_idx] <= 0;
+                        next_led[cur_idx] <= 0;
                         next_state <= LR;
                     end
                 end
+                else next_state <= RIGHT;
             end
-        endcase
+    endcase
     end
 
     always @(posedge clk_20) begin
