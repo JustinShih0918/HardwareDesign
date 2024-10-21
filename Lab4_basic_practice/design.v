@@ -88,7 +88,7 @@ module lab4_practice (
         endcase
     end
 
-    always @(posedge clk_20) begin
+    always @(posedge clk) begin
         LED <= next_led;
         cur_idx <= next_idx;
     end
