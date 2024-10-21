@@ -6,19 +6,22 @@ module lab4_practice (
     output reg [15:0] LED
 );
 
+    wire clk_20;
+    clock_divider #(.n(20)) cd(.clk(clk), .clk_div(clk_20));
+
     wire debounced_btnL;
     wire debounced_btnR;
     wire debounced_rst;
-    debounce d_btnL(.clk(clk), .pb(btnL), .pb_debounced(debounced_btnL));
-    debounce d_btnR(.clk(clk), .pb(btnR), .pb_debounced(debounced_btnR));
-    debounce d_rst(.clk(clk), .pb(rst), .pb_debounced(debounced_rst));
+    debounce d_btnL(.clk(clk_20), .pb(btnL), .pb_debounced(debounced_btnL));
+    debounce d_btnR(.clk(clk_20), .pb(btnR), .pb_debounced(debounced_btnR));
+    debounce d_rst(.clk(clk_20), .pb(rst), .pb_debounced(debounced_rst));
 
     wire pb_out_btnL;
     wire pb_out_btnR;
     wire pb_out_rst;
-    one_pulse op_btnL(.clk(clk), .pb_in(debounced_btnL), .pb_out(pb_out_btnL));
-    one_pulse op_btnR(.clk(clk), .pb_in(debounced_btnR), .pb_out(pb_out_btnR));
-    one_pulse op_rst(.clk(clk), .pb_in(debounced_rst), .pb_out(pb_out_rst));
+    one_pulse op_btnL(.clk(clk_20), .pb_in(debounced_btnL), .pb_out(pb_out_btnL));
+    one_pulse op_btnR(.clk(clk_20), .pb_in(debounced_btnR), .pb_out(pb_out_btnR));
+    one_pulse op_rst(.clk(clk_20), .pb_in(debounced_rst), .pb_out(pb_out_rst));
 
 
     parameter RST = 0;
@@ -33,7 +36,7 @@ module lab4_practice (
     reg signed [5:0] cur_idx;
     integer i;
     
-    always @(posedge clk, posedge pb_out_rst) begin
+    always @(posedge clk_20, posedge pb_out_rst) begin
         if(pb_out_rst) state <= RST;
         else state <= next_state;
     end
@@ -88,7 +91,7 @@ module lab4_practice (
         endcase
     end
 
-    always @(posedge clk) begin
+    always @(posedge clk_20) begin
         LED <= next_led;
         cur_idx <= next_idx;
     end
