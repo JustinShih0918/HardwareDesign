@@ -63,7 +63,7 @@ module lab4_1 (
 
     // use 4'b1111 for rst
     always @(posedge clk, posedge rst) begin
-        if(rst) nums <= 16'b1111_1111_1111;
+        if(rst) nums <= 16'b1111_1111_1111_1111;
         else begin
             nums <= nums;
             if(been_ready && key_down[last_change] == 1'b1) begin
