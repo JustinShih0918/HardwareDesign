@@ -3,8 +3,8 @@ module lab4_1 (
     input wire rst,
     inout wire PS2_DATA,
     inout wire PS2_CLK,
-    output reg [3:0] digit,
-    output reg [6:0] display
+    output wire [3:0] digit,
+    output wire [6:0] display
 );
     parameter [8:0] LEFT_SHIFT_CODES  = 9'b0_0001_0010;
     parameter [8:0] RIGHT_SHIFT_CODES = 9'b0_0101_1001;
