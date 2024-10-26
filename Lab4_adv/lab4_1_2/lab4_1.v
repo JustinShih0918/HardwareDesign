@@ -62,7 +62,7 @@ module lab4_1 (
     );
 
     // one pulse for each key press
-    wire [8:0] prev_change;
+    reg [8:0] prev_change;
 
     // use 4'b1111 for rst
     always @(posedge clk, posedge rst) begin
