@@ -61,12 +61,22 @@ module lab4_1 (
         .clk(clk)
     );
 
+    // one pulse for each key press
+    wire key_press;
+    wire key_down_signal;
+    assign key_down_signal = key_down[last_change];
+    one_pulse op(
+        .clk(clk),
+        .pb_in(key_down_signal),
+        .pb_out(key_press)
+    );
+
     // use 4'b1111 for rst
     always @(posedge clk, posedge rst) begin
         if(rst) nums <= 16'b1111_1111_1111_1111;
         else begin
             nums <= nums;
-            if(been_ready && key_down[last_change] == 1'b1) begin
+            if(been_ready && key_press == 1'b1) begin
                 if(key_num != 4'b1111) begin
                     if(shift_down == 1'b1) nums <= {nums[11:0], key_num};
                     else nums <= {key_num, nums[15:4]};
