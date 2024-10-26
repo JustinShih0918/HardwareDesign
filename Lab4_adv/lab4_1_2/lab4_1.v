@@ -63,7 +63,7 @@ module lab4_1 (
 
     // one pulse for each key press
     reg [8:0] prev_change;
-    reg [8:0] delay_prev;
+    reg delay_prev;
 
 
     always @(posedge clk) begin
