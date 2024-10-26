@@ -65,8 +65,9 @@ module lab4_1 (
     reg [8:0] prev_change;
     reg [8:0] delay_prev;
 
+
     always @(posedge clk) begin
-        delay_prev <= prev_change;
+        delay_prev <= key_down[prev_change];
     end
 
     // use 4'b1111 for rst
