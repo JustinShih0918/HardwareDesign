@@ -78,26 +78,26 @@ module lab4_1 (
     // mapping to the correct value
     always @(*) begin
         case (last_change)
-            KEY_CODES[00] : key_num = 4'b0000;
-			KEY_CODES[01] : key_num = 4'b0001;
-			KEY_CODES[02] : key_num = 4'b0010;
-			KEY_CODES[03] : key_num = 4'b0011;
-			KEY_CODES[04] : key_num = 4'b0100;
-			KEY_CODES[05] : key_num = 4'b0101;
-			KEY_CODES[06] : key_num = 4'b0110;
-			KEY_CODES[07] : key_num = 4'b0111;
-			KEY_CODES[08] : key_num = 4'b1000;
-			KEY_CODES[09] : key_num = 4'b1001;
-			KEY_CODES[10] : key_num = 4'b0000;
-			KEY_CODES[11] : key_num = 4'b0001;
-			KEY_CODES[12] : key_num = 4'b0010;
-			KEY_CODES[13] : key_num = 4'b0011;
-			KEY_CODES[14] : key_num = 4'b0100;
-			KEY_CODES[15] : key_num = 4'b0101;
-			KEY_CODES[16] : key_num = 4'b0110;
-			KEY_CODES[17] : key_num = 4'b0111;
-			KEY_CODES[18] : key_num = 4'b1000;
-			KEY_CODES[19] : key_num = 4'b1001;
+            key_code[00] : key_num = 4'b0000;
+			key_code[01] : key_num = 4'b0001;
+			key_code[02] : key_num = 4'b0010;
+			key_code[03] : key_num = 4'b0011;
+			key_code[04] : key_num = 4'b0100;
+			key_code[05] : key_num = 4'b0101;
+			key_code[06] : key_num = 4'b0110;
+			key_code[07] : key_num = 4'b0111;
+			key_code[08] : key_num = 4'b1000;
+			key_code[09] : key_num = 4'b1001;
+			key_code[10] : key_num = 4'b0000;
+			key_code[11] : key_num = 4'b0001;
+			key_code[12] : key_num = 4'b0010;
+			key_code[13] : key_num = 4'b0011;
+			key_code[14] : key_num = 4'b0100;
+			key_code[15] : key_num = 4'b0101;
+			key_code[16] : key_num = 4'b0110;
+			key_code[17] : key_num = 4'b0111;
+			key_code[18] : key_num = 4'b1000;
+			key_code[19] : key_num = 4'b1001;
 			default		  : key_num = 4'b1111;
         endcase
     end
