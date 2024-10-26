@@ -63,6 +63,11 @@ module lab4_1 (
 
     // one pulse for each key press
     reg [8:0] prev_change;
+    reg [8:0] delay_prev;
+
+    always @(posedge clk) begin
+        delay_prev <= prev_change;
+    end
 
     // use 4'b1111 for rst
     always @(posedge clk, posedge rst) begin
@@ -70,7 +75,7 @@ module lab4_1 (
         else begin
             nums <= nums;
             prev_change <= prev_change;
-            if(been_ready && key_down[last_change] == 1'b1 && key_down[prev_change] == 1'b0) begin
+            if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                 if(key_num != 4'b1111) begin
                     if(shift_down == 1'b1) nums <= {nums[11:0], key_num};
                     else nums <= {key_num, nums[15:4]};
