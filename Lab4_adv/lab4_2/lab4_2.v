@@ -163,6 +163,9 @@ module lab4_2 (
                   nums <= 16'b1111_1111_1111_1111;
                   time_nums <= {4'b0011, 4'b0000};
                   goal_nums <= {4'b0001, 4'b0000};
+                  time_limit <= 30;
+                  goal <= 10;
+                  goal_cnt <= 0;
             end
             else if(state == SET) begin
                   nums <= {time_nums, goal_nums};
