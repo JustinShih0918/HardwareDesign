@@ -203,10 +203,12 @@ module lab4_2 (
 
       // time limit counter
       reg [7:0] time_countdown;
-      always @(posedge clk_27) begin
-            if(en_time_counter) time_countdown <= time_countdown - 1;
-            else if(time_countdown == 0) time_countdown <= 0;
-            else time_countdown <= time_limit;
+      always @(posedge clk_27, posedge out_start) begin
+            if(out_start) time_countdown <= time_limit;
+            else begin
+                  if(en_time_counter) time_countdown <= time_countdown - 1;
+                  else if(time_countdown == 0) time_countdown <= 0;
+            end
       end
 
       // one second counter
