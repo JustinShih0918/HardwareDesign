@@ -64,7 +64,7 @@ module lab4_2 (
                   FINAL: begin
                         en_time_counter <= 0;
                         en_one_second_counter <= 1;
-                        if(one_second_count >= 4) next_state <= INIT;
+                        if(one_second_count >= 3) next_state <= INIT;
                         else next_state <= FINAL;
                   end
                   default: begin
@@ -298,7 +298,7 @@ module lab4_2 (
       reg [26:0] counter;
       always @(posedge clk) begin
             next_led <= next_led;
-            tmp_led <= 16'b1111_1111_1111_1111;
+            tmp_led <= 16'b0000_0000_0000_0000;
             if(state == INIT) begin
                   next_led <= 16'b0000_0000_0000_0000;
                   counter <= 27'b111_1111_1111_1111_1111_1111_1111;
@@ -319,7 +319,6 @@ module lab4_2 (
                               end     
                         end  
                   end
-
             end
             else if(state == FINAL) begin
                   tmp_led <= flash_led;
