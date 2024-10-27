@@ -216,19 +216,25 @@ module lab4_2 (
       end
 
       // LFSR for LED
+      reg [8:0] next_LFSR_led;
       reg [8:0] LFSR_led;
+      
       always @(posedge clk_27) begin
-            if(state != GAME) LFSR_led <= 9'b0_0000_0000;
+            LFSR_led <= next_LFSR_led;
+      end
+
+      always @(*) begin
+            if(state != GAME) next_LFSR_led <= 9'b0_0000_0000;
             else begin
-                  LFSR_led[8] <= LFSR_led[0];
-                  LFSR_led[7] <= LFSR_led[8];
-                  LFSR_led[6] <= LFSR_led[7] ^ LFSR_led[0];
-                  LFSR_led[5] <= LFSR_led[6] ^ LFSR_led[0];
-                  LFSR_led[4] <= LFSR_led[5];
-                  LFSR_led[3] <= LFSR_led[4] ^ LFSR_led[0];
-                  LFSR_led[2] <= LFSR_led[3];
-                  LFSR_led[1] <= LFSR_led[2];
-                  LFSR_led[0] <= LFSR_led[1];
+                  next_LFSR_led[8] <= LFSR_led[0];
+                  next_LFSR_led[7] <= LFSR_led[8];
+                  next_LFSR_led[6] <= LFSR_led[7] ^ LFSR_led[0];
+                  next_LFSR_led[5] <= LFSR_led[6] ^ LFSR_led[0];
+                  next_LFSR_led[4] <= LFSR_led[5];
+                  next_LFSR_led[3] <= LFSR_led[4] ^ LFSR_led[0];
+                  next_LFSR_led[2] <= LFSR_led[3];
+                  next_LFSR_led[1] <= LFSR_led[2];
+                  next_LFSR_led[0] <= LFSR_led[1];
             end
       end
 
