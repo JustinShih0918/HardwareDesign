@@ -319,7 +319,7 @@ module lab4_2 (
             end
             else if(state == GAME) begin
                   counter <= counter + 1;
-                  if(counter == 27'b111_1111_1111_1111_1111_1111_1111) next_led <= {LFSR_led, 7'b000_0011};
+                  if(counter == 27'b111_1111_1111_1111_1111_1111_1111) next_led <= {LFSR_led, 7'b000_0000};
                   else begin
                         prev_change_leds <= prev_change_leds;
                         if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
