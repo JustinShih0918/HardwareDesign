@@ -152,6 +152,7 @@ module lab4_2 (
       reg [7:0] time_limit;
       reg [7:0] goal;
       reg [7:0] goal_cnt;
+      reg [8:0] oper_led;
       always @(posedge clk) begin
             nums <= nums;
             time_nums <= time_nums;
@@ -282,6 +283,12 @@ module lab4_2 (
                   next_LFSR_led[2] <= LFSR_led[3];
                   next_LFSR_led[1] <= LFSR_led[2];
                   next_LFSR_led[0] <= LFSR_led[1];
+
+                  if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
+                        if(key_num != 4'b1111) begin
+                              if((16 - key_num) < 16 && LED[16 - key_num]) next_LFSR_led[9 - key_num] = 0;
+                        end     
+                  end
             end
       end
 
@@ -321,4 +328,12 @@ module Flashing (
             for(i = 0; i < 16; i = i + 1) tmp[i] <= ~led_in[i];
       end
       assign LED = tmp;
+endmodule
+
+module moduleName #(
+      parameters
+) (
+      ports
+);
+      
 endmodule
