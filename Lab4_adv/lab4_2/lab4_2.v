@@ -53,6 +53,7 @@ module lab4_2 (
                         FINAL: begin
                               next_state <= INIT;
                         end
+                        default: next_state <= next_state;
                   endcase
             end
       end
@@ -134,6 +135,9 @@ module lab4_2 (
       reg set_start;
       always @(posedge clk) begin
             nums <= nums;
+            time_nums <= time_nums;
+            goal_nums <= goal_nums;
+            set_start <= set_start;
             if(state == INIT) begin
                   nums <= 16'b1111_1111_1111_1111;
                   set_start <= 1'b1;
@@ -142,9 +146,11 @@ module lab4_2 (
                   if(set_start) begin
                         time_nums <= {4'b0011, 4'b0000};
                         goal_nums <= {4'b0001, 4'b0000};
+                        nums <= {time_nums, goal_nums};
                         set_start <= 1'b0;
                   end
                   else begin
+                        nums <= {time_nums, goal_nums};
                         time_nums <= time_nums;
                         goal_nums <= goal_nums;
                         if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
@@ -154,7 +160,6 @@ module lab4_2 (
                               end     
                         end
                   end
-                  nums <= {time_nums, goal_nums};
             end
       end
 
