@@ -39,6 +39,7 @@ module lab4_2 (
       end
 
       // state transition
+      reg en_time_counter;
       always @(*) begin
             case (state) 
                   INIT: begin
@@ -46,9 +47,8 @@ module lab4_2 (
                         else next_state <= INIT;
                   end
                   SET: begin
-                        // if(out_start) next_state <= GAME;
-                        // else next_state <= SET;
-                        next_state <= SET;
+                        if(out_start) next_state <= GAME;
+                        else next_state <= SET;
                   end
                   GAME: begin
                         next_state <= FINAL;
@@ -134,6 +134,8 @@ module lab4_2 (
       // update nums for each state
       reg [7:0] time_nums;
       reg [7:0] goal_nums;
+      reg [7:0] time_limit;
+      reg [7:0] goal;
       always @(posedge clk) begin
             nums <= nums;
             time_nums <= time_nums;
@@ -153,7 +155,29 @@ module lab4_2 (
                               else goal_nums <= {goal_nums[3:0], key_num};
                         end     
                   end
+                  time_limit <= nums[15:12]*10 + nums[11:8];
+                  goal <= 0;
             end
+            else if(state == GAME) begin
+                  nums <= {time_nums, goal_nums};
+                  time_nums[7:4] <= time_countdown/10;
+                  time_nums[3:0] <= time_countdown%10;
+                  goal_nums[7:4] <= goal/10;
+                  goal_nums[3:0] <= goal%10;
+                  if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
+                        if(key_num != 4'b1111) begin
+                              if(LED[key_num]) goal <= goal + 1;
+                              else goal <= goal;
+                        end     
+                  end
+            end
+      end
+
+      // time limit counter
+      reg time_countdown;
+      always @(posedge clk_27) begin
+            if(en_time_counter && time_countdown != 0) time_countdown <= time_countdown - 1;
+            else time_countdown <= time_limit;
       end
 
       // mapping key code to key_num
