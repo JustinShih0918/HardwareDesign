@@ -84,7 +84,9 @@ module lab4_2 (
       wire [511:0] key_down;
       wire [8:0] last_change;
       wire been_ready;
-      reg [8:0] prev_change;
+      reg [8:0] prev_change_space;
+      reg [8:0] prev_change_nums;
+      reg [8:0] prev_change_leds;
       reg delay_prev;
       parameter [8:0] SPACE_CODE = 9'b0_0010_1001;
       parameter [8:0] key_code [0:19] = {
@@ -131,7 +133,7 @@ module lab4_2 (
 
       // delay for key press
       always @(posedge clk) begin
-            delay_prev <= key_down[prev_change];
+            delay_prev <= (key_down[prev_change_space] == 1'b1 || key_down[prev_change_leds] || key_down[prev_change_leds]) ? 1'b1 : 1'b0;
       end
 
       // setting mode chnage
@@ -143,7 +145,8 @@ module lab4_2 (
             else begin
                   mode_change <= mode_change;
                   if(been_ready && key_down[SPACE_CODE] == 1'b1 && delay_prev == 1'b0) begin
-                        mode_change <= ~mode_change;      
+                        mode_change <= ~mode_change;    
+                        prev_change_space <= SPACE_CODE;
                   end
             end
       end
@@ -161,6 +164,7 @@ module lab4_2 (
             goal <= goal;
             goal_cnt <= goal_cnt;
             time_limit <= time_limit;
+            prev_change_nums <= prev_change_nums;
             if(state == INIT) begin
                   nums <= 16'b1111_1111_1111_1111;
                   time_nums <= {4'b0011, 4'b0000};
@@ -177,6 +181,7 @@ module lab4_2 (
                         if(key_num != 4'b1111) begin
                               if(mode_change == SET_TIME) time_nums <= {time_nums[3:0], key_num};
                               else goal_nums <= {goal_nums[3:0], key_num};
+                              prev_change_nums <= last_change;
                         end     
                   end
                   time_limit <= time_nums[7:4]*10 + time_nums[3:0];
@@ -197,6 +202,7 @@ module lab4_2 (
                               else begin
                                     goal_cnt <= goal_cnt;
                               end
+                              prev_change_nums <= last_change;
                         end     
                   end
             end
@@ -314,10 +320,12 @@ module lab4_2 (
                   counter <= counter + 1;
                   if(counter == 27'b111_1111_1111_1111_1111_1111_1111) next_led <= {LFSR_led, 7'b000_0011};
                   else begin
+                        prev_change_leds <= prev_change_leds;
                         if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                               if(key_num != 4'b1111) begin
                                     if((16 - key_num) < 16 && LED[16 - key_num]) next_led[16 - key_num] <= 0;
                                     else next_led[16 - key_num] <= next_led[16 - key_num];
+                                    prev_change_leds <= last_change;
                               end     
                         end  
                   end
