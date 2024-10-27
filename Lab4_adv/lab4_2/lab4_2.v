@@ -283,12 +283,6 @@ module lab4_2 (
                   next_LFSR_led[2] <= LFSR_led[3];
                   next_LFSR_led[1] <= LFSR_led[2];
                   next_LFSR_led[0] <= LFSR_led[1];
-
-                  if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
-                        if(key_num != 4'b1111) begin
-                              if((16 - key_num) < 16 && LED[16 - key_num]) next_LFSR_led[9 - key_num] = 0;
-                        end     
-                  end
             end
       end
 
@@ -308,6 +302,11 @@ module lab4_2 (
             end
             else if(state == GAME) begin
                   next_led <= {LFSR_led, 7'b000_0011};
+                  if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
+                        if(key_num != 4'b1111) begin
+                              if((16 - key_num) < 16 && LED[16 - key_num]) next_led[16 - key_num] <= 0;
+                        end     
+                  end
             end
             else if(state == FINAL) begin
                   tmp_led <= flash_led;
