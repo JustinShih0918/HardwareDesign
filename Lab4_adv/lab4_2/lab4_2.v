@@ -329,11 +329,3 @@ module Flashing (
       end
       assign LED = tmp;
 endmodule
-
-module moduleName #(
-      parameters
-) (
-      ports
-);
-      
-endmodule
