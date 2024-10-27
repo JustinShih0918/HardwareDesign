@@ -51,8 +51,9 @@ module lab4_2 (
                         else next_state <= SET;
                   end
                   GAME: begin
-                        if(time_countdown == 0) next_state <= FINAL;
-                        else next_state <= GAME;
+                        // if(time_countdown == 0) next_state <= FINAL;
+                        // else next_state <= GAME;
+                        next_state <= GAME;
                   end
                   FINAL: begin
                         next_state <= INIT;
@@ -238,7 +239,7 @@ module lab4_2 (
       reg [15:0] next_led;
       always @(posedge clk) begin
             next_led <= next_led;
-            if(state == INIT) next_led <= 16'b0000_0000_0000_0000;
+            if(state == INIT) next_led <= 16'b1000_0000_0000_0001;
             else if(state == SET) begin
                   if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0001;
                   else next_led <= 16'b1000_0000_1111_1111;
