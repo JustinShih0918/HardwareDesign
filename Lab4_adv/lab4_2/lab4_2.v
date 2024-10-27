@@ -66,7 +66,7 @@ module lab4_2 (
                   FINAL: begin
                         en_time_counter <= 0;
                         en_one_second_counter <= 1;
-                        if(one_second_count >= 3) next_state <= INIT;
+                        if(one_second_count >= 2) next_state <= INIT;
                         else next_state <= FINAL;
                   end
                   default: begin
