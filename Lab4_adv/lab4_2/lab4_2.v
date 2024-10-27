@@ -20,15 +20,17 @@ module lab4_2 (
       wire clk_20;
       wire clk_27;
       wire clk_26;
+      wire clk_10;
       wire pb_out_rst;
       wire out_rst;
       wire pb_out_start;
       wire out_start;
+      clock_divider #(.n(10)) clk_divider_10(.clk(clk), .clk_div(clk_10));
       clock_divider #(.n(26)) clk_divider_26(.clk(clk), .clk_div(clk_26));
       clock_divider #(.n(27)) clk_divider_27(.clk(clk), .clk_div(clk_27));
       clock_divider #(.n(20)) clk_divider_20(.clk(clk), .clk_div(clk_20));
       debounce db_rst(.clk(clk), .pb(rst), .pb_debounced(pb_out_rst));
-      debounce db_start(.clk(clk), .pb(start), .pb_debounced(pb_out_start));
+      debounce db_start(.clk(clk_10), .pb(start), .pb_debounced(pb_out_start));
       one_pulse rst_pulse(.clk(clk), .pb_in(pb_out_rst), .pb_out(out_rst));
       one_pulse start_pulse(.clk(clk), .pb_in(pb_out_start), .pb_out(out_start));
 
