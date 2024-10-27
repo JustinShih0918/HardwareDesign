@@ -51,7 +51,8 @@ module lab4_2 (
                         else next_state <= SET;
                   end
                   GAME: begin
-                        next_state <= FINAL;
+                        if(time_countdown == 0) next_state <= FINAL;
+                        else next_state <= GAME;
                   end
                   FINAL: begin
                         next_state <= INIT;
