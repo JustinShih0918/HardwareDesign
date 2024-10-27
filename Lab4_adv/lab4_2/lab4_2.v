@@ -20,13 +20,17 @@ module lab4_2 (
       wire clk_20;
       wire clk_27;
       wire clk_26;
+      wire pb_out_rst;
       wire out_rst;
+      wire pb_out_start;
       wire out_start;
       clock_divider #(.n(26)) clk_divider_26(.clk(clk), .clk_div(clk_26));
       clock_divider #(.n(27)) clk_divider_27(.clk(clk), .clk_div(clk_27));
       clock_divider #(.n(20)) clk_divider_20(.clk(clk), .clk_div(clk_20));
-      one_pulse rst_pulse(.clk(clk), .pb_in(rst), .pb_out(out_rst));
-      one_pulse start_pulse(.clk(clk), .pb_in(start), .pb_out(out_start));
+      debounce db_rst(.clk(clk), .pb(rst), .pb_debounced(pb_out_rst));
+      debounce db_start(.clk(clk), .pb(start), .pb_debounced(out_start));
+      one_pulse rst_pulse(.clk(clk), .pb_in(pb_out_rst), .pb_out(out_rst));
+      one_pulse start_pulse(.clk(clk), .pb_in(pb_out_start), .pb_out(out_start));
 
       // FSM
       always @(posedge clk, posedge out_rst) begin
@@ -222,14 +226,14 @@ module lab4_2 (
             next_led <= next_led;
             if(state == INIT) next_led <= 16'b0000_0000_0000_0000;
             else if(state == SET) begin
-                  if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0000;
-                  else next_led <= 16'b0000_0000_1111_1111;
+                  if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0001;
+                  else next_led <= 16'b1000_0000_1111_1111;
             end
             else if(state == GAME) begin
-                  next_led <= {LFSR_led, 7'b000_0000};
+                  next_led <= {LFSR_led, 7'b000_0011};
             end
             else if(state == FINAL) begin
-                  next_led <= flash_led;
+                  next_led <= 16'b1111_1111_1111_1111;
             end
       end
 endmodule
