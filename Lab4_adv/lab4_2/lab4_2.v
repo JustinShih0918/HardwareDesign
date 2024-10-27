@@ -288,11 +288,13 @@ module lab4_2 (
 
       // Flashing LED
       wire [15:0] flash_led;
-      Flashing flash(.clk(clk_26), .led_in(LED), .LED(flash_led));
+      reg [15:0] tmp_led;
+      Flashing flash(.clk(clk_26), .led_in(tmp_led), .LED(flash_led));
 
       reg [15:0] next_led;
       always @(posedge clk) begin
             next_led <= next_led;
+            tmp_led <= 16'b1111_1111_1111_1111;
             if(state == INIT) next_led <= 16'b1000_0000_0000_0001;
             else if(state == SET) begin
                   if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0001;
@@ -302,6 +304,7 @@ module lab4_2 (
                   next_led <= {LFSR_led, 7'b000_0011};
             end
             else if(state == FINAL) begin
+                  tmp_led <= flash_led;
                   next_led <= flash_led;
             end
       end
