@@ -161,14 +161,13 @@ module lab4_2 (
                   time_limit <= nums[15:12]*10 + nums[11:8];
                   goal <= nums[7:4]*10 + nums[3:0];
                   goal_cnt <= 0;
-                  time_countdown <= time_limit;
             end
             else if(state == GAME) begin
                   nums <= {time_nums, goal_nums};
-                  time_nums[7:4] <= time_countdown/10;
-                  time_nums[3:0] <= time_countdown%10;
-                  goal_nums[7:4] <= goal/10;
-                  goal_nums[3:0] <= goal%10;
+                  time_nums[7:4] <= time_limit/10;
+                  time_nums[3:0] <= time_limit%10;
+                  goal_nums[7:4] <= goal_cnt/10;
+                  goal_nums[3:0] <= goal_cnt%10;
                   if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                         if(key_num != 4'b1111) begin
                               if((16 - key_num) < 16 && LED[16 - key_num]) goal_cnt <= goal_cnt + 1;
