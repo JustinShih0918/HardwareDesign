@@ -133,7 +133,7 @@ module lab4_2 (
 
       // delay for key press
       always @(posedge clk) begin
-            delay_prev <= (key_down[prev_change_space] == 1'b1 || key_down[prev_change_leds] || key_down[prev_change_leds]) ? 1'b1 : 1'b0;
+            delay_prev <= (key_down[prev_change_space] == 1'b1 || key_down[prev_change_nums] == 1'b1 || key_down[prev_change_leds] == 1'b1) ? 1'b1 : 1'b0;
       end
 
       // setting mode chnage
@@ -164,7 +164,6 @@ module lab4_2 (
             goal <= goal;
             goal_cnt <= goal_cnt;
             time_limit <= time_limit;
-            prev_change_nums <= prev_change_nums;
             if(state == INIT) begin
                   nums <= 16'b1111_1111_1111_1111;
                   time_nums <= {4'b0011, 4'b0000};
@@ -177,6 +176,7 @@ module lab4_2 (
                   nums <= {time_nums, goal_nums};
                   time_nums <= time_nums;
                   goal_nums <= goal_nums;
+                  prev_change_nums <= prev_change_nums;
                   if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                         if(key_num != 4'b1111) begin
                               if(mode_change == SET_TIME) time_nums <= {time_nums[3:0], key_num};
@@ -194,6 +194,7 @@ module lab4_2 (
                   time_nums[3:0] <= time_countdown%10;
                   goal_nums[7:4] <= goal_cnt/10;
                   goal_nums[3:0] <= goal_cnt%10;
+                  prev_change_nums <= prev_change_nums;
                   if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                         if(key_num != 4'b1111) begin
                               if((16 - key_num) < 16 && LED[16 - key_num]) begin
