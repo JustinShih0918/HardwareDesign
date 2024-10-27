@@ -35,8 +35,6 @@ set_property PACKAGE_PIN W4 [get_ports {digit[3]}]
 #Buttons
 set_property PACKAGE_PIN U18 [get_ports rst]						
 	set_property IOSTANDARD LVCMOS33 [get_ports rst]
-set_property PACKAGE_PIN T17 [get_ports start]						
-	set_property IOSTANDARD LVCMOS33 [get_ports start]
  
 #USB HID (PS/2)
 set_property PACKAGE_PIN C17 [get_ports PS2_CLK]						
