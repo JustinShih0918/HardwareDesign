@@ -156,6 +156,9 @@ module lab4_2 (
             nums <= nums;
             time_nums <= time_nums;
             goal_nums <= goal_nums;
+            goal <= goal;
+            goal_cnt <= goal_cnt;
+            time_limit <= time_limit;
             if(state == INIT) begin
                   nums <= 16'b1111_1111_1111_1111;
                   time_nums <= {4'b0011, 4'b0000};
