@@ -152,7 +152,6 @@ module lab4_2 (
       reg [7:0] time_limit;
       reg [7:0] goal;
       reg [7:0] goal_cnt;
-      reg [8:0] oper_led;
       always @(posedge clk) begin
             nums <= nums;
             time_nums <= time_nums;
@@ -190,8 +189,12 @@ module lab4_2 (
                   goal_nums[3:0] <= goal_cnt%10;
                   if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                         if(key_num != 4'b1111) begin
-                              if((16 - key_num) < 16 && LED[16 - key_num]) goal_cnt <= goal_cnt + 1;
-                              else goal_cnt <= goal_cnt;
+                              if((16 - key_num) < 16 && LED[16 - key_num]) begin
+                                    goal_cnt <= goal_cnt + 1;
+                              end
+                              else begin
+                                    goal_cnt <= goal_cnt;
+                              end
                         end     
                   end
             end
@@ -292,21 +295,31 @@ module lab4_2 (
       Flashing flash(.clk(clk_26), .led_in(tmp_led), .LED(flash_led));
 
       reg [15:0] next_led;
+      reg [26:0] counter;
       always @(posedge clk) begin
             next_led <= next_led;
             tmp_led <= 16'b1111_1111_1111_1111;
-            if(state == INIT) next_led <= 16'b1000_0000_0000_0001;
+            if(state == INIT) begin
+                  next_led <= 16'b1000_0000_0000_0001;
+                  counter <= 27'b111_1111_1111_1111_1111_1111_1111;
+            end
             else if(state == SET) begin
+                  counter <= 27'b111_1111_1111_1111_1111_1111_1111;
                   if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0001;
                   else next_led <= 16'b1000_0000_1111_1111;
             end
             else if(state == GAME) begin
-                  next_led <= {LFSR_led, 7'b000_0011};
-                  if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
-                        if(key_num != 4'b1111) begin
-                              if((16 - key_num) < 16 && LED[16 - key_num]) next_led[16 - key_num] <= 0;
-                        end     
+                  counter <= counter + 1;
+                  if(counter == 27'b111_1111_1111_1111_1111_1111_1111) next_led <= {LFSR_led, 7'b000_0011};
+                  else begin
+                        if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
+                              if(key_num != 4'b1111) begin
+                                    if((16 - key_num) < 16 && LED[16 - key_num]) next_led[16 - key_num] <= 0;
+                                    else next_led[16 - key_num] <= next_led[16 - key_num];
+                              end     
+                        end  
                   end
+
             end
             else if(state == FINAL) begin
                   tmp_led <= flash_led;
