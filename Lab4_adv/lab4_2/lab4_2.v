@@ -316,8 +316,9 @@ module Flashing (
 );
 
       reg [15:0] tmp;
+      integer i;
       always @(posedge clk) begin
-            tmp <= !led_in;
+            for(i = 0; i < 16; i = i + 1) tmp[i] <= ~led_in[i];
       end
       assign LED = tmp;
 endmodule
