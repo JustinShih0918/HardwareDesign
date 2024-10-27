@@ -177,8 +177,8 @@ module lab4_2 (
                               else goal_nums <= {goal_nums[3:0], key_num};
                         end     
                   end
-                  time_limit <= nums[15:12]*10 + nums[11:8];
-                  goal <= nums[7:4]*10 + nums[3:0];
+                  time_limit <= time_nums[7:4]*10 + time_nums[3:0];
+                  goal <= goal_nums[7:4]*10 + goal_nums[3:0];
                   goal_cnt <= 0;
             end
             else if(state == GAME) begin
