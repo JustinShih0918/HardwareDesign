@@ -58,8 +58,9 @@ module lab4_2 (
                   GAME: begin
                         en_time_counter <= 1;
                         en_one_second_counter <= 0;
-                        if(time_to_go == 1) next_state <= FINAL;
-                        else next_state <= GAME;
+                        // if(time_to_go == 1) next_state <= FINAL;
+                        // else next_state <= GAME;
+                        next_state <= GAME;
                   end
                   FINAL: begin
                         en_time_counter <= 0;
