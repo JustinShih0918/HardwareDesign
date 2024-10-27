@@ -28,7 +28,7 @@ module lab4_2 (
       clock_divider #(.n(27)) clk_divider_27(.clk(clk), .clk_div(clk_27));
       clock_divider #(.n(20)) clk_divider_20(.clk(clk), .clk_div(clk_20));
       debounce db_rst(.clk(clk), .pb(rst), .pb_debounced(pb_out_rst));
-      debounce db_start(.clk(clk), .pb(start), .pb_debounced(out_start));
+      debounce db_start(.clk(clk), .pb(start), .pb_debounced(pb_out_start));
       one_pulse rst_pulse(.clk(clk), .pb_in(pb_out_rst), .pb_out(out_rst));
       one_pulse start_pulse(.clk(clk), .pb_in(pb_out_start), .pb_out(out_start));
 
@@ -39,27 +39,25 @@ module lab4_2 (
       end
 
       // state transition
-      always @(posedge clk, posedge out_rst) begin
-            if(out_rst) next_state <= INIT;
-            else begin
-                  case (state) 
-                        INIT: begin
-                              if(out_start) next_state <= SET;
-                              else next_state <= INIT;
-                        end
-                        SET: begin
-                              if(out_start) next_state <= GAME;
-                              else next_state <= SET;
-                        end
-                        GAME: begin
-                              next_state <= FINAL;
-                        end
-                        FINAL: begin
-                              next_state <= INIT;
-                        end
-                        default: next_state <= next_state;
-                  endcase
-            end
+      always @(*) begin
+            case (state) 
+                  INIT: begin
+                        if(out_start) next_state <= SET;
+                        else next_state <= INIT;
+                  end
+                  SET: begin
+                        // if(out_start) next_state <= GAME;
+                        // else next_state <= SET;
+                        next_state <= SET;
+                  end
+                  GAME: begin
+                        next_state <= FINAL;
+                  end
+                  FINAL: begin
+                        next_state <= INIT;
+                  end
+                  default: next_state <= next_state;
+            endcase
       end
 
       // Keyboard Controller and 7-segment display controller
@@ -136,33 +134,24 @@ module lab4_2 (
       // update nums for each state
       reg [7:0] time_nums;
       reg [7:0] goal_nums;
-      reg set_start;
       always @(posedge clk) begin
             nums <= nums;
             time_nums <= time_nums;
             goal_nums <= goal_nums;
-            set_start <= set_start;
             if(state == INIT) begin
                   nums <= 16'b1111_1111_1111_1111;
-                  set_start <= 1'b1;
+                  time_nums <= {4'b0011, 4'b0000};
+                  goal_nums <= {4'b0001, 4'b0000};
             end
             else if(state == SET) begin
-                  if(set_start) begin
-                        time_nums <= {4'b0011, 4'b0000};
-                        goal_nums <= {4'b0001, 4'b0000};
-                        nums <= {time_nums, goal_nums};
-                        set_start <= 1'b0;
-                  end
-                  else begin
-                        nums <= {time_nums, goal_nums};
-                        time_nums <= time_nums;
-                        goal_nums <= goal_nums;
-                        if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
-                              if(key_num != 4'b1111) begin
-                                    if(mode_change == SET_TIME) time_nums <= {time_nums[3:0], key_num};
-                                    else goal_nums <= {goal_nums[3:0], key_num};
-                              end     
-                        end
+                  nums <= {time_nums, goal_nums};
+                  time_nums <= time_nums;
+                  goal_nums <= goal_nums;
+                  if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
+                        if(key_num != 4'b1111) begin
+                              if(mode_change == SET_TIME) time_nums <= {time_nums[3:0], key_num};
+                              else goal_nums <= {goal_nums[3:0], key_num};
+                        end     
                   end
             end
       end
