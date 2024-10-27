@@ -43,22 +43,29 @@ module lab4_2 (
       always @(*) begin
             case (state) 
                   INIT: begin
+                        en_time_counter <= 0;
                         if(out_start) next_state <= SET;
                         else next_state <= INIT;
                   end
                   SET: begin
+                        en_time_counter <= 0;
                         if(out_start) next_state <= GAME;
                         else next_state <= SET;
                   end
                   GAME: begin
                         // if(time_countdown == 0) next_state <= FINAL;
                         // else next_state <= GAME;
+                        en_time_counter <= 1;
                         next_state <= GAME;
                   end
                   FINAL: begin
+                        en_time_counter <= 0;
                         next_state <= INIT;
                   end
-                  default: next_state <= next_state;
+                  default: begin
+                        en_time_counter <= 0;
+                        next_state <= next_state;
+                  end
             endcase
       end
 
@@ -164,8 +171,8 @@ module lab4_2 (
             end
             else if(state == GAME) begin
                   nums <= {time_nums, goal_nums};
-                  time_nums[7:4] <= time_limit/10;
-                  time_nums[3:0] <= time_limit%10;
+                  time_nums[7:4] <= time_countdown/10;
+                  time_nums[3:0] <= time_countdown%10;
                   goal_nums[7:4] <= goal_cnt/10;
                   goal_nums[3:0] <= goal_cnt%10;
                   if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
@@ -178,9 +185,9 @@ module lab4_2 (
       end
 
       // time limit counter
-      reg time_countdown;
+      reg [7:0] time_countdown;
       always @(posedge clk_27) begin
-            if(en_time_counter && time_countdown != 0) time_countdown <= time_countdown - 1;
+            if(en_time_counter) time_countdown <= time_countdown - 1;
             else time_countdown <= time_limit;
       end
 
