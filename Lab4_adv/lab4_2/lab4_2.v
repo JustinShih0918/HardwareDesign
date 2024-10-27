@@ -212,11 +212,11 @@ module lab4_2 (
       // time to go condition
       reg time_to_go;
       reg game_result;
-      always @(*) begin
+      always @(posedge clk) begin
             if(time_countdown == 0 || goal_cnt == goal) begin
-                  time_to_go = 1;
                   if(goal_cnt == goal) game_result = 1;
                   else game_result = 0;
+                  time_to_go = 1;
             end
             else time_to_go = 0;
       end
