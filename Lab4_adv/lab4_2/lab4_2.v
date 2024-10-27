@@ -300,13 +300,13 @@ module lab4_2 (
             next_led <= next_led;
             tmp_led <= 16'b1111_1111_1111_1111;
             if(state == INIT) begin
-                  next_led <= 16'b1000_0000_0000_0001;
+                  next_led <= 16'b1000_0000_0000_0000;
                   counter <= 27'b111_1111_1111_1111_1111_1111_1111;
             end
             else if(state == SET) begin
                   counter <= 27'b111_1111_1111_1111_1111_1111_1111;
-                  if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0001;
-                  else next_led <= 16'b1000_0000_1111_1111;
+                  if(mode_change == SET_TIME) next_led <= 16'b1111_1111_0000_0000;
+                  else next_led <= 16'b0000_0000_1111_1111;
             end
             else if(state == GAME) begin
                   counter <= counter + 1;
