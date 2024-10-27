@@ -224,7 +224,7 @@ module lab4_2 (
       end
 
       always @(*) begin
-            if(state != GAME) next_LFSR_led <= 9'b0_0000_0000;
+            if(state != GAME) next_LFSR_led <= 9'b1_0110_0000;
             else begin
                   next_LFSR_led[8] <= LFSR_led[0];
                   next_LFSR_led[7] <= LFSR_led[8];
