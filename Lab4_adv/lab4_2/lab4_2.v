@@ -40,30 +40,36 @@ module lab4_2 (
 
       // state transition
       reg en_time_counter;
+      reg en_one_second_counter;
       always @(*) begin
             case (state) 
                   INIT: begin
                         en_time_counter <= 0;
+                        en_one_second_counter <= 0;
                         if(out_start) next_state <= SET;
                         else next_state <= INIT;
                   end
                   SET: begin
                         en_time_counter <= 0;
+                        en_one_second_counter <= 0;
                         if(out_start) next_state <= GAME;
                         else next_state <= SET;
                   end
                   GAME: begin
-                        // if(time_countdown == 0) next_state <= FINAL;
-                        // else next_state <= GAME;
                         en_time_counter <= 1;
-                        next_state <= GAME;
+                        en_one_second_counter <= 0;
+                        if(time_to_go == 1) next_state <= FINAL;
+                        else next_state <= GAME;
                   end
                   FINAL: begin
                         en_time_counter <= 0;
-                        next_state <= INIT;
+                        en_one_second_counter <= 1;
+                        if(one_second_count >= 4) next_state <= INIT;
+                        else next_state <= FINAL;
                   end
                   default: begin
                         en_time_counter <= 0;
+                        en_one_second_counter <= 0;
                         next_state <= next_state;
                   end
             endcase
@@ -182,13 +188,37 @@ module lab4_2 (
                         end     
                   end
             end
+            else if(state == FINAL) begin
+                  if(game_result == 1) nums <= 16'b1111_1010_1011_1100;
+                  else nums <= 16'b1101_0000_0101_1110;
+            end
       end
 
       // time limit counter
       reg [7:0] time_countdown;
       always @(posedge clk_27) begin
             if(en_time_counter) time_countdown <= time_countdown - 1;
+            else if(time_countdown == 0) time_countdown <= 0;
             else time_countdown <= time_limit;
+      end
+
+      // one second counter
+      reg [7:0] one_second_count;
+      always @(posedge clk_27) begin
+            if(en_one_second_counter) one_second_count <= one_second_count + 1;
+            else one_second_count <= 0;
+      end
+
+      // time to go condition
+      reg time_to_go;
+      reg game_result;
+      always @(*) begin
+            if(time_countdown == 0 || goal_cnt == goal) begin
+                  time_to_go = 1;
+                  if(goal_cnt == goal) game_result = 1;
+                  else game_result = 0;
+            end
+            else time_to_go = 0;
       end
 
       // mapping key code to key_num
@@ -263,7 +293,7 @@ module lab4_2 (
                   next_led <= {LFSR_led, 7'b000_0011};
             end
             else if(state == FINAL) begin
-                  next_led <= 16'b1111_1111_1111_1111;
+                  next_led <= flash_led;
             end
       end
 endmodule
