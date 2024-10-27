@@ -58,9 +58,8 @@ module lab4_2 (
                   GAME: begin
                         en_time_counter <= 1;
                         en_one_second_counter <= 0;
-                        // if(time_to_go == 1) next_state <= FINAL;
-                        // else next_state <= GAME;
-                        next_state <= GAME;
+                        if(time_to_go == 1) next_state <= FINAL;
+                        else next_state <= GAME;
                   end
                   FINAL: begin
                         en_time_counter <= 0;
@@ -206,8 +205,8 @@ module lab4_2 (
       always @(posedge clk_27, posedge out_start) begin
             if(out_start) time_countdown <= time_limit;
             else begin
-                  if(en_time_counter) time_countdown <= time_countdown - 1;
-                  else if(time_countdown == 0) time_countdown <= 0;
+                  if(en_time_counter && time_countdown != 0) time_countdown <= time_countdown - 1;
+                  else if(time_countdown <= 0) time_countdown <= 0;
             end
       end
 
