@@ -300,7 +300,7 @@ module lab4_2 (
             next_led <= next_led;
             tmp_led <= 16'b1111_1111_1111_1111;
             if(state == INIT) begin
-                  next_led <= 16'b1000_0000_0000_0000;
+                  next_led <= 16'b0000_0000_0000_0000;
                   counter <= 27'b111_1111_1111_1111_1111_1111_1111;
             end
             else if(state == SET) begin
