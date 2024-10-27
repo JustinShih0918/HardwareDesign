@@ -29,16 +29,16 @@ module lab4_2 (
       one_pulse start_pulse(.clk(clk_20), .pb_in(start), .pb_out(out_start));
 
       // FSM
-      always @(posedge clk, posedge our_rst) begin
+      always @(posedge clk, posedge out_rst) begin
             if(out_rst) state <= INIT;
             else state <= next_state;
       end
 
       // state transition
-      always @(posedge clk, posedge our_rst) begin
+      always @(posedge clk, posedge out_rst) begin
             if(out_rst) next_state <= INIT;
             else begin
-                  case (state) : begin
+                  case (state) 
                         INIT: begin
                               if(out_start) next_state <= SET;
                               else next_state <= INIT;
@@ -53,7 +53,6 @@ module lab4_2 (
                         FINAL: begin
                               next_state <= INIT;
                         end
-                  end
                   endcase
             end
       end
@@ -118,7 +117,7 @@ module lab4_2 (
       // setting mode chnage
       parameter SET_TIME = 0;
       parameter SET_GOAL = 1;
-      wire mode_change;
+      reg mode_change;
       always @(posedge clk) begin
             if(state == INIT) mode_change <= SET_TIME;
             else begin
@@ -130,10 +129,10 @@ module lab4_2 (
       end
 
       // update nums for each state
-      wire [7:0] time_nums;
-      wire [7:0] goal_nums;
+      reg [7:0] time_nums;
+      reg [7:0] goal_nums;
       reg set_start;
-      always @(posedge clk, posedge out_rst) begin
+      always @(posedge clk) begin
             nums <= nums;
             if(state == INIT) begin
                   nums <= 16'b1111_1111_1111_1111;
@@ -233,7 +232,7 @@ endmodule
 module Flashing (
       input wire clk,
       input wire [15:0] led_in,
-      output reg [15:0] LED
+      output wire [15:0] LED
 );
 
       reg [15:0] tmp;
