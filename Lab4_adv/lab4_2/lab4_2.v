@@ -138,6 +138,7 @@ module lab4_2 (
       reg [7:0] goal_nums;
       reg [7:0] time_limit;
       reg [7:0] goal;
+      reg [7:0] goal_cnt;
       always @(posedge clk) begin
             nums <= nums;
             time_nums <= time_nums;
@@ -158,7 +159,9 @@ module lab4_2 (
                         end     
                   end
                   time_limit <= nums[15:12]*10 + nums[11:8];
-                  goal <= 0;
+                  goal <= nums[7:4]*10 + nums[3:0];
+                  goal_cnt <= 0;
+                  time_countdown <= time_limit;
             end
             else if(state == GAME) begin
                   nums <= {time_nums, goal_nums};
@@ -168,8 +171,8 @@ module lab4_2 (
                   goal_nums[3:0] <= goal%10;
                   if(been_ready && key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                         if(key_num != 4'b1111) begin
-                              if(LED[key_num]) goal <= goal + 1;
-                              else goal <= goal;
+                              if((16 - key_num) < 16 && LED[16 - key_num]) goal_cnt <= goal_cnt + 1;
+                              else goal_cnt <= goal_cnt;
                         end     
                   end
             end
@@ -218,7 +221,7 @@ module lab4_2 (
       // LFSR for LED
       reg [8:0] next_LFSR_led;
       reg [8:0] LFSR_led;
-      
+
       always @(posedge clk_27) begin
             LFSR_led <= next_LFSR_led;
       end
