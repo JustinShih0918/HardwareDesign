@@ -317,7 +317,7 @@ module Flashing (
 
       reg [15:0] tmp;
       always @(posedge clk) begin
-            tmp <= !LED;
+            tmp <= !led_in;
       end
       assign LED = tmp;
 endmodule
