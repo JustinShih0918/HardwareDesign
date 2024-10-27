@@ -25,8 +25,8 @@ module lab4_2 (
       clock_divider #(.n(26)) clk_divider_26(.clk(clk), .clk_div(clk_26));
       clock_divider #(.n(27)) clk_divider_27(.clk(clk), .clk_div(clk_27));
       clock_divider #(.n(20)) clk_divider_20(.clk(clk), .clk_div(clk_20));
-      one_pulse rst_pulse(.clk(clk_20), .pb_in(rst), .pb_out(out_rst));
-      one_pulse start_pulse(.clk(clk_20), .pb_in(start), .pb_out(out_start));
+      one_pulse rst_pulse(.clk(clk), .pb_in(rst), .pb_out(out_rst));
+      one_pulse start_pulse(.clk(clk), .pb_in(start), .pb_out(out_start));
 
       // FSM
       always @(posedge clk, posedge out_rst) begin
