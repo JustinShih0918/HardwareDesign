@@ -86,16 +86,12 @@ module note_gen(
             next_low <= 16'hD000;
         end
         else if(volume == 4'b0100) begin
-            next_high <= 16'hE000;
-            next_low <= 16'h2000;
-        end
-        else if(volume == 4'b0101) begin
-            next_high <= 16'hFFFF;
+            next_high <= 16'hEE00;
             next_low <= 16'h1000;
         end
-        else begin
-            next_high <= 16'h0000;
-            next_low <= 16'h0000;
+        else if(volume == 4'b0101) begin
+            next_high <= 16'hE000;
+            next_low <= 16'h2000;
         end
     end
 
