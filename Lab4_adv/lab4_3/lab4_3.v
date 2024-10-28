@@ -6,6 +6,7 @@
 `define g4 32'd392   // G4
 `define a4 32'd440   // A4
 `define b4 32'd494   // B4
+`define c5 32'd523   // C5
 
 module lab4_3(
     input wire clk,
@@ -104,7 +105,7 @@ module lab4_3(
     always @(posedge clk) begin
         delay_prev <= key_down[prev_change];
     end
-    parameter [8:0] key_code [0:6] = {
+    parameter [8:0] key_code [0:7] = {
         9'b0_0001_1100, // a -> 1C
         9'b0_0001_1011, // s -> 1B
         9'b0_0010_0011, // d -> 23
@@ -112,6 +113,7 @@ module lab4_3(
         9'b0_0011_0100,  // g -> 34
         9'b0_0011_0011,  // h -> 33
         9'b0_0011_1011  // j -> 3B
+        9'b0_0010_1010  // k -> 42
     };
 
     SevenSegment seven_seg(
@@ -172,6 +174,7 @@ module lab4_3(
                             4'b1001 : next_freq <= `g4 * 2 ** (octLevel - 4);
                             4'b1110 : next_freq <= `a4 * 2 ** (octLevel - 4);
                             4'b0110 : next_freq <= `b4 * 2 ** (octLevel - 4);
+                            4'b0001 : next_freq <= `c5 * 2 ** (octLevel - 4);
                             default : next_freq <= `silence;
                         endcase 
                     end
@@ -184,6 +187,7 @@ module lab4_3(
                             4'b1001 : next_freq <= `g4 / 2;
                             4'b1110 : next_freq <= `a4 / 2;
                             4'b0110 : next_freq <= `b4 / 2;
+                            4'b0001 : next_freq <= `c5 / 2;
                             default : next_freq <= `silence;
                         endcase
                     end
@@ -216,6 +220,7 @@ module lab4_3(
             key_code[04] : key_num <= 4'b1001;
             key_code[05] : key_num <= 4'b1110;
             key_code[06] : key_num <= 4'b0110;
+            key_code[07] : key_num <= 4'b0001;
             default : key_num <= 4'b1111;
         endcase
     end
