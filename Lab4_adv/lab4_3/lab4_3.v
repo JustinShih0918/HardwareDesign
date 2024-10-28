@@ -130,16 +130,30 @@ module lab4_3(
     reg [3:0] octLevel;
     reg [31:0] next_freq;
     always @(*) begin
-        case(key_num)
-            4'b1010 : next_freq = `c4 * 2 ** (octLevel - 4);
-            4'b1011 : next_freq = `d4 * 2 ** (octLevel - 4);
-            4'b1100 : next_freq = `e4 * 2 ** (octLevel - 4);
-            4'b1101 : next_freq = `f4 * 2 ** (octLevel - 4);
-            4'b1001 : next_freq = `g4 * 2 ** (octLevel - 4);
-            4'b1110 : next_freq = `a4 * 2 ** (octLevel - 4);
-            4'b0110 : next_freq = `b4 * 2 ** (octLevel - 4);
-            default : next_freq = `silence;
-        endcase
+        if(octLevel >=4) begin
+            case(key_num)
+                4'b1010 : next_freq = `c4 * 2 ** (octLevel - 4);
+                4'b1011 : next_freq = `d4 * 2 ** (octLevel - 4);
+                4'b1100 : next_freq = `e4 * 2 ** (octLevel - 4);
+                4'b1101 : next_freq = `f4 * 2 ** (octLevel - 4);
+                4'b1001 : next_freq = `g4 * 2 ** (octLevel - 4);
+                4'b1110 : next_freq = `a4 * 2 ** (octLevel - 4);
+                4'b0110 : next_freq = `b4 * 2 ** (octLevel - 4);
+                default : next_freq = `silence;
+            endcase 
+        end
+        else if(octLevel == 3) begin
+            case(key_num)
+                4'b1010 : next_freq = `c4 / 2;
+                4'b1011 : next_freq = `d4 / 2;
+                4'b1100 : next_freq = `e4 / 2;
+                4'b1101 : next_freq = `f4 / 2;
+                4'b1001 : next_freq = `g4 / 2;
+                4'b1110 : next_freq = `a4 / 2;
+                4'b0110 : next_freq = `b4 / 2;
+                default : next_freq = `silence;
+            endcase
+        end
     end
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
