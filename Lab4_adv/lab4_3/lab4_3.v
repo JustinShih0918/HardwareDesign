@@ -113,7 +113,7 @@ module lab4_3(
         9'b0_0011_0100,  // g -> 34
         9'b0_0011_0011,  // h -> 33
         9'b0_0011_1011,  // j -> 3B
-        9'b0_0010_1010  // k -> 42
+        9'b0_0100_0010  // k -> 42
     };
 
     SevenSegment seven_seg(
@@ -136,7 +136,6 @@ module lab4_3(
 
     reg [3:0] octLevel;
     reg [31:0] next_freq;
-
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
             nums <= 16'b1111_1111_1111_1111;
