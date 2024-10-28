@@ -1,7 +1,7 @@
 module note_gen(
     input clk, // clock from crystal
     input rst, // active high reset
-    input [3:0] wire volume, 
+    input wire [3:0] volume, 
     input [21:0] note_div_left, // div for note generation
     input [21:0] note_div_right,
     output [15:0] audio_left,
@@ -60,31 +60,42 @@ module note_gen(
 
     // Assign the amplitude of the note
     // Volume is controlled here
+    reg [15:0] next_high, next_low;
     reg [15:0] high, low;
-    always @(posedge clk) begin
-        if(volume == 4'b0001) begin
-            high <= 16'hA500;
-            low <= 16'hA000;
-        end
-        if(volume == 4'b0010) begin
-            high <= 16'hDE00;
-            low <= 16'hD500;
-        end
-        else if(volume == 4'b0011) begin
+    always @(posedge clk, posedge rst) begin
+        if(rst) begin
             high <= 16'hDFF0;
             low <= 16'hD000;
         end
+        else begin
+            high <= next_high;
+            low <= next_low;
+        end
+    end
+    always @(*) begin
+        if(volume == 4'b0001) begin
+            next_high <= 16'hA500;
+            next_low <= 16'hA000;
+        end
+        if(volume == 4'b0010) begin
+            next_high <= 16'hDE00;
+            next_low <= 16'hD500;
+        end
+        else if(volume == 4'b0011) begin
+            next_high <= 16'hDFF0;
+            next_low <= 16'hD000;
+        end
         else if(volume == 4'b0100) begin
-            high <= 16'hE000;
-            low <= 16'h2000;
+            next_high <= 16'hE000;
+            next_low <= 16'h2000;
         end
         else if(volume == 4'b0101) begin
-            high <= 16'hFFFF;
-            low <= 16'h1000;
+            next_high <= 16'hFFFF;
+            next_low <= 16'h1000;
         end
         else begin
-            high <= 16'h0000;
-            low <= 16'h0000;
+            next_high <= 16'h0000;
+            next_low <= 16'h0000;
         end
     end
 
