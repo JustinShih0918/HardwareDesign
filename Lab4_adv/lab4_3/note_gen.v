@@ -72,7 +72,7 @@ module note_gen(
         end
         else if(volume == 4) begin
             high <= 16'hFFFF;
-            low <= 16'1111;
+            low <= 16'h1111;
         end
         else begin
             high <= 16'hE000;
