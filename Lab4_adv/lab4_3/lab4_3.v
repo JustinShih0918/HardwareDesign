@@ -135,7 +135,7 @@ module lab4_3(
             if(been_ready && key_down[last_change] == 1'b1) begin
                 if(key_num != 4'b1111) nums <= {8'b1111_1111, key_num, octLevel};
             end
-            else nums <= 16'b1111_1111_1111_1111;
+            else if(key_down[last_change] == 1'b0) nums <= 16'b1111_1111_1111_1111;
         end
     end
 

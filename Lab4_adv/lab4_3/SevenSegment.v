@@ -55,13 +55,13 @@ module SevenSegment(
 			3 : display = 7'b0110000;   //0011                                             
 			4 : display = 7'b0011001;   //0100                                               
 			5 : display = 7'b0010010;   //0101 / S                                           
-			6 : display = 7'b0000010;   //0110 / b
+			6 : display = 7'b0000011;   //0110 / b
 			7 : display = 7'b1111000;   //0111
 			8 : display = 7'b0000000;   //1000
 			9 : display = 7'b0010000;	//1001 / g
 			10: display = 7'b1000110;   // C
 			11: display = 7'b0100001;   // d
-			12: display = 7'b0001110;   // E
+			12: display = 7'b0000110;   // E
 			13: display = 7'b0001110;   // F
 			14: display = 7'b0001000;   // A
 			4'b1111 : display = 7'b0111111;
