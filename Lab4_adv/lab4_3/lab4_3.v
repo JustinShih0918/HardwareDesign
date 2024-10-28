@@ -96,7 +96,12 @@ module lab4_3(
     reg [9:0] last_key;
     wire [511:0] key_down;
     wire [8:0] last_change;
+    reg [8:0] prev_change;
+    reg delay_prev;
     wire been_ready;
+    always @(posedge clk) begin
+        delay <= key_down[prev_change];
+    end
     parameter [8:0] key_code [0:6] = {
         9'b0_0001_1100, // a -> 1C
         9'b0_0001_1011, // s -> 1B
@@ -129,6 +134,7 @@ module lab4_3(
 
     reg [3:0] octLevel;
     reg [31:0] next_freq;
+
     always @(*) begin
         if(octLevel >=4) begin
             case(key_num)
@@ -155,6 +161,7 @@ module lab4_3(
             endcase
         end
     end
+
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
             nums <= 16'b1111_1111_1111_1111;
@@ -165,11 +172,13 @@ module lab4_3(
             nums <= nums;
             freqL <= freqL;
             freqR <= freqR;
-            if(been_ready && key_down[last_change] == 1'b1) begin
+            prev_change <= prev_change;
+            if(been_ready && key_down[last_change] == 1'b1 && (delay_prev == 1'b0 || prev_change == last_change)) begin
                 if(key_num != 4'b1111) begin
                     nums <= {8'b1111_1111, key_num, octLevel};
                     freqL <= next_freq;
                     freqR <= next_freq;
+                    prev_change <= last_change;
                 end
             end
             else if(key_down[last_change] == 1'b0) begin
