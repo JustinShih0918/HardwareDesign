@@ -149,8 +149,8 @@ module lab4_3(
         end
         else begin
             nums <= nums;
-            freq_outL <= freq_outL;
-            freq_outR <= freq_outR;
+            freqL <= freqL;
+            freqR <= freqR;
             if(been_ready && key_down[last_change] == 1'b1) begin
                 if(key_num != 4'b1111) begin
                     nums <= {8'b1111_1111, key_num, octLevel};
