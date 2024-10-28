@@ -100,7 +100,7 @@ module lab4_3(
     reg delay_prev;
     wire been_ready;
     always @(posedge clk) begin
-        delay <= key_down[prev_change];
+        delay_prev <= key_down[prev_change];
     end
     parameter [8:0] key_code [0:6] = {
         9'b0_0001_1100, // a -> 1C
