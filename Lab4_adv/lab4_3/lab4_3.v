@@ -71,7 +71,7 @@ module lab4_3(
     note_gen noteGen_00(
         .clk(clk), 
         .rst(rst), 
-        .volume(3'b000),
+        .volume(vol),
         .note_div_left(freq_outL), 
         .note_div_right(freq_outR), 
         .audio_left(audio_in_left),     // left sound audio

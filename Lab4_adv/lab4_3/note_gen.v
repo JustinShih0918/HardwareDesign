@@ -1,7 +1,7 @@
 module note_gen(
     input clk, // clock from crystal
     input rst, // active high reset
-    input [2:0] volume, 
+    input [3:0] volume, 
     input [21:0] note_div_left, // div for note generation
     input [21:0] note_div_right,
     output [15:0] audio_left,
@@ -60,8 +60,28 @@ module note_gen(
 
     // Assign the amplitude of the note
     // Volume is controlled here
+    reg [15:0] high, low;
+    always @(posedge clk) begin
+        if(volume == 2) begin
+            high <= 16'hA000;
+            low <= 16'h1000;
+        end
+        else if(volume == 3) begin
+            high <= 16'hE000;
+            low <= 16'h2000;
+        end
+        else if(volume == 4) begin
+            high <= 16'hFFFF;
+            low <= 16'1111;
+        end
+        else begin
+            high <= 16'hE000;
+            low <= 16'h2000;
+        end
+    end
+
     assign audio_left = (note_div_left == 22'd1) ? 16'h0000 : 
-                                (b_clk == 1'b0) ? 16'hE000 : 16'h2000;
+                                (b_clk == 1'b0) ? high : low;
     assign audio_right = (note_div_right == 22'd1) ? 16'h0000 : 
-                                (c_clk == 1'b0) ? 16'hE000 : 16'h2000;
+                                (c_clk == 1'b0) ? high : low;
 endmodule
