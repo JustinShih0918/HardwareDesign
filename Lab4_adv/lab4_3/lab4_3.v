@@ -26,19 +26,19 @@ module lab4_3(
     );      
     
     // button porcessing
-    wire clk_10;
-    clock_divider #(.n(10)) clock_10(.clk(clk), .clk_div(clk_10));
+    wire clk_16;
+    clock_divider #(.n(16)) clock_10(.clk(clk), .clk_div(clk_16));
     
     wire dp_Volup;
     wire dp_Voldown;
     wire dp_Oup;
     wire dp_Odown;
     wire dp_rst;
-    debounce db_u(.pb_debounced(dp_Volup), .pb(volUP), .clk(clk_10));
-    debounce db_d(.pb_debounced(dp_Voldown), .pb(volDOWN), .clk(clk_10));
-    debounce db_r(.pb_debounced(dp_Oup), .pb(octaveUP), .clk(clk_10));
-    debounce db_l(.pb_debounced(dp_Odown), .pb(octaveDOWN), .clk(clk_10));
-    debounce db_rst(.pb_debounced(dp_rst), .pb(rst), .clk(clk_10));
+    debounce db_u(.pb_debounced(dp_Volup), .pb(volUP), .clk(clk_16));
+    debounce db_d(.pb_debounced(dp_Voldown), .pb(volDOWN), .clk(clk_16));
+    debounce db_r(.pb_debounced(dp_Oup), .pb(octaveUP), .clk(clk_16));
+    debounce db_l(.pb_debounced(dp_Odown), .pb(octaveDOWN), .clk(clk_16));
+    debounce db_rst(.pb_debounced(dp_rst), .pb(rst), .clk(clk_16));
 
     wire out_volUp;
     wire out_volDown;
