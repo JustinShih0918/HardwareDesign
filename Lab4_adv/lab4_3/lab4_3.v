@@ -68,6 +68,7 @@ module lab4_3(
     // Note generation
     // [in]  processed frequency
     // [out] audio wave signal (using square wave here)
+    reg [3:0] vol;
     note_gen noteGen_00(
         .clk(clk), 
         .rst(rst), 
@@ -219,7 +220,6 @@ module lab4_3(
         else LED <= next_led;
     end
 
-    reg [3:0] vol;
     integer i;
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
