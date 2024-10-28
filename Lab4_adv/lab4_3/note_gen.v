@@ -62,21 +62,29 @@ module note_gen(
     // Volume is controlled here
     reg [15:0] high, low;
     always @(posedge clk) begin
-        if(volume == 2) begin
-            high <= 16'hA000;
+        if(volume == 4'b0001) begin
+            high <= 16'hA500;
+            low <= 16'hA000;
+        end
+        if(volume == 4'b0010) begin
+            high <= 16'hDE00;
+            low <= 16'hD500;
+        end
+        else if(volume == 4'b0011) begin
+            high <= 16'hDFF0;
+            low <= 16'hD000;
+        end
+        else if(volume == 4'b0100) begin
+            high <= 16'hE000;
+            low <= 16'h2000;
+        end
+        else if(volume == 4'b0101) begin
+            high <= 16'hFFFF;
             low <= 16'h1000;
         end
-        else if(volume == 3) begin
-            high <= 16'hE000;
-            low <= 16'h2000;
-        end
-        else if(volume == 4) begin
-            high <= 16'hFFFF;
-            low <= 16'h1111;
-        end
         else begin
-            high <= 16'hE000;
-            low <= 16'h2000;
+            high <= 16'h0000;
+            low <= 16'h0000;
         end
     end
 

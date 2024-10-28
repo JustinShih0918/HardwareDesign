@@ -328,7 +328,7 @@ module lab4_2 (
                                     else next_led[16 - key_num] <= next_led[16 - key_num];
                                     prev_change_leds <= last_change;
                               end     
-                        end  
+                        end
                   end
             end
             else if(state == FINAL) begin

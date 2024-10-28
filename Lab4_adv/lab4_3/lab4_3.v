@@ -22,6 +22,7 @@ module lab4_3(
     output wire audio_sck,  // serial clock
     output wire audio_sdin, // serial audio data input
     output wire [6:0] DISPLAY,
+    output reg [3:0] vol,
     output wire [3:0] DIGIT
     );      
     
@@ -219,7 +220,7 @@ module lab4_3(
         else LED <= next_led;
     end
 
-    reg [3:0] vol;
+    //reg [3:0] vol;
     integer i;
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
