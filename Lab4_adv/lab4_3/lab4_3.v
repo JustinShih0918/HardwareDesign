@@ -1,5 +1,11 @@
 `define silence   32'd50000000
-`define c4  32'd262   // C4
+`define c4 32'd262   // C4
+`define d4 32'd294   // D4
+`define e4 32'd330   // E4
+`define f4 32'd350   // F4
+`define g4 32'd392   // G4
+`define a4 32'd440   // A4
+`define b4 32'd494   // B4
 
 module lab4_3(
     input wire clk,
@@ -19,45 +25,45 @@ module lab4_3(
     output wire [3:0] DIGIT
     );      
     
+    // button porcessing
+    wire clk_10;
+    clock_divider #(.n(10)) clock_10(.clk(clk), .clk_div(clk_10));
+    
+    wire dp_Volup;
+    wire dp_Voldown;
+    wire dp_Oup;
+    wire dp_Odown;
+    wire dp_rst;
+    debounce db_u(.pb_debounced(dp_Volup), .pb(volUP), .clk(clk_10));
+    debounce db_d(.pb_debounced(dp_Voldown), .pb(volDOWN), .clk(clk_10));
+    debounce db_r(.pb_debounced(dp_Oup), .pb(octaveUP), .clk(clk_10));
+    debounce db_l(.pb_debounced(dp_Odown), .pb(octaveDOWN), .clk(clk_10));
+    debounce db_rst(.pb_debounced(dp_rst), .pb(rst), .clk(clk_10));
+
+    wire out_volUp;
+    wire out_volDown;
+    wire out_octUp;
+    wire out_octDown;
+    wire out_rst;
+    one_pulse op_vu(.clk(clk), .pb_in(dp_Volup), .pb_out(out_volUp));
+    one_pulse op_vd(.clk(clk), .pb_in(dp_Voldown), .pb_out(out_volDown));
+    one_pulse op_ou(.clk(clk), .pb_in(dp_Oup), .pb_out(out_octUp));
+    one_pulse op_od(.clk(clk), .pb_in(dp_Odown), .pb_out(out_octDown));
+    one_pulse op_rst(.clk(clk), .pb_in(dp_rst), .pb_out(out_rst));
 
     // Internal Signal
     wire [15:0] audio_in_left, audio_in_right;
 
-    wire [31:0] freqL, freqR;           // Raw frequency
+    reg [31:0] freqL, freqR;           // Raw frequency
     wire [21:0] freq_outL, freq_outR;    // Processed frequency, adapted to the clock rate of Basys3
-
-    /*------------------ This part does not included in Lab4 ------------------*/
-    // wire [11:0] ibeatNum;               // Beat counter
-
-    // Player Control
-    // [in]  reset, clock, _play, _slow, _music, and _mode
-    // [out] beat number
-    // player_control #(.LEN(128)) playerCtrl_00 ( 
-    //     .clk(clkDiv22),
-    //     .reset(rst),
-    //     ._play(1'b1), 
-    //     ._mode(1'b0),
-    //     .ibeat(ibeatNum)
-    // );
-
-    // Music module
-    // [in]  beat number and en
-    // [out] left & right raw frequency
-    // music_example music_00 (
-    //     .ibeatNum(ibeatNum),
-    //     .en(1'b1),
-    //     .toneL(freqL),
-    //     .toneR(freqR)
-    // );
-    /*------------------------------------------------------------------------*/
 
     // clkDiv22
     wire clkDiv22;
     clock_divider #(.n(22)) clock_22(.clk(clk), .clk_div(clkDiv22));    // for audio
     // freq_outL, freq_outR
     // Note gen makes no sound, if freq_out = 50000000 / `silence = 1
-    // assign freq_outL = 50000000 / freqL;
-    // assign freq_outR = 50000000 / freqR;
+    assign freq_outL = 50000000 / freqL;
+    assign freq_outR = 50000000 / freqR;
 
     // Note generation
     // [in]  processed frequency
@@ -83,5 +89,105 @@ module lab4_3(
         .audio_sck(audio_sck),              // serial clock
         .audio_sdin(audio_sdin)             // serial audio data input
     );
+
+    // keyboard controller and 7-segment display controller
+    reg [15:0] nums;
+    reg [3:0] key_num;
+    reg [9:0] last_key;
+    wire [511:0] key_down;
+    wire [8:0] last_change;
+    wire been_ready;
+    parameter [8:0] key_code [0:6] = {
+        9'b0_0001_1100, // a -> 1C
+        9'b0_0001_1011, // s -> 1B
+        9'b0_0010_0011, // d -> 23
+        9'b0_0010_1011, // f -> 2B
+        9'b0_0011_0100  // g -> 34
+        9'b0_0011_0011  // h -> 33
+        9'b0_0011_1011  // j -> 3B
+    };
+
+    SevenSegment seven_seg(
+        .display(DISPLAY),
+        .digit(DIGIT),
+        .nums(nums),
+        .rst(out_rst),
+        .clk(clk)
+    );
+
+    KeyboardDecoder key_de(
+        .key_down(key_down),
+        .last_change(last_change),
+        .key_valid(been_ready),
+        .PS2_DATA(PS2_DATA),
+        .PS2_CLK(PS2_CLK),
+        .rst(out_rst),
+        .clk(clk)
+    );
+
+    
+
+    reg [3:0] octLevel;
+    always @(posedge clk, posedge out_rst) begin
+        if(out_rst) nums <= 16'b1111_1111_1111_1111;
+        else begin
+            nums <= nums;
+            if(been_ready && key_down[last_change] == 1'b1) begin
+                if(key_num != 4'b1111) nums <= {8'b1111_1111, key_num, octLevel};
+            end
+            else nums <= 16'b1111_1111_1111_1111;
+        end
+    end
+
+    always @(posedge clk, posedge out_rst) begin
+        if(out_rst) octLevel <= 5;
+        else begin
+            if(out_octUp && octLevel < 5) octLevel <= octLevel + 1;
+            else if(out_octDown && octLevel > 3) octLevel <= octLevel - 1;
+            else octLevel <= octLevel;
+        end
+    end
+
+    // mapping
+    always @(*) begin
+        case(last_change)
+            key_code[00] : key_num <= 4'b1010;
+            key_code[01] : key_num <= 4'b1011;
+            key_code[02] : key_num <= 4'b1100;
+            key_code[03] : key_num <= 4'b1101;
+            key_code[04] : key_num <= 4'b1001;
+            key_code[05] : key_num <= 4'b1110;
+            key_code[06] : key_num <= 4'b0110;
+            default : key_num <= 4'b1111;
+        endcase
+    end
+
+    // led controller
+    reg [4:0] next_led;
+    always @(posedge clk, posedge out_rst) begin
+        if(out_rst) LED <= 5'b00111;
+        else LED <= next_led;
+    end
+
+    reg [3:0] vol;
+    integer i;
+    always @(posedge clkm posedge out_rst) begin
+        if(out_rst) begin
+            vol <= 3;
+            next_led <= 5'b00111;
+        end
+        else begin
+            if(out_volUp && vol < 5) vol <= vol + 1;
+            else if(out_volDown && vol > 1) vol <= vol - 1;
+            else vol <= vol;
+            for(i = 0; i<5; i = i + 1) begin
+                if(i<vol) next_led[i] <= 1;
+                else next_led[i] <= 0;
+            end
+        end
+    end
+
+
+    
 
 endmodule
