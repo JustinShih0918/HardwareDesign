@@ -1,7 +1,7 @@
 module note_gen(
     input clk, // clock from crystal
     input rst, // active high reset
-    input [3:0] volume, 
+    input [3:0] wire volume, 
     input [21:0] note_div_left, // div for note generation
     input [21:0] note_div_right,
     output [15:0] audio_left,
