@@ -131,16 +131,15 @@ module lab4_3(
     reg [31:0] next_freq;
     always @(*) begin
         case(key_num)
-            4'b1010 : next_freq = `c4;
-            4'b1011 : next_freq = `d4;
-            4'b1100 : next_freq = `e4;
-            4'b1101 : next_freq = `f4;
-            4'b1001 : next_freq = `g4;
-            4'b1110 : next_freq = `a4;
-            4'b0110 : next_freq = `b4;
+            4'b1010 : next_freq = `c4 * 2 ** (octLevel - 4);
+            4'b1011 : next_freq = `d4 * 2 ** (octLevel - 4);
+            4'b1100 : next_freq = `e4 * 2 ** (octLevel - 4);
+            4'b1101 : next_freq = `f4 * 2 ** (octLevel - 4);
+            4'b1001 : next_freq = `g4 * 2 ** (octLevel - 4);
+            4'b1110 : next_freq = `a4 * 2 ** (octLevel - 4);
+            4'b0110 : next_freq = `b4 * 2 ** (octLevel - 4);
             default : next_freq = `silence;
         endcase
-        next_freq = next_freq * 2^(octLevel - 4);
     end
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
@@ -150,14 +149,20 @@ module lab4_3(
         end
         else begin
             nums <= nums;
-            freqL <= next_freq;
-            freqR <= next_freq;
+            freq_outL <= freq_outL;
+            freq_outR <= freq_outR;
             if(been_ready && key_down[last_change] == 1'b1) begin
                 if(key_num != 4'b1111) begin
                     nums <= {8'b1111_1111, key_num, octLevel};
+                    freqL <= next_freq;
+                    freqR <= next_freq;
                 end
             end
-            else if(key_down[last_change] == 1'b0) nums <= 16'b1111_1111_1111_1111;
+            else if(key_down[last_change] == 1'b0) begin
+                nums <= 16'b1111_1111_1111_1111;
+                freqL <= `silence;
+                freqR <= `silence;
+            end
         end
     end
 
