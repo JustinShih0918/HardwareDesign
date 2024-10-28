@@ -42,10 +42,10 @@ module KeyboardDecoder(
 		.clk(clk)
 	);
 	
-	onepulse op (
-		.signal(been_ready),
+	one_pulse op (
 		.clk(clk),
-		.op(pulse_been_ready)
+		.pb_in(been_ready),
+		.pb_out(pulse_been_ready)
 	);
     
     always @ (posedge clk, posedge rst) begin

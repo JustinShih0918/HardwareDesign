@@ -102,8 +102,8 @@ module lab4_3(
         9'b0_0001_1011, // s -> 1B
         9'b0_0010_0011, // d -> 23
         9'b0_0010_1011, // f -> 2B
-        9'b0_0011_0100  // g -> 34
-        9'b0_0011_0011  // h -> 33
+        9'b0_0011_0100,  // g -> 34
+        9'b0_0011_0011,  // h -> 33
         9'b0_0011_1011  // j -> 3B
     };
 
@@ -140,7 +140,7 @@ module lab4_3(
     end
 
     always @(posedge clk, posedge out_rst) begin
-        if(out_rst) octLevel <= 5;
+        if(out_rst) octLevel <= 4;
         else begin
             if(out_octUp && octLevel < 5) octLevel <= octLevel + 1;
             else if(out_octDown && octLevel > 3) octLevel <= octLevel - 1;
@@ -171,7 +171,7 @@ module lab4_3(
 
     reg [3:0] vol;
     integer i;
-    always @(posedge clkm posedge out_rst) begin
+    always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
             vol <= 3;
             next_led <= 5'b00111;
