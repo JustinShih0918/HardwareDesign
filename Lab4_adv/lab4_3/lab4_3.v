@@ -94,6 +94,7 @@ module lab4_3(
     // keyboard controller and 7-segment display controller
     reg [15:0] nums;
     reg [3:0] key_num;
+    reg [3:0] cur_key_num;
     reg [9:0] last_key;
     wire [511:0] key_down;
     wire [8:0] last_change;
@@ -131,37 +132,8 @@ module lab4_3(
         .clk(clk)
     );
 
-    
-
     reg [3:0] octLevel;
     reg [31:0] next_freq;
-
-    always @(*) begin
-        if(octLevel >=4) begin
-            case(key_num)
-                4'b1010 : next_freq = `c4 * 2 ** (octLevel - 4);
-                4'b1011 : next_freq = `d4 * 2 ** (octLevel - 4);
-                4'b1100 : next_freq = `e4 * 2 ** (octLevel - 4);
-                4'b1101 : next_freq = `f4 * 2 ** (octLevel - 4);
-                4'b1001 : next_freq = `g4 * 2 ** (octLevel - 4);
-                4'b1110 : next_freq = `a4 * 2 ** (octLevel - 4);
-                4'b0110 : next_freq = `b4 * 2 ** (octLevel - 4);
-                default : next_freq = `silence;
-            endcase 
-        end
-        else if(octLevel == 3) begin
-            case(key_num)
-                4'b1010 : next_freq = `c4 / 2;
-                4'b1011 : next_freq = `d4 / 2;
-                4'b1100 : next_freq = `e4 / 2;
-                4'b1101 : next_freq = `f4 / 2;
-                4'b1001 : next_freq = `g4 / 2;
-                4'b1110 : next_freq = `a4 / 2;
-                4'b0110 : next_freq = `b4 / 2;
-                default : next_freq = `silence;
-            endcase
-        end
-    end
 
     always @(posedge clk, posedge out_rst) begin
         if(out_rst) begin
@@ -174,12 +146,47 @@ module lab4_3(
             freqL <= freqL;
             freqR <= freqR;
             prev_change <= prev_change;
-            if(been_ready && key_down[last_change] == 1'b1 && (delay_prev == 1'b0 || prev_change == last_change)) begin
+            if(key_down[last_change] == 1'b1 && delay_prev == 1'b0) begin
                 if(key_num != 4'b1111) begin
+                    cur_key_num <= key_num;
                     nums <= {8'b1111_1111, key_num, octLevel};
                     freqL <= next_freq;
                     freqR <= next_freq;
                     prev_change <= last_change;
+                end
+            end
+            else if(key_down[prev_change] == 1'b1) begin
+                if(cur_key_num != 4'b1111) begin
+                    cur_key_num <= cur_key_num;
+                    nums <= {8'b1111_1111, cur_key_num, octLevel};
+                    freqL <= next_freq;
+                    freqR <= next_freq;
+                    prev_change <= prev_change;
+
+                    if(octLevel >=4) begin
+                        case(cur_key_num)
+                            4'b1010 : next_freq <= `c4 * 2 ** (octLevel - 4);
+                            4'b1011 : next_freq <= `d4 * 2 ** (octLevel - 4);
+                            4'b1100 : next_freq <= `e4 * 2 ** (octLevel - 4);
+                            4'b1101 : next_freq <= `f4 * 2 ** (octLevel - 4);
+                            4'b1001 : next_freq <= `g4 * 2 ** (octLevel - 4);
+                            4'b1110 : next_freq <= `a4 * 2 ** (octLevel - 4);
+                            4'b0110 : next_freq <= `b4 * 2 ** (octLevel - 4);
+                            default : next_freq <= `silence;
+                        endcase 
+                    end
+                    else if(octLevel == 3) begin
+                        case(cur_key_num)
+                            4'b1010 : next_freq <= `c4 / 2;
+                            4'b1011 : next_freq <= `d4 / 2;
+                            4'b1100 : next_freq <= `e4 / 2;
+                            4'b1101 : next_freq <= `f4 / 2;
+                            4'b1001 : next_freq <= `g4 / 2;
+                            4'b1110 : next_freq <= `a4 / 2;
+                            4'b0110 : next_freq <= `b4 / 2;
+                            default : next_freq <= `silence;
+                        endcase
+                    end
                 end
             end
             else if(key_down[last_change] == 1'b0) begin
