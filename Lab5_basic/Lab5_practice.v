@@ -28,18 +28,21 @@ module lab5_practice (
     end
 
     reg [2:0] idx;
+    reg [7:0] sum;
     always @(posedge clk) begin
         if(rst) begin
             ans <= 0;
             done <= 0;
             idx <= 0;
+            sum <= 0;
         end
         else if(en_add && !done) begin
-            ans <= ans + memory[idx];
+            sum <= sum + memory[idx];
             idx <= idx + 1;
             if(idx == 5) begin
                 done <= 1;
                 idx <= 0;
+                ans <= sum;
             end
         end
     end
