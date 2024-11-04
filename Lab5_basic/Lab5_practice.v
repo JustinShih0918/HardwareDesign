@@ -27,7 +27,7 @@ module lab5_practice (
         else if(done) en_add <= 0;
     end
 
-    reg [2:0]idx
+    reg [2:0] idx;
     always @(posedge clk) begin
         if(rst) begin
             ans <= 0;
