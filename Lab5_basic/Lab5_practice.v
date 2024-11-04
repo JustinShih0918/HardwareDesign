@@ -15,6 +15,7 @@ module lab5_practice (
     reg [7:0] memory [0:5];
     reg [2:0] idx;
     reg [7:0] sum;
+    reg en_add;
     integer i;
     always @(posedge clk) begin
         if(rst) begin
@@ -24,10 +25,12 @@ module lab5_practice (
             sum <= 0;
             idx <= 0;
             done <= 0;
+            en_add <= 0;
         end
         else if(we) memory[addr] <= din;
         else if(re) dout <= memory[addr];
-        else if(start) begin
+        else if(start) en_add <= 1;
+        else if(en_add)begin
             if(idx < 6) begin
                 sum <= sum + memory[idx];
                 idx <= idx + 1;
@@ -35,6 +38,7 @@ module lab5_practice (
             else begin
                 ans <= sum;
                 done <= 1;
+                en_add <= 0;
             end
         end
     end
