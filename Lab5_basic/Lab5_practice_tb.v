@@ -30,7 +30,7 @@ module lab5_practice_tb;
 
     initial begin
         // Initialize inputs
-        clk = 0;
+        clk = 0;    
         rst = 1;
         addr = 0;
         we = 0;
@@ -88,9 +88,7 @@ module lab5_practice_tb;
         #10;
         start = 0;
 
-        // Wait for the done signal
-        wait(done);
-
+        #10
         // Check the result
         if (ans == 8'd210) begin
             $display("Test Passed: ans = %d", ans);

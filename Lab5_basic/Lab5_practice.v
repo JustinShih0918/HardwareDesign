@@ -28,7 +28,7 @@ module lab5_practice (
             ans <= 0;
             done <= 0;
         end
-        else i(start) begin
+        else if(start) begin
             for(i = 0; i < 6; i = i + 1) ans <= ans + memory[i];
             done <= 1;
         end
