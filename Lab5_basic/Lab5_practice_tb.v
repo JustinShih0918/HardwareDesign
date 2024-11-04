@@ -88,7 +88,7 @@ module lab5_practice_tb;
         #10;
         start = 0;
 
-        #10
+        #20;
         // Check the result
         if (ans == 8'd210) begin
             $display("Test Passed: ans = %d", ans);
