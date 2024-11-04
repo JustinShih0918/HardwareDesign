@@ -27,15 +27,20 @@ module lab5_practice (
         else if(done) en_add <= 0;
     end
 
-    integer j;
+    reg [2:0]idx
     always @(posedge clk) begin
         if(rst) begin
             ans <= 0;
             done <= 0;
+            idx <= 0;
         end
-        else if(en_add) begin
-            for(j = 0; j < 6; j = j + 1) ans <= ans + memory[j];
-            done <= 1;
+        else if(en_add && !done) begin
+            ans <= ans + memory[idx];
+            idx <= idx + 1;
+            if(idx == 5) begin
+                done <= 1;
+                idx <= 0;
+            end
         end
     end
     
