@@ -13,6 +13,7 @@ module lab5_practice (
     // add your design here
     // note that you are free to adjust the IO's data type
     reg [7:0] memory [0:5];
+    reg en_add;
     integer i;
     always @(posedge clk) begin
         if(rst) begin
@@ -36,13 +37,14 @@ module lab5_practice (
         end
         else if(en_add && !done) begin
             if(idx < 6) begin
-               sum <= sum + memory[idx];
-                idx <= idx + 1; 
+                sum <= sum + memory[idx];
+                idx <= idx + 1;
             end
             else if(idx == 6) begin
                 done <= 1;
                 idx <= 0;
                 ans <= sum;
+                sum <= 0;
             end
         end
     end
