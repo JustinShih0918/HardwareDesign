@@ -37,6 +37,7 @@ module lab5_1 (
         .dir(dir),
         .vmir(vmir),
         .hmir(hmir),
+        .enlarge(enlarge),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .pixel_addr(pixel_addr)
@@ -94,12 +95,12 @@ module mem_addr_gen(
     // enlarge
     always @ (posedge clk or posedge rst) begin
         if(rst) begin
-            zoom <= 0;
+            zoom <= 1;
         end                                                                                                                
         else if(enlarge) begin
             zoom <= 2;
         end
-        else zoom <= 0;
+        else zoom <= 1;
     end
 
     // mirror
