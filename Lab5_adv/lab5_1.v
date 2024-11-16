@@ -150,8 +150,20 @@ module mem_addr_gen(
         end
     end
     
-
-    assign pixel_addr = (vmir || hmir) ? ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800 : ((((xpos + run_x) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;  //640*480 --> 320*240 
+    always @(*) begin
+        if(vmir && hmir) begin
+            pixel_addr = ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800;
+        end
+        else if(vmir) begin
+            pixel_addr = ((((xpos + run_x) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800;
+        end
+        else if(hmir) begin
+            pixel_addr = ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;
+        end
+        else begin
+            pixel_addr = ((((xpos + run_x) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;
+        end
+    end
     
 endmodule
 
