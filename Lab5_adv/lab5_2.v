@@ -5,11 +5,11 @@ module lab5_2 (
     input wire hint,
     inout wire PS2_CLK,
     inout wire PS2_DATA,
-    output reg [3:0] vgaRed,
-    output reg [3:0] vgaGreen,
-    output reg [3:0] vgaBlue,
-    output reg hsync,
-    output reg vsync,
+    output wire [3:0] vgaRed,
+    output wire [3:0] vgaGreen,
+    output wire [3:0] vgaBlue,
+    output wire hsync,
+    output wire vsync,
     output reg pass
 );
     wire [11:0] data;
@@ -17,7 +17,7 @@ module lab5_2 (
     wire clk_22;
     wire [16:0] pixel_addr;
     wire [11:0] pixel_1, pixel_2, pixel_3, pixel_4, pixel_5, pixel_6, pixel_7, pixel_8;
-    wire [11:0] pixel;
+    reg [11:0] pixel;
     wire [3:0] img_select;
     wire valid;
     wire [9:0] h_cnt; //640
@@ -45,7 +45,7 @@ module lab5_2 (
     );
 
     // memory modules
-{
+
     blk_mem_gen_1 blk_mem_gen_1_inst(
         .clka(clk_25MHz),
         .wea(0),
@@ -109,7 +109,7 @@ module lab5_2 (
         .dina(data[11:0]),
         .douta(pixel_8)
     );
-}
+
     always @(*) begin
         case (img_select)
             4'b0000 : pixel = pixel_1;
@@ -132,7 +132,7 @@ module lab5_2 (
         endcase
     end
 
-    assign {vgaRed, vgaGreen, vgaBlue} = (valid) ? pixel : 12'h000;
+    assign {vgaRed, vgaGreen, vgaBlue} = (valid == 1'b1) ? pixel : 12'h000;
 
 endmodule
 
@@ -144,7 +144,7 @@ module mem_addr_gen(
     input wire [9:0] h_cnt,
     input wire [9:0] v_cnt,
     output reg [3:0] img_select,
-    output [16:0] pixel_addr
+    output reg [16:0] pixel_addr
 );
 
     wire [9:0] x = h_cnt >> 1;
