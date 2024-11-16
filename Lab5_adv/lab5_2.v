@@ -33,6 +33,12 @@ module lab5_2 (
         .v_cnt(v_cnt)
     );
 
+    clock_divider clk_wiz_0_inst(
+        .clk(clk),
+        .clk1(clk_25MHz),
+        .clk22(clk_22)
+    );
+
     mem_addr_gen mem_addr_gen_inst(
         .clk(clk_22),
         .rst(rst),
