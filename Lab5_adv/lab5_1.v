@@ -72,7 +72,7 @@ module mem_addr_gen(
     input enlarge,
     input [9:0] h_cnt,
     input [9:0] v_cnt,
-    output [16:0] pixel_addr
+    output reg [16:0] pixel_addr
 );
     
     reg [9:0] run_x;
