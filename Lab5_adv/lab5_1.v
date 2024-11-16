@@ -114,7 +114,7 @@ module mem_addr_gen(
                 turn_y <= 480;
             end
             else if(vmir) begin
-                turn_y <= 480;
+                turn_y <= 240;
                 turn_x <= 0;
             end
             else if(hmir) begin
