@@ -22,7 +22,6 @@ module lab5_1 (
     wire [9:0] h_cnt; //640
     wire [9:0] v_cnt;  //480
     
-    
     assign {vgaRed, vgaGreen, vgaBlue} = (valid==1'b1) ? pixel:12'h0;
 
     clock_divider clk_wiz_0_inst(
@@ -38,7 +37,6 @@ module lab5_1 (
         .dir(dir),
         .vmir(vmir),
         .hmir(hmir),
-        .enlarge(enlarge),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .pixel_addr(pixel_addr)
@@ -87,22 +85,21 @@ module mem_addr_gen(
     wire [9:0] center_x = IMG_W/2;
     wire [9:0] center_y = IMG_H/2;
 
-    reg [1:0] zoom;
-    wire [10:0] xpos; 
-    assign xpos = center_x + ((h_cnt - 320) >> zoom);
-    wire [10:0] ypos; 
-    assign ypos = center_y + ((v_cnt - 240) >> zoom);
+    reg [3:0] zoom;
+
+    wire [9:0] xpos = center_x + ((h_cnt - 320) >> zoom);
+    wire [9:0] ypos = center_y + ((v_cnt - 240) >> zoom);
 
 
     // enlarge
     always @ (posedge clk or posedge rst) begin
         if(rst) begin
-            zoom <= 1;
+            zoom <= 0;
         end                                                                                                                
         else if(enlarge) begin
             zoom <= 2;
         end
-        else zoom <= 1;
+        else zoom <= 0;
     end
 
     // mirror
@@ -155,13 +152,13 @@ module mem_addr_gen(
     
     always @(*) begin
         if(vmir && hmir) begin
-            pixel_addr = ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800;
+            pixel_addr = ((((turn_x - (xpos + run_x) + IMG_W) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y) + IMG_H) % IMG_H)) % 76800;
         end
         else if(vmir) begin
-            pixel_addr = ((((xpos + run_x) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800;
+            pixel_addr = ((((xpos + run_x) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y) + IMG_H) % IMG_H)) % 76800;
         end
         else if(hmir) begin
-            pixel_addr = ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;
+            pixel_addr = ((((turn_x - (xpos + run_x) + IMG_W) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;
         end
         else begin
             pixel_addr = ((((xpos + run_x) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;
