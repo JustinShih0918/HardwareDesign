@@ -146,8 +146,8 @@ module mem_addr_gen(
             end
         end
         else begin
-            run_x <= 0;
-            run_y <= 0;
+            run_x <= run_x;
+            run_y <= run_y;
         end
     end
     
