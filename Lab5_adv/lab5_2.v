@@ -8,7 +8,7 @@ module lab5_2 (
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue,
-    output reg hysnc,
+    output reg hsync,
     output reg vsync,
     output reg pass
 );
