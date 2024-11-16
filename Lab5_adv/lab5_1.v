@@ -22,6 +22,7 @@ module lab5_1 (
     wire [9:0] h_cnt; //640
     wire [9:0] v_cnt;  //480
     
+    
     assign {vgaRed, vgaGreen, vgaBlue} = (valid==1'b1) ? pixel:12'h0;
 
     clock_divider clk_wiz_0_inst(
@@ -37,6 +38,7 @@ module lab5_1 (
         .dir(dir),
         .vmir(vmir),
         .hmir(hmir),
+        .enlarge(enlarge),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .pixel_addr(pixel_addr)
@@ -85,10 +87,11 @@ module mem_addr_gen(
     wire [9:0] center_x = IMG_W/2;
     wire [9:0] center_y = IMG_H/2;
 
-    reg [3:0] zoom;
-
-    wire [9:0] xpos = center_x + ((h_cnt - 320) >> zoom);
-    wire [9:0] ypos = center_y + ((v_cnt - 240) >> zoom);
+    reg [1:0] zoom;
+    wire [10:0] xpos; 
+    assign xpos = center_x + ((h_cnt - 320) >> zoom);
+    wire [10:0] ypos; 
+    assign ypos = center_y + ((v_cnt - 240) >> zoom);
 
 
     // enlarge
