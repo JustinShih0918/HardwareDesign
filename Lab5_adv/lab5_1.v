@@ -12,6 +12,158 @@ module lab5_1 (
     output reg hysnc,
     output reg vsync
 );
-    // add your design here
 
+    wire [11:0] data;
+    wire clk_25MHz;
+    wire clk_22;
+    wire [16:0] pixel_addr;
+    wire [11:0] pixel;
+    wire valid;
+    wire [9:0] h_cnt; //640
+    wire [9:0] v_cnt;  //480
+    
+    assign {vgaRed, vgaGreen, vgaBlue} = (valid==1'b1) ? pixel:12'h0;
+
+    clock_divider clk_wiz_0_inst(
+      .clk(clk),
+      .clk1(clk_25MHz),
+      .clk22(clk_22)
+    );
+
+    mem_addr_gen mem_addr_gen_inst(
+        .clk(clk_22),
+        .rst(rst),
+        .en(en),
+        .dir(dir),
+        .vmir(vmir),
+        .hmir(hmir),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .pixel_addr(pixel_addr)
+    );
+
+    blk_mem_gen_0 blk_mem_gen_0_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel)
+    );
+
+    vga_controller   vga_inst(
+        .pclk(clk_25MHz),
+        .reset(rst),
+        .hsync(hsync),
+        .vsync(vsync),
+        .valid(valid),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt)
+    );
+
+endmodule
+
+module mem_addr_gen(
+    input clk,
+    input rst,
+    input en,
+    input dir,
+    input vmir,
+    input hmir,
+    input enlarge,
+    input [9:0] h_cnt,
+    input [9:0] v_cnt,
+    output [16:0] pixel_addr
+);
+    
+    reg [9:0] run_x;
+    reg [9:0] run_y; 
+    reg [9:0] turn_y;
+    reg [9:0] turn_x;
+    parameter IMG_W = 320;
+    parameter IMG_H = 240;
+
+    wire [9:0] center_x = IMG_W/2;
+    wire [9:0] center_y = IMG_H/2;
+
+    reg [3:0] zoom;
+
+    wire [9:0] xpos = center_x + ((h_cnt - 320) >> zoom);
+    wire [9:0] ypos = center_y + ((v_cnt - 240) >> zoom);
+
+
+    // enlarge
+    always @ (posedge clk or posedge rst) begin
+        if(rst) begin
+            zoom <= 0;
+        end                                                                                                                
+        else if(enlarge) begin
+            if(zoom < 2) begin
+                zoom <= zoom + 1;
+            end
+        end
+    end
+
+    // mirror
+    always @(posedge clk, posedge rst) begin
+        if(rst) begin
+            turn_x <= 0;
+            turn_y <= 0;
+        end
+        else begin
+            if(vmir && hmir) begin
+                turn_x <= 640;
+                turn_y <= 480;
+            end
+            else if(vmir) begin
+                turn_y <= 480;
+                turn_x <= 0;
+            end
+            else if(hmir) begin
+                turn_x <= 640;
+                turn_y <= 0;
+            end
+        end
+    end
+
+    // direction
+    always @(posedge clk, posedge rst) begin
+        if(rst) begin
+            run_x <= 0;
+            run_y <= 0;
+        end
+        else begin
+            if(dir) begin
+                run_x <= run_x + 1;
+                run_y <= run_y - 1;
+                if(run_x == 319) run_x <= 0;
+                else if(run_y == 0) run_y <= 239;
+            end
+            else begin
+                run_x <= run_x - 1;
+                run_y <= run_y + 1;
+                if(run_x == 0) run_x <= 319;
+                else if(run_y == 239) run_y <= 0;
+            end
+        end
+    end
+    
+
+    assign pixel_addr = (en) ? ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800 : ((((xpos + run_x) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;  //640*480 --> 320*240 
+    
+endmodule
+
+module clock_divider(clk1, clk, clk22);
+    input clk;
+    output clk1;
+    output clk22;
+    reg [21:0] num;
+    wire [21:0] next_num;
+
+    always @(posedge clk) begin
+    num <= next_num;
+    end
+
+    assign next_num = num + 1'b1;
+    assign clk1 = num[1];
+    assign clk22 = num[21];
 endmodule
