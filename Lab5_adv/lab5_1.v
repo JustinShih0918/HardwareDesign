@@ -94,13 +94,12 @@ module mem_addr_gen(
     // enlarge
     always @ (posedge clk or posedge rst) begin
         if(rst) begin
-            zoom <= 0;
+            zoom <= 1;
         end                                                                                                                
         else if(enlarge) begin
-            if(zoom < 2) begin
-                zoom <= zoom + 1;
-            end
+            zoom <= 2;
         end
+        else zoom <= 1;
     end
 
     // mirror
@@ -131,7 +130,7 @@ module mem_addr_gen(
             run_x <= 0;
             run_y <= 0;
         end
-        else begin
+        else if(en) begin
             if(dir) begin
                 run_x <= run_x + 1;
                 run_y <= run_y - 1;
@@ -145,10 +144,14 @@ module mem_addr_gen(
                 else if(run_y == 239) run_y <= 0;
             end
         end
+        else begin
+            run_x <= 0;
+            run_y <= 0;
+        end
     end
     
 
-    assign pixel_addr = (en) ? ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800 : ((((xpos + run_x) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;  //640*480 --> 320*240 
+    assign pixel_addr = (vmir || hmir) ? ((((turn_x - (xpos + run_x)) % IMG_W)) + IMG_W * ((turn_y - (ypos + run_y)) % IMG_H)) % 76800 : ((((xpos + run_x) % IMG_W)) + IMG_W * ((ypos + run_y) % IMG_H)) % 76800;  //640*480 --> 320*240 
     
 endmodule
 
