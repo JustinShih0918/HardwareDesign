@@ -110,15 +110,15 @@ module mem_addr_gen(
         end
         else begin
             if(vmir && hmir) begin
-                turn_x <= 640;
-                turn_y <= 480;
+                turn_x <= 639;
+                turn_y <= 239;
             end
             else if(vmir) begin
-                turn_y <= 240;
+                turn_y <= 239;
                 turn_x <= 0;
             end
             else if(hmir) begin
-                turn_x <= 640;
+                turn_x <= 639;
                 turn_y <= 0;
             end
         end
