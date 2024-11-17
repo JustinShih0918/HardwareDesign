@@ -356,7 +356,7 @@ module lab5_2 (
     end
 
     // execute block
-    always @(posedge clk) begin
+    always @(*) begin
         if(state == INIT) begin
             for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 12'h000;
         end
