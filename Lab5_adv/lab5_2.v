@@ -142,7 +142,7 @@ module lab5_2 (
     assign pixel_original_data[15] = pixel_original_data[7];
 
     parameter [11:0] img_pos [0:15] = {
-        0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7
+        12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7, 12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7
     };
 
     reg [15:0] is_good;
