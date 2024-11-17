@@ -300,7 +300,10 @@ module lab5_2 (
                 if(win_cnt == 8) next_state <= FINISH;
                 else next_state <= GAME;
             end
-            FINISH: 
+            FINISH: begin
+                if(out_start) next_state <= INIT;
+                else next_state <= FINISH;
+            end
             default: next_state <= next_state;
         endcase
     end
