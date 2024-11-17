@@ -10,6 +10,7 @@ module lab5_2 (
     output wire [3:0] vgaBlue,
     output wire hsync,
     output wire vsync,
+    output wire [4:0] key,
     output reg pass
 );
     wire [11:0] data;
@@ -153,6 +154,7 @@ module lab5_2 (
     wire [8:0] last_change;
     reg [8:0] prev_change;
     reg delay_prev;
+    assign key = key_num;
     wire been_ready;
     parameter [8:0] key_code [0:17] = {
         // 1 -> 16
@@ -285,9 +287,6 @@ module lab5_2 (
                 is_good[i] <= 0;
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
-        end
-        else if(next_state == GANE && state == SHOW) begin
-            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= 12'h000;
         end
         else if(state == GAME) begin
             if(out_hint) begin
