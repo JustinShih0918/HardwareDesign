@@ -11,6 +11,7 @@ module lab5_2 (
     output wire hsync,
     output wire vsync,
     output wire [4:0] key,
+    output wire [1:0] cur_state;
     output reg pass
 );
     wire [11:0] data;
@@ -238,7 +239,7 @@ module lab5_2 (
     parameter FINISH = 3;
 
     reg [1:0] state, next_state;
-
+    assign cur_state = state;
     always @(posedge clk, posedge rst) begin
         if(rst) state <= INIT;
         else state <= next_state;
