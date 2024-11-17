@@ -136,7 +136,7 @@ module lab5_2 (
 
     reg is_show [15:0];
     reg is_good [15:0];
-    assign key = {valid, is_show[3], is_show[2], is_show[1], is_show[0]};
+    assign key = {valid_input, is_show[3], is_show[2], is_show[1], is_show[0]};
 
     // keyboard
     reg [4:0] key_num;
@@ -289,7 +289,7 @@ module lab5_2 (
     end
 
     integer i;
-    reg valid;
+    reg valid_input;
     reg need_reset;
     always @(posedge clk) begin
         if(state == INIT) begin
@@ -299,7 +299,7 @@ module lab5_2 (
                 img_flip[i] <= 1'b0;
             end
             win_cnt <= 6'd0;
-            valid <= 1;
+            valid_input <= 1;
             pass <= 0;
         end
         else if(state == SHOW) begin
@@ -310,7 +310,7 @@ module lab5_2 (
                 else img_flip[i] <= 1'b0;
             end
             win_cnt <= 6'd0;
-            valid <= 1;
+            valid_input <= 1;
             pass <= 0;
             if(out_start) begin
                 for(i = 0; i < 16; i = i + 1) begin
@@ -322,7 +322,7 @@ module lab5_2 (
             end
         end
         else if(state == GAME) begin
-            valid <= valid;
+            valid_input <= valid_input
             win_cnt <= win_cnt;
             pass <= 0;
             for(i = 0; i < 16; i = i + 1) begin
@@ -337,25 +337,25 @@ module lab5_2 (
                     end
                     need_reset <= 0;
                 end
-                else if(key_down[last_change] && last_change == ENTER && !valid) begin
+                else if(key_down[last_change] && last_change == ENTER && !valid_input) begin
                     for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
-                    valid <= 1;
+                    valid_input <= 1;
                 end
-                else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid) begin
+                else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid_input) begin
                     is_show[pre_key_num] <= 1'b1;
                     img_flip[pre_key_num] <= ~img_flip[pre_key_num];
-                    valid <= 0;
+                    valid_input <= 0;
                 end
-                else if(key_down[last_change] && key_down[prev_change] && prev_change == LEFT_SHIFT && last_change != prev_change && valid) begin
+                else if(key_down[last_change] && key_down[prev_change] && prev_change == LEFT_SHIFT && last_change != prev_change && valid_input) begin
                     is_show[key_num] <= 1'b1;
                     img_flip[key_num] <= ~img_flip[key_num];
-                    valid <= 0;
+                    valid_input <= 0;
                 end
-                else if(key_down[last_change] && key_down[prev_change] && prev_change != last_change && valid) begin
+                else if(key_down[last_change] && key_down[prev_change] && prev_change != last_change && valid_input) begin
                     if(key_num <= 15 && key_num >= 0 && pre_key_num <= 15 && pre_key_num >= 0) begin
                         is_show[key_num] <= 1'b1;
                         is_show[pre_key_num] <= 1'b1;
-                        valid <= 0;
+                        valid_input <= 0;
                         if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == img_flip[pre_key_num]) begin
                             is_good[key_num] <= 1'b1;
                             is_good[pre_key_num] <= 1'b1;
@@ -376,7 +376,7 @@ module lab5_2 (
                 is_good[i] <= 1'b1;
             end
             win_cnt <= 6'd0;
-            valid <= 1;
+            valid_input <= 1;
         end
     end
     
