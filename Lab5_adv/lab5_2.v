@@ -136,7 +136,7 @@ module lab5_2 (
 
     reg is_show [15:0];
     reg is_good [15:0];
-    assign key = is_show[4:0];
+    assign key = {is_show[4], is_show[3], is_show[2], is_show[1], is_show[0]};
 
     // keyboard
     reg [4:0] key_num;
@@ -332,6 +332,7 @@ module lab5_2 (
             if(!hint) begin
                 if(key_down[last_change] && last_change == ENTER && !valid) begin
                     for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
+                    valid <= 1;
                 end
                 else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid) begin
                     is_show[pre_key_num] <= 1'b1;
