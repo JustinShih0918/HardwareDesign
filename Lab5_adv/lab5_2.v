@@ -195,7 +195,7 @@ module lab5_2 (
     parameter ENTER = 9'b0_0101_1010;
 
     always @(*) begin
-        case (prev_change_1)
+        case (prev_change)
             key_code[0] : key_num = 5'b00000;
             key_code[1] : key_num = 5'b00001;
             key_code[2] : key_num = 5'b00010;
@@ -286,7 +286,7 @@ module lab5_2 (
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
         end
-        else if(next_state == GANE && state == SHOW) begin
+        else if(next_state == GAME && state == SHOW) begin
             for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= 12'h000;
         end
         else if(state == GAME) begin
