@@ -296,6 +296,7 @@ module lab5_2 (
             end
             win_cnt <= 6'd0;
             valid <= 1;
+            pass <= 0;
         end
         else if(state == SHOW) begin
             for(i = 0; i < 16; i = i + 1) begin
@@ -304,6 +305,7 @@ module lab5_2 (
             end
             win_cnt <= 6'd0;
             valid <= 1;
+            pass <= 0;
         end
         else if(state == SHOW && next_state == GAME) begin
             for(i = 0; i < 16; i = i + 1) begin
@@ -312,10 +314,12 @@ module lab5_2 (
             end
             win_cnt <= 6'd0;
             valid <= 1;
+            pass <= 0;
         end
         else if(state == GAME) begin
             valid <= valid;
             win_cnt <= win_cnt;
+            pass <= 0;
             for(i = 0; i < 16; i = i + 1) begin
                 is_good[i] <= is_good[i];
                 is_show[i] <= is_show[i];
