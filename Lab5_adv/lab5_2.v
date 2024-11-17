@@ -274,29 +274,27 @@ module lab5_2 (
                 is_good[i] <= 0;
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
+            if(out_start) for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 0;
         end
         else if(state == GAME) begin
             if(hint) begin
                 for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
             end
             else begin
-                for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 0;
-                // win_cnt <= win_cnt;
-                // if(key_down[last_change] && last_change != ENTER) begin
-                //     if(key_num <= 15 && key_num >= 0) begin
-                //         img_pixel_data[key_num] <= pixel_original_data[key_num];
-                //         is_good[key_num] <= 1;
-                //     end
-                // end
-                // else if(key_down[last_change] && last_change == ENTER) begin
-                //     for(i = 0 ; i < 16 ; i = i + 1) begin
-                //         if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
-                //         else img_pixel_data[i] <= 12'h000;
-                //     end
-                // end
-                // else begin
-                //     for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= img_pixel_data[i];
-                // end
+                for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= img_pixel_data[i];
+                win_cnt <= win_cnt;
+                if(key_down[last_change] && last_change != ENTER) begin
+                    if(key_num <= 15 && key_num >= 0) begin
+                        img_pixel_data[key_num] <= pixel_original_data[key_num];
+                        is_good[key_num] <= 1;
+                    end
+                end
+                else if(key_down[last_change] && last_change == ENTER) begin
+                    for(i = 0 ; i < 16 ; i = i + 1) begin
+                        if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
+                        else img_pixel_data[i] <= 12'h000;
+                    end
+                end
             end
         end
         else if(state == FINISH) begin
