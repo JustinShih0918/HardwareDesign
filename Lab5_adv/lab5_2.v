@@ -333,7 +333,13 @@ module lab5_2 (
             else if(key_down[last_change] && last_change == LEFT_SHIFT) begin
                 shift <= 1;
             end
-        end 
+        end
+        else if(state == FINISH) begin
+            for(k = 0; k < 16; k = k + 1) begin
+                is_good[k] <= 1;
+            end
+            win_cnt <= win_cnt;
+        end
     end
 
     integer i;
@@ -342,7 +348,6 @@ module lab5_2 (
             win_cnt <= 0;
             for(i = 0; i < 16; i = i + 1) begin
                 is_show[i] <= 1'b0;
-                is_good[i] <= 1'b0;
             end
         end
         else if(state == SHOW) begin
@@ -378,7 +383,6 @@ module lab5_2 (
                 is_show[i] <= 1'b1;
                 is_good[i] <= 1'b1;
             end
-            win_cnt = 0;
         end
     end
     
