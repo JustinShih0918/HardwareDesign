@@ -22,7 +22,7 @@ module lab5_2 (
     wire [11:0] pixel_original_data [0:15];
     reg [11:0] pixel;
     wire [3:0] img_select;
-    wire valid;
+    wire valid_key;
     wire [9:0] h_cnt; //640
     wire [9:0] v_cnt;  //480
 
@@ -46,7 +46,7 @@ module lab5_2 (
         .reset(rst),
         .hsync(hsync),
         .vsync(vsync),
-        .valid(valid),
+        .valid(valid_key),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt)
     );
