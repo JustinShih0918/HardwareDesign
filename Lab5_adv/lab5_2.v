@@ -293,6 +293,7 @@ module lab5_2 (
             for(i = 0; i < 16; i = i + 1) begin
                 is_show[i] <= 1'b0;
                 is_good[i] <= 1'b0;
+                img_flip[i] <= 1'b0;
             end
             win_cnt <= 6'd0;
             valid <= 1;
@@ -302,19 +303,20 @@ module lab5_2 (
             for(i = 0; i < 16; i = i + 1) begin
                 is_show[i] <= 1'b1;
                 is_good[i] <= 1'b0;
+                if(i == 0 || i == 1 || i == 13 || i == 14) img_flip[i] <= 1'b1;
+                else img_flip[i] <= 1'b0;
             end
             win_cnt <= 6'd0;
             valid <= 1;
             pass <= 0;
-        end
-        else if(state == SHOW && next_state == GAME) begin
-            for(i = 0; i < 16; i = i + 1) begin
+            if(out_start) begin
+                for(i = 0; i < 16; i = i + 1) begin
                 is_show[i] <= 1'b0;
                 is_good[i] <= 1'b0;
+                if(i == 0 || i == 1 || i == 13 || i == 14) img_flip[i] <= 1'b1;
+                else img_flip[i] <= 1'b0;
             end
-            win_cnt <= 6'd0;
-            valid <= 1;
-            pass <= 0;
+            end
         end
         else if(state == GAME) begin
             valid <= valid;
