@@ -137,6 +137,7 @@ module lab5_2 (
 
     // keyboard
     reg [4:0] key_num;
+    reg [4:0] pre_key_num;
     wire [511:0] key_down;
     wire [8:0] last_change;
     reg [8:0] prev_change;
@@ -182,7 +183,7 @@ module lab5_2 (
         9'b0_0101_1010
     };
     parameter ENTER = 9'b0_0101_1010;
-
+    parameter LEFT_SHIFT = 9'b0_0001_0010;
     always @(*) begin
         case (last_change)
             key_code[0] : key_num = 5'b00000;
@@ -203,6 +204,30 @@ module lab5_2 (
             key_code[15] : key_num = 5'b01111;
             key_code[16] : key_num = 5'b01111; // left shift
             key_code[17] : key_num = 5'b10000; // enter
+            default: key_num = 5'b11111;
+        endcase
+    end
+
+    always @(*) begin
+        case (prev_change)
+            key_code[0] : pre_key_num = 5'b00000;
+            key_code[1] : pre_key_num = 5'b00001;
+            key_code[2] : pre_key_num = 5'b00010;
+            key_code[3] : pre_key_num = 5'b00011;
+            key_code[4] : pre_key_num = 5'b00100;
+            key_code[5] : pre_key_num = 5'b00101;
+            key_code[6] : pre_key_num = 5'b00110;
+            key_code[7] : pre_key_num = 5'b00111;
+            key_code[8] : pre_key_num = 5'b01000;
+            key_code[9] : pre_key_num = 5'b01001;
+            key_code[10] : pre_key_num = 5'b01010;
+            key_code[11] : pre_key_num = 5'b01011;
+            key_code[12] : pre_key_num = 5'b01100;
+            key_code[13] : pre_key_num = 5'b01101;
+            key_code[14] : pre_key_num = 5'b01110;
+            key_code[15] : pre_key_num = 5'b01111;
+            key_code[16] : pre_key_num = 5'b01111; // left shift
+            key_code[17] : pre_key_num = 5'b10000; // enter
             default: key_num = 5'b11111;
         endcase
     end
@@ -281,21 +306,52 @@ module lab5_2 (
                 for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
             end
             else begin
-                for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= img_pixel_data[i];
                 win_cnt <= win_cnt;
-                if(key_down[last_change] && last_change != ENTER) begin
-                    if(key_num <= 15 && key_num >= 0) begin
-                        img_pixel_data[key_num] <= pixel_original_data[key_num];
-                        is_good[key_num] <= 1;
-                    end
-                end
-                else begin
-                    for(i = 0 ; i < 16 ; i = i + 1) begin
-                        if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
+                if(key_down[last_change] && last_change == ENTER) begin
+                    for(i = 0 ; i < 16; i = i + 1) begin
+                        if(is_good[i] == 1) img_pixel_data[i] <= pixel_original_data[i];
+                        else if(is_good[i] == 2) is_good[i] <= 0;
                         else img_pixel_data[i] <= 12'h000;
                     end
                 end
-                
+                else if(key_down[last_change] && last_change == LEFT_SHIFT) begin
+                    if(pre_key_num <= 15 && pre_key_num >= 0) begin
+                        img_flip[pre_key_num] <= ~img_flip[pre_key_num];
+                        is_good[pre_key_num] <= 2; 
+                        prev_change <= 9'b1_1111_1111;
+                    end
+                    else prev_change <= last_change;
+                    for(i = 0 ; i < 16; i = i + 1) begin
+                        if(is_good[i] > 0) img_pixel_data[i] <= pixel_original_data[i];
+                        else img_pixel_data[i] <= 12'h000;
+                    end
+                end
+                else if(key_down[last_change] && last_change != ENTER && last_change != LEFT_SHIFT && last_change != prev_change) begin
+                    win_cnt <= win_cnt;
+                    if(key_num <= 15 && key_num >= 0) begin
+                        is_good[key_num] <= 2;
+                        if(prev_change == LEFT_SHIFT) begin
+                            img_flip[key_num] <= ~img_flip[key_num];
+                            is_good[key_num] <= 2;
+                        end 
+                        else if(pre_key_num <= 15 && pre_key_num >= 0) begin
+                            if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == img_flip[pre_key_num]) begin
+                                is_good[key_num] <= 1;
+                                is_good[pre_key_num] <= 1;
+                                win_cnt <= win_cnt + 1;
+                            end
+                            else begin
+                                is_good[key_num] <= 2;
+                                is_good[pre_key_num] <= 2;
+                            end
+                        end
+                        else prev_change <= last_change;
+                        for(i = 0 ; i < 16; i = i + 1) begin
+                            if(is_good[i] > 0) img_pixel_data[i] <= pixel_original_data[i];
+                            else img_pixel_data[i] <= 12'h000;
+                        end
+                    end
+                end
             end
         end
         else if(state == FINISH) begin
