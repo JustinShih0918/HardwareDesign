@@ -11,7 +11,7 @@ module lab5_2 (
     output wire hsync,
     output wire vsync,
     output wire [4:0] key,
-    output wire [1:0] cur_state;
+    output wire [1:0] cur_state,
     output reg pass
 );
     wire [11:0] data;
@@ -26,31 +26,17 @@ module lab5_2 (
     wire [9:0] v_cnt;  //480
 
     wire dp_start;
-    wire dp_hint;
     debounce dp_inst(
         .pb_debounced(dp_start),
         .pb(start),
         .clk(clk)
     );
 
-    debounce dp_hint_inst(
-        .pb_debounced(dp_hint),
-        .pb(hint),
-        .clk(clk)
-    );
-
     wire out_start;
-    wire out_hint;
     one_pulse op_inst(
         .clk(clk),
         .pb_in(dp_start),
         .pb_out(out_start)
-    );
-
-    one_pulse op_hint_inst(
-        .clk(clk),
-        .pb_in(dp_hint),
-        .pb_out(out_hint)
     );
 
 
@@ -290,11 +276,11 @@ module lab5_2 (
             end
         end
         else if(state == GAME) begin
-            if(out_hint) begin
+            if(hint) begin
                 for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
             end
             else begin
-                for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+                for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 0;
                 // win_cnt <= win_cnt;
                 // if(key_down[last_change] && last_change != ENTER) begin
                 //     if(key_num <= 15 && key_num >= 0) begin
@@ -324,7 +310,7 @@ module lab5_2 (
         .clk(clk_25MHz),
         .rst(rst),
         .start(out_start),
-        .hint(out_hint),
+        .hint(hint),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .img_flip(img_flip),
