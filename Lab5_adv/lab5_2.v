@@ -143,7 +143,7 @@ module lab5_2 (
 
     parameter [11:0] img_pos [0:15] = {
         0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7
-    }
+    };
 
     reg [15:0] is_good;
 
@@ -197,7 +197,7 @@ module lab5_2 (
     parameter ENTER = 9'b0_0101_1010;
     always @(posedge clk) begin
         if(been_ready && key_down[last_change] && key_down[prev_change_1] && key_down[prev_change_2]) begin
-            prev_change_1 <= prev_change_1
+            prev_change_1 <= prev_change_1;
             prev_change_2 <= prev_change_2;
         end
         else if(been_ready && key_down[last_change] && key_down[prev_change_1]) begin
