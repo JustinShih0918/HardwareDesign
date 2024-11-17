@@ -148,12 +148,10 @@ module lab5_2 (
     reg [15:0] is_good;
 
     // keyboard
-    reg [4:0] key_num_1;
-    reg [4:0] key_num_2;
+    reg [4:0] key_num;
     wire [511:0] key_down;
     wire [8:0] last_change;
-    reg [8:0] prev_change_1;
-    reg [8:0] prev_change_2;
+    reg [8:0] prev_change;
     reg delay_prev;
     wire been_ready;
     parameter [8:0] key_code [0:16] = {
@@ -195,69 +193,28 @@ module lab5_2 (
         9'b0_0101_1010
     };
     parameter ENTER = 9'b0_0101_1010;
-    always @(posedge clk) begin
-        if(been_ready && key_down[last_change] && key_down[prev_change_1] && key_down[prev_change_2]) begin
-            prev_change_1 <= prev_change_1;
-            prev_change_2 <= prev_change_2;
-        end
-        else if(been_ready && key_down[last_change] && key_down[prev_change_1]) begin
-            prev_change_1 <= last_change;
-            prev_change_2 <= prev_change_1;
-        end
-        else if(been_ready && key_down[last_change]) begin
-            prev_change_1 <= last_change;
-        end
-        else begin
-            prev_change_1 <= prev_change_1;
-            prev_change_2 <= prev_change_2;
-        end
-    end
 
     always @(*) begin
         case (prev_change_1)
-            key_code[0] : key_num_1 = 5'b00000;
-            key_code[1] : key_num_1 = 5'b00001;
-            key_code[2] : key_num_1 = 5'b00010;
-            key_code[3] : key_num_1 = 5'b00011;
-            key_code[4] : key_num_1 = 5'b00100;
-            key_code[5] : key_num_1 = 5'b00101;
-            key_code[6] : key_num_1 = 5'b00110;
-            key_code[7] : key_num_1 = 5'b00111;
-            key_code[8] : key_num_1 = 5'b01000;
-            key_code[9] : key_num_1 = 5'b01001;
-            key_code[10] : key_num_1 = 5'b01010;
-            key_code[11] : key_num_1 = 5'b01011;
-            key_code[12] : key_num_1 = 5'b01100;
-            key_code[13] : key_num_1 = 5'b01101;
-            key_code[14] : key_num_1 = 5'b01110;
-            key_code[15] : key_num_1 = 5'b01111;
-            key_code[16] : key_num_1 = 5'b01111; // left shift
-            key_code[17] : key_num_1 = 5'b10000; // enter
-            default: key_num_1 = 5'b11111;
-        endcase
-    end
-
-    always @(*) begin
-        case (prev_change_2)
-            key_code[0] : key_num_2 = 5'b00000;
-            key_code[1] : key_num_2 = 5'b00001;
-            key_code[2] : key_num_2 = 5'b00010;
-            key_code[3] : key_num_2 = 5'b00011;
-            key_code[4] : key_num_2 = 5'b00100;
-            key_code[5] : key_num_2 = 5'b00101;
-            key_code[6] : key_num_2 = 5'b00110;
-            key_code[7] : key_num_2 = 5'b00111;
-            key_code[8] : key_num_2 = 5'b01000;
-            key_code[9] : key_num_2 = 5'b01001;
-            key_code[10] : key_num_2 = 5'b01010;
-            key_code[11] : key_num_2 = 5'b01011;
-            key_code[12] : key_num_2 = 5'b01100;
-            key_code[13] : key_num_2 = 5'b01101;
-            key_code[14] : key_num_2 = 5'b01110;
-            key_code[15] : key_num_2 = 5'b01111;
-            key_code[16] : key_num_2 = 5'b01111; // left shift
-            key_code[17] : key_num_2 = 5'b10000; // enter
-            default: key_num_2 = 5'b11111;
+            key_code[0] : key_num = 5'b00000;
+            key_code[1] : key_num = 5'b00001;
+            key_code[2] : key_num = 5'b00010;
+            key_code[3] : key_num = 5'b00011;
+            key_code[4] : key_num = 5'b00100;
+            key_code[5] : key_num = 5'b00101;
+            key_code[6] : key_num = 5'b00110;
+            key_code[7] : key_num = 5'b00111;
+            key_code[8] : key_num = 5'b01000;
+            key_code[9] : key_num = 5'b01001;
+            key_code[10] : key_num = 5'b01010;
+            key_code[11] : key_num = 5'b01011;
+            key_code[12] : key_num = 5'b01100;
+            key_code[13] : key_num = 5'b01101;
+            key_code[14] : key_num = 5'b01110;
+            key_code[15] : key_num = 5'b01111;
+            key_code[16] : key_num = 5'b01111; // left shift
+            key_code[17] : key_num = 5'b10000; // enter
+            default: key_num = 5'b11111;
         endcase
     end
 
@@ -318,6 +275,7 @@ module lab5_2 (
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
             win_cnt <= 0;
+            pass <= 0;
         end
         else if(state == SHOW) begin
             for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
@@ -327,7 +285,9 @@ module lab5_2 (
                 is_good[i] <= 0;
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
-            if(start) for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= 12'h000;
+        end
+        else if(next_state == GANE && state == SHOW) begin
+            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= 12'h000;
         end
         else if(state == GAME) begin
             if(out_hint) begin
@@ -335,25 +295,16 @@ module lab5_2 (
             end
             else begin
                 win_cnt <= win_cnt;
-                if(key_num_1 >= 0 && key_num_1 <= 15 && key_num_2 >= 0 && key_num_2 <= 15)begin
-                    img_pixel_data[key_num_1] <= pixel_original_data[key_num_1];
-                    img_pixel_data[key_num_2] <= pixel_original_data[key_num_2];
-                    is_good[key_num_1] <= 1;
-                    is_good[key_num_2] <= 1;
-                    if(img_pos[key_num_1] == img_pos[key_num_2] && img_flip[key_num_1] == img_flip[key_num_2]) win_cnt <= win_cnt + 1;
+                if(key_down[last_change] && last_change != ENTER) begin
+                    if(key_num <= 15 && key_num >= 0) begin
+                        img_pixel_data[key_num] <= pixel_original_data[key_num];
+                        is_good[key_num] <= 1;
+                    end
                 end
-                else if(key_num_1 == 5'b01111 && key_num_2 >= 0 && key_num_2 <= 15) begin
-                    img_flip[key_num_2] <= ~img_flip[key_num_2];
-                    img_pixel_data[key_num_2] <= pixel_original_data[key_num_2];
-                end
-                else if(key_num_2 == 5'b01111 && key_num_1 >= 0 && key_num_1 <= 15) begin
-                    img_flip[key_num_1] <= ~img_flip[key_num_1];
-                    img_pixel_data[key_num_1] <= pixel_original_data[key_num_1];
-                end
-                else if(key_down[last_change] == 1 && last_change == ENTER) begin
+                else if(key_down[last_change] && last_change == ENTER) begin
                     for(i = 0 ; i < 16 ; i = i + 1) begin
-                        if(is_good[i] == 0) img_pixel_data[i] <= 12'h000;
-                        else img_pixel_data[i] <= pixel_original_data[i];
+                        if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
+                        else img_pixel_data[i] <= 12'h000;
                     end
                 end
                 else begin
