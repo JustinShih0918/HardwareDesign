@@ -228,7 +228,7 @@ module lab5_2 (
             key_code[15] : pre_key_num = 5'b01111;
             key_code[16] : pre_key_num = 5'b01111; // left shift
             key_code[17] : pre_key_num = 5'b10000; // enter
-            default: key_num = 5'b11111;
+            default: pre_key_num = 5'b11111;
         endcase
     end
 
