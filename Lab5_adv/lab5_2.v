@@ -133,7 +133,8 @@ module lab5_2 (
         12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7, 12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7
     };
 
-    reg [1:0] is_good [0:15];
+    reg is_show [15:0];
+    reg is_good [15:0];
 
     // keyboard
     reg [4:0] key_num;
@@ -280,108 +281,99 @@ module lab5_2 (
     end
 
     // control block
-    integer i;
-    reg clear;
+    reg buffer;
+    reg shift;
+    integer k;
     always @(posedge clk) begin
-        if(state == INIT) begin
-            for(i = 0; i < 16; i = i + 1) begin
-                img_flip[i] <= 0;
-                is_good[i] <= 0;
-                if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
-            end
-            win_cnt <= 0;
-            pass <= 0;
-            clear <= 1;
-        end
-        else if(state == SHOW) begin
-            win_cnt <= 0;
-            for(i = 0; i < 16; i = i + 1) begin
-                img_flip[i] <= 0;
-                is_good[i] <= 0;
-                if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
-            end
-            clear <= 1;
-        end
-        else if(state == GAME) begin
-            if(hint) begin
-                win_cnt <= win_cnt;
-                clear <= clear;
-                prev_change <= prev_change;
-                for(i = 0 ; i < 16; i = i + 1) begin
-                    is_good[i] <= is_good[i];
-                    img_flip[i] <= img_flip[i];
-                end
-            end
-            else begin
-                win_cnt <= win_cnt;
-                clear <= clear;
-                prev_change <= prev_change;
-                for(i = 0 ; i < 16; i = i + 1) begin
-                    is_good[i] <= is_good[i];
-                    img_flip[i] <= img_flip[i];
-                end
-
-                if(key_down[last_change] && last_change == ENTER) begin
-                    clear <= 1;
-                    prev_change <= last_change;
-                end
-                else if(key_down[last_change] && last_change == LEFT_SHIFT) begin
-                    if(pre_key_num <= 15 && pre_key_num >= 0) begin
+        if(state == GAME) begin
+            if(key_down[last_change] && last_change != LEFT_SHIFT && last_change != ENTER) begin
+                if(key_num <= 15 && key_num >= 0) begin
+                    if(buffer == 1'b0 && !shift) begin
+                        buffer = 1'b1;
+                        prev_change <= last_change;
+                    end
+                    else if(buffer == 1'b0 && shift) begin
+                        buffer <= 1'b0;
+                        prev_change <= 9'b0_0000_0000;
+                        img_flip[key_num] <= ~img_flip[key_num];
+                    end
+                    else if(buffer == 1'b1 && !shift) begin
+                        buffer <= 1'b0;
+                        prev_change <= 9'b0_0000_0000;
+                    end
+                    else if(buffer == 1'b1 && shift) begin
+                        buffer <= 1'b0;
                         img_flip[pre_key_num] <= ~img_flip[pre_key_num];
-                        is_good[pre_key_num] <= 2; 
-                        clear <= 0;
-                    end
-                    else prev_change <= last_change;
-                end
-                else if(key_down[last_change] && last_change != ENTER && last_change != LEFT_SHIFT && last_change != prev_change) begin
-                    win_cnt <= win_cnt;
-                    if(key_num <= 15 && key_num >= 0) begin
-                        is_good[key_num] <= 2;
-                        clear <= 0;
-                        if(prev_change == LEFT_SHIFT) begin
-                            img_flip[key_num] <= ~img_flip[key_num];
-                        end
-                        else if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == img_flip[pre_key_num]) begin
-                            is_good[key_num] <= 1;
-                            is_good[pre_key_num] <= 1;
-                            win_cnt <= win_cnt + 1;
-                        end
+                        prev_change <= 9'b0_0000_0000;
                     end
                 end
             end
-        end
-        else if(state == FINISH) begin
-            pass <= 1;
-        end
+            else if(key_down[last_change] && last_change == LEFT_SHIFT) begin
+                shift <= 1;
+            end
+        end 
     end
 
-    // execute block
-    always @(*) begin
+    integer i;
+    always @(posedge clk) begin
         if(state == INIT) begin
-            for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 12'h000;
+            win_cnt <= 0;
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b0;
+                is_good[i] <= 1'b0;
+            end
         end
         else if(state == SHOW) begin
-            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
-        end
-        else if(state == GAME) begin
-            if(hint) begin
-                for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+            win_cnt <= 0;
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b1;
+                is_good[i] <= 1'b0;
             end
-            else if(clear) begin
+            if(out_start) begin
                 for(i = 0; i < 16; i = i + 1) begin
-                    if(is_good[i] == 1) img_pixel_data[i] <= pixel_original_data[i];
-                    else img_pixel_data[i] <= 12'h000;
+                    is_show[i] <= 1'b0;
+                    is_good[i] <= 1'b0;
                 end
             end
-            else begin
-                for(i = 0; i < 16; i = i + 1) begin
-                    if(is_good[i] > 0) img_pixel_data[i] <= pixel_original_data[i];
-                    else img_pixel_data[i] <= 12'h000;
+        end
+        else if(state == GAME) begin
+            win_cnt <= win_cnt;
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= is_show[i];
+                is_good[i] <= is_good[i];
+            end
+            if(key_down[last_change] && last_change == ENTER) begin
+                for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 0;
+            end
+            else if(key_down[last_change] && last_change != LEFT_SHIFT && last_change != ENTER) begin
+                if(key_num <= 15 && key_num >= 0) begin
+                    is_show[key_num] <= 1;
+                    if(buffer = 1'b1) begin
+                        if(img_pos[pre_key_num] == img_pos[key_num] && img_flip[pre_key_num] == img_flip[key_num])begin
+                            is_good[pre_key_num] <= 1;
+                            is_good[key_num] <= 1;
+                            win_cnt = win_cnt + 1;
+                        end
+                    end
                 end
             end
         end
         else if(state == FINISH) begin
-            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b1;
+                is_good[i] <= 1'b1;
+            end
+            win_cnt = 0;
+        end
+    end
+    
+
+    // display block
+    integer j;
+    always @(*) begin
+        for(j = 0 ; j < 16; j = j + 1) begin
+            if(is_good[j] == 1'b1 || is_show[j] == 1'b1) img_pixel_data[j] = pixel_original_data[j];
+            else img_pixel_data[j] <= 12'h000;                
         end
     end
 
