@@ -12,6 +12,7 @@ module lab5_2 (
     output wire vsync,
     output wire [4:0] key,
     output wire [1:0] cur_state,
+    output wire flip,
     output reg pass
 );
     wire [11:0] data;
@@ -245,6 +246,7 @@ module lab5_2 (
 
     reg [11:0] img_pixel_data [0:15];
     reg [15:0] img_flip;
+    assign flip = img_flip[0];
     parameter INIT = 0;
     parameter SHOW = 1;
     parameter GAME = 2;
