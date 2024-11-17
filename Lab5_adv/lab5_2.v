@@ -365,7 +365,9 @@ module lab5_2 (
                 end
             end
             else if(hint) begin
-                is_show <= 16'b1111_1111_1111_1111;
+                for (i = 0; i < 16; i = i + 1) begin
+                    is_show[i] <= 1'b1;
+                end
                 need_reset <= 1;
             end
         end
