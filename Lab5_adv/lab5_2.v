@@ -289,12 +289,13 @@ module lab5_2 (
                         is_good[key_num] <= 1;
                     end
                 end
-                else if(key_down[last_change] && last_change == ENTER) begin
+                else begin
                     for(i = 0 ; i < 16 ; i = i + 1) begin
                         if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
                         else img_pixel_data[i] <= 12'h000;
                     end
                 end
+                
             end
         end
         else if(state == FINISH) begin
