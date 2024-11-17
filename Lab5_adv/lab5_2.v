@@ -350,7 +350,7 @@ module lab5_2 (
             else if(key_down[last_change] && last_change != LEFT_SHIFT && last_change != ENTER) begin
                 if(key_num <= 15 && key_num >= 0) begin
                     is_show[key_num] <= 1;
-                    if(buffer = 1'b1) begin
+                    if(buffer == 1'b1) begin
                         if(img_pos[pre_key_num] == img_pos[key_num] && img_flip[pre_key_num] == img_flip[key_num])begin
                             is_good[pre_key_num] <= 1;
                             is_good[key_num] <= 1;
