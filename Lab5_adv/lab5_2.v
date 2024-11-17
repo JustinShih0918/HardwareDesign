@@ -304,7 +304,13 @@ module lab5_2 (
         end
         else if(state == GAME) begin
             if(hint) begin
-                for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+                win_cnt <= win_cnt;
+                clear <= clear;
+                prev_change <= prev_change;
+                for(i = 0 ; i < 16; i = i + 1) begin
+                    is_good[i] <= is_good[i];
+                    img_flip[i] <= img_flip[i];
+                end
             end
             else begin
                 win_cnt <= win_cnt;
