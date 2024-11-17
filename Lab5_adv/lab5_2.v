@@ -352,7 +352,6 @@ module lab5_2 (
         end
         else if(state == FINISH) begin
             pass <= 1;
-            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
         end
     end
 
