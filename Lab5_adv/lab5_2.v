@@ -290,6 +290,7 @@ module lab5_2 (
 
     integer i;
     reg valid;
+    reg need_reset;
     always @(posedge clk) begin
         if(state == INIT) begin
             for(i = 0; i < 16; i = i + 1) begin
@@ -330,7 +331,13 @@ module lab5_2 (
                 img_flip[i] <= img_flip[i];
             end
             if(!hint) begin
-                if(key_down[last_change] && last_change == ENTER && !valid) begin
+                if(need_reset) begin
+                    for(i = 0 ;i < 16; i = i + 1)begin
+                        is_show[i] <= 1'b0;
+                    end
+                    need_reset <= 0;
+                end
+                else if(key_down[last_change] && last_change == ENTER && !valid) begin
                     for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
                     valid <= 1;
                 end
@@ -357,6 +364,10 @@ module lab5_2 (
                     end
                 end
             end
+            else if(hint) begin
+                is_show <= 16'b1111_1111_1111_1111;
+                need_reset <= 1;
+            end
         end
         else if(state == FINISH) begin
             pass <= 1;
@@ -376,19 +387,14 @@ module lab5_2 (
     reg [1:0] status;
     assign cur_state = status;
     always @(posedge clk) begin
-        if(hint && state == GAME) begin
-            for(j = 0;j < 16; j = j + 1) img_pixel_data[j] <= pixel_original_data[j];
-        end
-        else begin
-            for(j = 0 ; j < 16; j = j + 1) begin
-                if(is_good[j] == 1'b1 || is_show[j] == 1'b1) begin
-                    img_pixel_data[j] <= pixel_original_data[j];
-                end
-                else img_pixel_data[j] <= 12'h000;                
-            end 
-            status[0] <= is_show[2];
-            status[1] <= is_show[3];
-        end
+        for(j = 0 ; j < 16; j = j + 1) begin
+            if(is_good[j] == 1'b1 || is_show[j] == 1'b1) begin
+                img_pixel_data[j] <= pixel_original_data[j];
+            end
+            else img_pixel_data[j] <= 12'h000;        
+        end 
+        status[0] <= is_show[2];
+        status[1] <= is_show[3];
     end
 
 
