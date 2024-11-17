@@ -324,6 +324,7 @@ module lab5_2 (
                 is_good[i] <= 0;
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
+            if(start) for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= 12'h000;
         end
         else if(state == GAME) begin
             if(out_hint) begin
@@ -351,6 +352,9 @@ module lab5_2 (
                         if(is_good[i] == 0) img_pixel_data[i] <= 12'h000;
                         else img_pixel_data[i] <= pixel_original_data[i];
                     end
+                end
+                else begin
+                    for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= img_pixel_data[i];
                 end
             end
         end
