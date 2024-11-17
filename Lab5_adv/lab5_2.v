@@ -279,10 +279,11 @@ module lab5_2 (
         endcase
     end
 
+    // control block
     integer i;
+    reg clear;
     always @(posedge clk) begin
         if(state == INIT) begin
-            for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 12'h000;
             for(i = 0; i < 16; i = i + 1) begin
                 img_flip[i] <= 0;
                 is_good[i] <= 0;
@@ -290,16 +291,16 @@ module lab5_2 (
             end
             win_cnt <= 0;
             pass <= 0;
+            clear <= 1;
         end
         else if(state == SHOW) begin
-            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
             win_cnt <= 0;
             for(i = 0; i < 16; i = i + 1) begin
                 img_flip[i] <= 0;
                 is_good[i] <= 0;
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
-            if(out_start) for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 0;
+            clear <= 1;
         end
         else if(state == GAME) begin
             if(hint) begin
@@ -307,48 +308,37 @@ module lab5_2 (
             end
             else begin
                 win_cnt <= win_cnt;
+                clear <= clear;
+                prev_change <= prev_change;
+                for(i = 0 ; i < 16; i = i + 1) begin
+                    is_good[i] <= is_good[i];
+                    img_flip[i] <= img_flip[i];
+                end
+
                 if(key_down[last_change] && last_change == ENTER) begin
-                    for(i = 0 ; i < 16; i = i + 1) begin
-                        if(is_good[i] == 1) img_pixel_data[i] <= pixel_original_data[i];
-                        else if(is_good[i] == 2) is_good[i] <= 0;
-                        else img_pixel_data[i] <= 12'h000;
-                    end
+                    clear <= 1;
+                    prev_change <= last_change;
                 end
                 else if(key_down[last_change] && last_change == LEFT_SHIFT) begin
                     if(pre_key_num <= 15 && pre_key_num >= 0) begin
                         img_flip[pre_key_num] <= ~img_flip[pre_key_num];
                         is_good[pre_key_num] <= 2; 
-                        prev_change <= 9'b1_1111_1111;
+                        clear <= 0;
                     end
                     else prev_change <= last_change;
-                    for(i = 0 ; i < 16; i = i + 1) begin
-                        if(is_good[i] > 0) img_pixel_data[i] <= pixel_original_data[i];
-                        else img_pixel_data[i] <= 12'h000;
-                    end
                 end
                 else if(key_down[last_change] && last_change != ENTER && last_change != LEFT_SHIFT && last_change != prev_change) begin
                     win_cnt <= win_cnt;
                     if(key_num <= 15 && key_num >= 0) begin
                         is_good[key_num] <= 2;
+                        clear <= 0;
                         if(prev_change == LEFT_SHIFT) begin
                             img_flip[key_num] <= ~img_flip[key_num];
-                            is_good[key_num] <= 2;
-                        end 
-                        else if(pre_key_num <= 15 && pre_key_num >= 0) begin
-                            if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == img_flip[pre_key_num]) begin
-                                is_good[key_num] <= 1;
-                                is_good[pre_key_num] <= 1;
-                                win_cnt <= win_cnt + 1;
-                            end
-                            else begin
-                                is_good[key_num] <= 2;
-                                is_good[pre_key_num] <= 2;
-                            end
                         end
-                        else prev_change <= last_change;
-                        for(i = 0 ; i < 16; i = i + 1) begin
-                            if(is_good[i] > 0) img_pixel_data[i] <= pixel_original_data[i];
-                            else img_pixel_data[i] <= 12'h000;
+                        else if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == img_flip[pre_key_num]) begin
+                            is_good[key_num] <= 1;
+                            is_good[pre_key_num] <= 1;
+                            win_cnt <= win_cnt + 1;
                         end
                     end
                 end
@@ -356,6 +346,36 @@ module lab5_2 (
         end
         else if(state == FINISH) begin
             pass <= 1;
+            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+        end
+    end
+
+    // execute block
+    always @(posedge clk) begin
+        if(state == INIT) begin
+            for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 12'h000;
+        end
+        else if(state == SHOW) begin
+            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+        end
+        else if(state == GAME) begin
+            if(hint) begin
+                for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+            end
+            else if(clear) begin
+                for(i = 0; i < 16; i = i + 1) begin
+                    if(is_good[i] == 1) img_pixel_data[i] <= pixel_original_data[i];
+                    else img_pixel_data[i] <= 12'h000;
+                end
+            end
+            else begin
+                for(i = 0; i < 16; i = i + 1) begin
+                    if(is_good[i] > 0) img_pixel_data[i] <= pixel_original_data[i];
+                    else img_pixel_data[i] <= 12'h000;
+                end
+            end
+        end
+        else if(state == FINISH) begin
             for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
         end
     end
