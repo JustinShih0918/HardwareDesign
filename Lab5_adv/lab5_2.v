@@ -136,7 +136,7 @@ module lab5_2 (
 
     reg is_show [15:0];
     reg is_good [15:0];
-    assign key = {is_show[4], is_show[3], is_show[2], is_show[1], is_show[0]};
+    assign key = {valid, is_show[3], is_show[2], is_show[1], is_show[0]};
 
     // keyboard
     reg [4:0] key_num;
@@ -254,7 +254,7 @@ module lab5_2 (
     parameter FINISH = 3;
 
     reg [1:0] state, next_state;
-    assign cur_state = state;
+    
     always @(posedge clk, posedge rst) begin
         if(rst) state <= INIT;
         else state <= next_state;
@@ -272,7 +272,7 @@ module lab5_2 (
                 else next_state <= SHOW;
             end
             GAME: begin
-                if(win_cnt == 8) next_state <= FINISH;
+                if(out_start) next_state <= FINISH;
                 else next_state <= GAME;
             end
             FINISH: begin
@@ -324,11 +324,11 @@ module lab5_2 (
             valid <= valid;
             win_cnt <= win_cnt;
             pass <= 0;
-            for(i = 0; i < 16; i = i + 1) begin
-                is_good[i] <= is_good[i];
-                is_show[i] <= is_show[i];
-                img_flip[i] <= img_flip[i];
-            end
+            // for(i = 0; i < 16; i = i + 1) begin
+            //     is_good[i] <= is_good[i];
+            //     is_show[i] <= is_show[i];
+            //     img_flip[i] <= img_flip[i];
+            // end
             if(!hint) begin
                 if(key_down[last_change] && last_change == ENTER && !valid) begin
                     for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
@@ -373,15 +373,26 @@ module lab5_2 (
 
     // display block
     integer j;
+    reg [1:0] status;
+    assign cur_state = status;
     always @(*) begin
-        if(state == GAME && hint) begin
+        if(hint && state == GAME) begin
             for(j = 0;j < 16; j = j + 1) img_pixel_data[j] = pixel_original_data[j];
+            status <= 0;
+        end
+        else if(!hint && state == GAME) begin
+            for(j = 0 ; j < 16; j = j + 1) begin
+                if(is_good[j] == 1'b1 || is_show[j] == 1'b0) img_pixel_data[j] = pixel_original_data[j];
+                else img_pixel_data[j] <= 12'h000;                
+            end
+            status <= 1;
         end
         else begin
             for(j = 0 ; j < 16; j = j + 1) begin
                 if(is_good[j] == 1'b1 || is_show[j] == 1'b1) img_pixel_data[j] = pixel_original_data[j];
                 else img_pixel_data[j] <= 12'h000;                
             end 
+            status <=2;
         end
     end
 
