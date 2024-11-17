@@ -375,44 +375,10 @@ module lab5_2 (
     integer j;
     reg [1:0] status;
     assign cur_state = status;
-    always @(*) begin
+    always @(posedge clk) begin
         if(hint && state == GAME) begin
             for(j = 0;j < 16; j = j + 1) img_pixel_data[j] = pixel_original_data[j];
             status <= 0;
-        end
-        else if(!hint && state == GAME) begin
-            if(is_show[0] == 1) img_pixel_data[0] = pixel_original_data[0];
-            else img_pixel_data[0] = 12'h000;
-            if(is_show[1] == 1) img_pixel_data[1] = pixel_original_data[1];
-            else img_pixel_data[1] = 12'h000;
-            if(is_show[2] == 1) img_pixel_data[2] = pixel_original_data[2];
-            else img_pixel_data[2] = 12'h000;
-            if(is_show[3] == 1) img_pixel_data[3] = pixel_original_data[3];
-            else img_pixel_data[3] = 12'h000;
-            if(is_show[4] == 1) img_pixel_data[4] = pixel_original_data[4];
-            else img_pixel_data[4] = 12'h000;
-            if(is_show[5] == 1) img_pixel_data[5] = pixel_original_data[5];
-            else img_pixel_data[5] = 12'h000;
-            if(is_show[6] == 1) img_pixel_data[6] = pixel_original_data[6];
-            else img_pixel_data[6] = 12'h000;
-            if(is_show[7] == 1) img_pixel_data[7] = pixel_original_data[7];
-            else img_pixel_data[7] = 12'h000;
-            if(is_show[8] == 1) img_pixel_data[8] = pixel_original_data[8];
-            else img_pixel_data[8] = 12'h000;
-            if(is_show[9] == 1) img_pixel_data[9] = pixel_original_data[9];
-            else img_pixel_data[9] = 12'h000;
-            if(is_show[10] == 1) img_pixel_data[10] = pixel_original_data[10];
-            else img_pixel_data[10] = 12'h000;
-            if(is_show[11] == 1) img_pixel_data[11] = pixel_original_data[11];
-            else img_pixel_data[11] = 12'h000;
-            if(is_show[12] == 1) img_pixel_data[12] = pixel_original_data[12];
-            else img_pixel_data[12] = 12'h000;
-            if(is_show[13] == 1) img_pixel_data[13] = pixel_original_data[13];
-            else img_pixel_data[13] = 12'h000;
-            if(is_show[14] == 1) img_pixel_data[14] = pixel_original_data[14];
-            else img_pixel_data[14] = 12'h000;
-            if(is_show[15] == 1) img_pixel_data[15] = pixel_original_data[15];
-            else img_pixel_data[15] = 12'h000;
         end
         else begin
             for(j = 0 ; j < 16; j = j + 1) begin
