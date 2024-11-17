@@ -377,12 +377,12 @@ module lab5_2 (
     assign cur_state = status;
     always @(posedge clk) begin
         if(hint && state == GAME) begin
-            for(j = 0;j < 16; j = j + 1) img_pixel_data[j] = pixel_original_data[j];
+            for(j = 0;j < 16; j = j + 1) img_pixel_data[j] <= pixel_original_data[j];
             status <= 0;
         end
         else begin
             for(j = 0 ; j < 16; j = j + 1) begin
-                if(is_good[j] == 1'b1 || is_show[j] == 1'b1) img_pixel_data[j] = pixel_original_data[j];
+                if(is_good[j] == 1'b1 || is_show[j] == 1'b1) img_pixel_data[j] <= pixel_original_data[j];
                 else img_pixel_data[j] <= 12'h000;                
             end 
             status <=2;
