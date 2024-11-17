@@ -16,7 +16,7 @@ module lab5_2 (
     wire clk_25MHz;
     wire clk_22;
     wire [16:0] pixel_addr;
-    wire [11:0] pixel_original_data [0:7];
+    wire [11:0] pixel_original_data [0:15];
     reg [11:0] pixel;
     wire [3:0] img_select;
     wire valid;
@@ -132,6 +132,144 @@ module lab5_2 (
         .dina(data[11:0]),
         .douta(pixel_original_data[7])
     );
+    assign pixel_original_data[8] = pixel_original_data[0];
+    assign pixel_original_data[9] = pixel_original_data[1];
+    assign pixel_original_data[10] = pixel_original_data[2];
+    assign pixel_original_data[11] = pixel_original_data[3];
+    assign pixel_original_data[12] = pixel_original_data[4];
+    assign pixel_original_data[13] = pixel_original_data[5];
+    assign pixel_original_data[14] = pixel_original_data[6];
+    assign pixel_original_data[15] = pixel_original_data[7];
+
+    parameter [11:0] img_pos [0:15] = {
+        0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7
+    }
+
+    reg [15:0] is_good;
+
+    // keyboard
+    reg [4:0] key_num_1;
+    reg [4:0] key_num_2;
+    wire [511:0] key_down;
+    wire [8:0] last_change;
+    reg [8:0] prev_change_1;
+    reg [8:0] prev_change_2;
+    reg delay_prev;
+    wire been_ready;
+    parameter [8:0] key_code [0:16] = {
+        // 1 -> 16
+        9'b0_0001_0110,
+        // 2 -> 1E
+        9'b0_0001_1110,
+        // 3 -> 26
+        9'b0_0010_0110,
+        // 4 -> 25
+        9'b0_0010_0101,
+        // Q -> 15
+        9'b0_0001_0101,
+        // W -> 1D
+        9'b0_0001_1101,
+        // E -> 24
+        9'b0_0010_0100,
+        // R -> 2D
+        9'b0_0010_1101,
+        // A -> 1C
+        9'b0_0001_1100,
+        // S -> 1B
+        9'b0_0001_1011,
+        // D -> 23
+        9'b0_0010_0011,
+        // F -> 2B
+        9'b0_0010_1011,
+        // Z -> 1A
+        9'b0_0001_1010,
+        // X -> 22
+        9'b0_0010_0010,
+        // C -> 21
+        9'b0_0010_0001,
+        // V -> 2A
+        9'b0_0010_1010,
+        // left shift -> 12
+        9'b0_0001_0010,
+        // Enter -> 5A
+        9'b0_0101_1010
+    };
+    parameter ENTER = 9'b0_0101_1010;
+    always @(posedge clk) begin
+        if(been_ready && key_down[last_change] && key_down[prev_change_1] && key_down[prev_change_2]) begin
+            prev_change_1 <= prev_change_1
+            prev_change_2 <= prev_change_2;
+        end
+        else if(been_ready && key_down[last_change] && key_down[prev_change_1]) begin
+            prev_change_1 <= last_change;
+            prev_change_2 <= prev_change_1;
+        end
+        else if(been_ready && key_down[last_change]) begin
+            prev_change_1 <= last_change;
+        end
+        else begin
+            prev_change_1 <= prev_change_1;
+            prev_change_2 <= prev_change_2;
+        end
+    end
+
+    always @(*) begin
+        case (prev_change_1)
+            key_code[0] : key_num_1 = 5'b00000;
+            key_code[1] : key_num_1 = 5'b00001;
+            key_code[2] : key_num_1 = 5'b00010;
+            key_code[3] : key_num_1 = 5'b00011;
+            key_code[4] : key_num_1 = 5'b00100;
+            key_code[5] : key_num_1 = 5'b00101;
+            key_code[6] : key_num_1 = 5'b00110;
+            key_code[7] : key_num_1 = 5'b00111;
+            key_code[8] : key_num_1 = 5'b01000;
+            key_code[9] : key_num_1 = 5'b01001;
+            key_code[10] : key_num_1 = 5'b01010;
+            key_code[11] : key_num_1 = 5'b01011;
+            key_code[12] : key_num_1 = 5'b01100;
+            key_code[13] : key_num_1 = 5'b01101;
+            key_code[14] : key_num_1 = 5'b01110;
+            key_code[15] : key_num_1 = 5'b01111;
+            key_code[16] : key_num_1 = 5'b01111; // left shift
+            key_code[17] : key_num_1 = 5'b10000; // enter
+            default: key_num_1 = 5'b11111;
+        endcase
+    end
+
+    always @(*) begin
+        case (prev_change_2)
+            key_code[0] : key_num_2 = 5'b00000;
+            key_code[1] : key_num_2 = 5'b00001;
+            key_code[2] : key_num_2 = 5'b00010;
+            key_code[3] : key_num_2 = 5'b00011;
+            key_code[4] : key_num_2 = 5'b00100;
+            key_code[5] : key_num_2 = 5'b00101;
+            key_code[6] : key_num_2 = 5'b00110;
+            key_code[7] : key_num_2 = 5'b00111;
+            key_code[8] : key_num_2 = 5'b01000;
+            key_code[9] : key_num_2 = 5'b01001;
+            key_code[10] : key_num_2 = 5'b01010;
+            key_code[11] : key_num_2 = 5'b01011;
+            key_code[12] : key_num_2 = 5'b01100;
+            key_code[13] : key_num_2 = 5'b01101;
+            key_code[14] : key_num_2 = 5'b01110;
+            key_code[15] : key_num_2 = 5'b01111;
+            key_code[16] : key_num_2 = 5'b01111; // left shift
+            key_code[17] : key_num_2 = 5'b10000; // enter
+            default: key_num_2 = 5'b11111;
+        endcase
+    end
+
+    KeyboardDecoder key_de(
+        .key_down(key_down),
+        .last_change(last_change),
+        .key_valid(been_ready),
+        .PS2_DATA(PS2_DATA),
+        .PS2_CLK(PS2_CLK),
+        .rst(out_rst),
+        .clk(clk)
+    );
 
     reg [11:0] img_pixel_data [0:15];
     reg [15:0] img_flip;
@@ -147,6 +285,7 @@ module lab5_2 (
         else state <= next_state;
     end
 
+    reg [5:0] win_cnt;
     always @(*) begin
         case (state)
             INIT: begin
@@ -157,6 +296,11 @@ module lab5_2 (
                 if(out_start) next_state <= GAME;
                 else next_state <= SHOW;
             end
+            GAME: begin
+                if(win_cnt == 8) next_state <= FINISH;
+                else next_state <= GAME;
+            end
+            FINISH: 
             default: next_state <= next_state;
         endcase
     end
@@ -167,26 +311,52 @@ module lab5_2 (
             for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 12'h000;
             for(i = 0; i < 16; i = i + 1) begin
                 img_flip[i] <= 0;
+                is_good[i] <= 0;
+                if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
+            end
+            win_cnt <= 0;
+        end
+        else if(state == SHOW) begin
+            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+            win_cnt <= 0;
+            for(i = 0; i < 16; i = i + 1) begin
+                img_flip[i] <= 0;
+                is_good[i] <= 0;
                 if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
             end
         end
-        else if(state == SHOW) begin
-            img_pixel_data[0] <= pixel_original_data[0];
-            img_pixel_data[1] <= pixel_original_data[1];
-            img_pixel_data[2] <= pixel_original_data[2];
-            img_pixel_data[3] <= pixel_original_data[3];
-            img_pixel_data[4] <= pixel_original_data[4];
-            img_pixel_data[5] <= pixel_original_data[5];
-            img_pixel_data[6] <= pixel_original_data[6];
-            img_pixel_data[7] <= pixel_original_data[7];
-            img_pixel_data[8] <= pixel_original_data[0];
-            img_pixel_data[9] <= pixel_original_data[1];
-            img_pixel_data[10] <= pixel_original_data[2];
-            img_pixel_data[11] <= pixel_original_data[3];
-            img_pixel_data[12] <= pixel_original_data[4];
-            img_pixel_data[13] <= pixel_original_data[5];
-            img_pixel_data[14] <= pixel_original_data[6];
-            img_pixel_data[15] <= pixel_original_data[7];
+        else if(state == GAME) begin
+            if(out_hint) begin
+                for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+            end
+            else begin
+                win_cnt <= win_cnt;
+                if(key_num_1 >= 0 && key_num_1 <= 15 && key_num_2 >= 0 && key_num_2 <= 15)begin
+                    img_pixel_data[key_num_1] <= pixel_original_data[key_num_1];
+                    img_pixel_data[key_num_2] <= pixel_original_data[key_num_2];
+                    is_good[key_num_1] <= 1;
+                    is_good[key_num_2] <= 1;
+                    if(img_pos[key_num_1] == img_pos[key_num_2] && img_flip[key_num_1] == img_flip[key_num_2]) win_cnt <= win_cnt + 1;
+                end
+                else if(key_num_1 == 5'b01111 && key_num_2 >= 0 && key_num_2 <= 15) begin
+                    img_flip[key_num_2] <= ~img_flip[key_num_2];
+                    img_pixel_data[key_num_2] <= pixel_original_data[key_num_2];
+                end
+                else if(key_num_2 == 5'b01111 && key_num_1 >= 0 && key_num_1 <= 15) begin
+                    img_flip[key_num_1] <= ~img_flip[key_num_1];
+                    img_pixel_data[key_num_1] <= pixel_original_data[key_num_1];
+                end
+                else if(key_down[last_change] == 1 && last_change == ENTER) begin
+                    for(i = 0 ; i < 16 ; i = i + 1) begin
+                        if(is_good[i] == 0) img_pixel_data[i] <= 12'h000;
+                        else img_pixel_data[i] <= pixel_original_data[i];
+                    end
+                end
+            end
+        end
+        else if(state == FINISH) begin
+            pass <= 1;
+            for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
         end
     end
 
@@ -213,14 +383,14 @@ module lab5_2 (
             4'b0101 : pixel = img_pixel_data[5];
             4'b0110 : pixel = img_pixel_data[6];
             4'b0111 : pixel = img_pixel_data[7];
-            4'b1000 : pixel = img_pixel_data[0];
-            4'b1001 : pixel = img_pixel_data[1];
-            4'b1010 : pixel = img_pixel_data[2];
-            4'b1011 : pixel = img_pixel_data[3];
-            4'b1100 : pixel = img_pixel_data[4];
-            4'b1101 : pixel = img_pixel_data[5];
-            4'b1110 : pixel = img_pixel_data[6];
-            4'b1111 : pixel = img_pixel_data[7];
+            4'b1000 : pixel = img_pixel_data[8];
+            4'b1001 : pixel = img_pixel_data[9];
+            4'b1010 : pixel = img_pixel_data[10];
+            4'b1011 : pixel = img_pixel_data[11];
+            4'b1100 : pixel = img_pixel_data[12];
+            4'b1101 : pixel = img_pixel_data[13];
+            4'b1110 : pixel = img_pixel_data[14];
+            4'b1111 : pixel = img_pixel_data[15];
             default: pixel = 12'h000;
         endcase
     end
