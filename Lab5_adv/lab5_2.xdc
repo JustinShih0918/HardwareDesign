@@ -6,6 +6,16 @@ create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_
 ## LEDs
 set_property PACKAGE_PIN U16 [get_ports {pass}]
 set_property IOSTANDARD LVCMOS33 [get_ports {pass}]
+set_property PACKAGE_PIN U3 [get_ports {key[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {key[0]}]
+set_property PACKAGE_PIN P3 [get_ports {key[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {key[1]}]
+set_property PACKAGE_PIN N3 [get_ports {key[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {key[2]}]
+set_property PACKAGE_PIN P1 [get_ports {key[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {key[3]}]
+set_property PACKAGE_PIN L1 [get_ports {key[4]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {key[4]}]
 
 ## Switches
 set_property PACKAGE_PIN V17 [get_ports hint]
