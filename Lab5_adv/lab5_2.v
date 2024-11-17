@@ -133,7 +133,7 @@ module lab5_2 (
         12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7, 12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7
     };
 
-    reg [15:0] is_good;
+    reg [1:0] is_good [0:15];
 
     // keyboard
     reg [4:0] key_num;
