@@ -361,7 +361,7 @@ module lab5_2 (
             for(i = 0; i < 16; i = i + 1) begin
                 is_show[i] <= is_show[i];
             end
-            else if(hint) begin
+            if(hint) begin
                 for(i = 0; i < 16; i = i + 1) is_show[i] <= 1'b1;
             end
             else if(key_down[last_change] && last_change == ENTER && !hint) begin
