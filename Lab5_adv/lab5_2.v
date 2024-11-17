@@ -197,7 +197,7 @@ module lab5_2 (
     parameter ENTER = 9'b0_0101_1010;
 
     always @(*) begin
-        case (prev_change)
+        case (last_change)
             key_code[0] : key_num = 5'b00000;
             key_code[1] : key_num = 5'b00001;
             key_code[2] : key_num = 5'b00010;
@@ -293,22 +293,23 @@ module lab5_2 (
                 for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
             end
             else begin
-                win_cnt <= win_cnt;
-                if(key_down[last_change] && last_change != ENTER) begin
-                    if(key_num <= 15 && key_num >= 0) begin
-                        img_pixel_data[key_num] <= pixel_original_data[key_num];
-                        is_good[key_num] <= 1;
-                    end
-                end
-                else if(key_down[last_change] && last_change == ENTER) begin
-                    for(i = 0 ; i < 16 ; i = i + 1) begin
-                        if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
-                        else img_pixel_data[i] <= 12'h000;
-                    end
-                end
-                else begin
-                    for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= img_pixel_data[i];
-                end
+                for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= pixel_original_data[i];
+                // win_cnt <= win_cnt;
+                // if(key_down[last_change] && last_change != ENTER) begin
+                //     if(key_num <= 15 && key_num >= 0) begin
+                //         img_pixel_data[key_num] <= pixel_original_data[key_num];
+                //         is_good[key_num] <= 1;
+                //     end
+                // end
+                // else if(key_down[last_change] && last_change == ENTER) begin
+                //     for(i = 0 ; i < 16 ; i = i + 1) begin
+                //         if(is_good[i] == 1) img_pixel_data[i] <= img_pixel_data[i];
+                //         else img_pixel_data[i] <= 12'h000;
+                //     end
+                // end
+                // else begin
+                //     for(i = 0 ; i < 16 ; i = i + 1) img_pixel_data[i] <= img_pixel_data[i];
+                // end
             end
         end
         else if(state == FINISH) begin
