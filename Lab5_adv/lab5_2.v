@@ -156,7 +156,7 @@ module lab5_2 (
     reg [8:0] prev_change_2;
     reg delay_prev;
     wire been_ready;
-    parameter [8:0] key_code [0:16] = {
+    parameter [8:0] key_code [0:17] = {
         // 1 -> 16
         9'b0_0001_0110,
         // 2 -> 1E
