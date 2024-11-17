@@ -136,6 +136,7 @@ module lab5_2 (
 
     reg is_show [15:0];
     reg is_good [15:0];
+    assign key = is_show[4:0];
 
     // keyboard
     reg [4:0] key_num;
@@ -144,7 +145,7 @@ module lab5_2 (
     wire [8:0] last_change;
     reg [8:0] prev_change;
     reg delay_prev;
-    assign key = key_num;
+    
     wire been_ready;
     parameter [8:0] key_code [0:17] = {
         // 1 -> 16
@@ -286,6 +287,7 @@ module lab5_2 (
     always @(posedge clk) begin
         prev_change <= last_change;
     end
+
     integer i;
     reg valid;
     always @(posedge clk) begin
