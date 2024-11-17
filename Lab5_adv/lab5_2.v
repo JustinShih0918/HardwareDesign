@@ -16,12 +16,41 @@ module lab5_2 (
     wire clk_25MHz;
     wire clk_22;
     wire [16:0] pixel_addr;
-    wire [11:0] pixel_1, pixel_2, pixel_3, pixel_4, pixel_5, pixel_6, pixel_7, pixel_8;
+    wire [11:0] pixel_original_data [0:7];
     reg [11:0] pixel;
     wire [3:0] img_select;
     wire valid;
     wire [9:0] h_cnt; //640
     wire [9:0] v_cnt;  //480
+
+    wire dp_start;
+    wire dp_hint;
+    debounce dp_inst(
+        .pb_debounced(dp_start),
+        .pb(start),
+        .clk(clk)
+    );
+
+    debounce dp_hint_inst(
+        .pb_debounced(dp_hint),
+        .pb(hint),
+        .clk(clk)
+    );
+
+    wire out_start;
+    wire out_hint;
+    one_pulse op_inst(
+        .clk(clk),
+        .pb_in(dp_start),
+        .pb_out(out_start)
+    );
+
+    one_pulse op_hint_inst(
+        .clk(clk),
+        .pb_in(dp_hint),
+        .pb_out(out_hint)
+    );
+
 
     vga_controller vga_inst(
         .pclk(clk_25MHz),
@@ -39,25 +68,13 @@ module lab5_2 (
         .clk22(clk_22)
     );
 
-    mem_addr_gen mem_addr_gen_inst(
-        .clk(clk_22),
-        .rst(rst),
-        .start(start),
-        .hint(hint),
-        .h_cnt(h_cnt),
-        .v_cnt(v_cnt),
-        .img_select(img_select),
-        .pixel_addr(pixel_addr)
-    );
-
     // memory modules
-
     blk_mem_gen_1 blk_mem_gen_1_inst(
         .clka(clk_25MHz),
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_1)
+        .douta(pixel_original_data[0])
     );
 
     blk_mem_gen_2 blk_mem_gen_2_inst(
@@ -65,7 +82,7 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_2)
+        .douta(pixel_original_data[1])
     );
 
     blk_mem_gen_3 blk_mem_gen_3_inst(
@@ -73,7 +90,7 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_3)
+        .douta(pixel_original_data[2])
     );
 
     blk_mem_gen_4 blk_mem_gen_4_inst(
@@ -81,7 +98,7 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_4)
+        .douta(pixel_original_data[3])
     );
 
     blk_mem_gen_5 blk_mem_gen_5_inst(
@@ -89,7 +106,7 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_5)
+        .douta(pixel_original_data[4])
     );
 
     blk_mem_gen_6 blk_mem_gen_6_inst(
@@ -97,7 +114,7 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_6)
+        .douta(pixel_original_data[5])
     );
 
     blk_mem_gen_7 blk_mem_gen_7_inst(
@@ -105,7 +122,7 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_7)
+        .douta(pixel_original_data[6])
     );
 
     blk_mem_gen_8 blk_mem_gen_8_inst(
@@ -113,27 +130,97 @@ module lab5_2 (
         .wea(0),
         .addra(pixel_addr),
         .dina(data[11:0]),
-        .douta(pixel_8)
+        .douta(pixel_original_data[7])
+    );
+
+    reg [11:0] img_pixel_data [0:15];
+    reg [15:0] img_flip;
+    parameter INIT = 0;
+    parameter SHOW = 1;
+    parameter GAME = 2;
+    parameter FINISH = 3;
+
+    reg [1:0] state, next_state;
+
+    always @(posedge clk, posedge rst) begin
+        if(rst) state <= INIT;
+        else state <= next_state;
+    end
+
+    always @(*) begin
+        case (state)
+            INIT: begin
+                if(out_start) next_state <= SHOW;
+                else next_state <= INIT;
+            end
+            SHOW: begin
+                if(out_start) next_state <= GAME;
+                else next_state <= SHOW;
+            end
+            default: next_state <= next_state;
+        endcase
+    end
+
+    integer i;
+    always @(posedge clk) begin
+        if(state == INIT) begin
+            for(i = 0; i < 16; i = i + 1) img_pixel_data[i] <= 12'h000;
+            for(i = 0; i < 16; i = i + 1) begin
+                img_flip[i] <= 0;
+                if(i == 0 || i == 2 || i == 3) img_flip[i] <= 1;
+            end
+        end
+        else if(state == SHOW) begin
+            img_pixel_data[0] <= pixel_original_data[0];
+            img_pixel_data[1] <= pixel_original_data[1];
+            img_pixel_data[2] <= pixel_original_data[2];
+            img_pixel_data[3] <= pixel_original_data[3];
+            img_pixel_data[4] <= pixel_original_data[4];
+            img_pixel_data[5] <= pixel_original_data[5];
+            img_pixel_data[6] <= pixel_original_data[6];
+            img_pixel_data[7] <= pixel_original_data[7];
+            img_pixel_data[8] <= pixel_original_data[0];
+            img_pixel_data[9] <= pixel_original_data[1];
+            img_pixel_data[10] <= pixel_original_data[2];
+            img_pixel_data[11] <= pixel_original_data[3];
+            img_pixel_data[12] <= pixel_original_data[4];
+            img_pixel_data[13] <= pixel_original_data[5];
+            img_pixel_data[14] <= pixel_original_data[6];
+            img_pixel_data[15] <= pixel_original_data[7];
+        end
+    end
+
+
+    mem_addr_gen mem_addr_gen_inst(
+        .clk(clk_25MHz),
+        .rst(rst),
+        .start(out_start),
+        .hint(out_hint),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .img_flip(img_flip),
+        .img_select(img_select),
+        .pixel_addr(pixel_addr)
     );
 
     always @(*) begin
         case (img_select)
-            4'b0000 : pixel = pixel_1;
-            4'b0001 : pixel = pixel_2;
-            4'b0010 : pixel = pixel_3;
-            4'b0011 : pixel = pixel_4;
-            4'b0100 : pixel = pixel_5;
-            4'b0101 : pixel = pixel_6;
-            4'b0110 : pixel = pixel_7;
-            4'b0111 : pixel = pixel_8;
-            4'b1000 : pixel = pixel_1;
-            4'b1001 : pixel = pixel_2;
-            4'b1010 : pixel = pixel_3;
-            4'b1011 : pixel = pixel_4;
-            4'b1100 : pixel = pixel_5;
-            4'b1101 : pixel = pixel_6;
-            4'b1110 : pixel = pixel_7;
-            4'b1111 : pixel = pixel_8;
+            4'b0000 : pixel = img_pixel_data[0];
+            4'b0001 : pixel = img_pixel_data[1];
+            4'b0010 : pixel = img_pixel_data[2];
+            4'b0011 : pixel = img_pixel_data[3];
+            4'b0100 : pixel = img_pixel_data[4];
+            4'b0101 : pixel = img_pixel_data[5];
+            4'b0110 : pixel = img_pixel_data[6];
+            4'b0111 : pixel = img_pixel_data[7];
+            4'b1000 : pixel = img_pixel_data[0];
+            4'b1001 : pixel = img_pixel_data[1];
+            4'b1010 : pixel = img_pixel_data[2];
+            4'b1011 : pixel = img_pixel_data[3];
+            4'b1100 : pixel = img_pixel_data[4];
+            4'b1101 : pixel = img_pixel_data[5];
+            4'b1110 : pixel = img_pixel_data[6];
+            4'b1111 : pixel = img_pixel_data[7];
             default: pixel = 12'h000;
         endcase
     end
@@ -149,6 +236,7 @@ module mem_addr_gen(
     input hint,
     input wire [9:0] h_cnt,
     input wire [9:0] v_cnt,
+    input [15:0] img_flip,
     output reg [3:0] img_select,
     output reg [16:0] pixel_addr
 );
@@ -167,7 +255,8 @@ module mem_addr_gen(
     reg [6:0] img_y;
     always @(*) begin
         img_x = x % 80;
-        img_y = y % 60;
+        if(img_flip[img_select] == 1) img_y = (59 - y + 60) % 60;
+        else img_y = y % 60;
         pixel_addr = img_x + img_y * 80;
     end
     
@@ -255,4 +344,40 @@ module clock_divider(clk1, clk, clk22);
     assign next_num = num + 1'b1;
     assign clk1 = num[1];
     assign clk22 = num[21];
+endmodule
+
+module debounce(
+    output pb_debounced, 
+    input pb ,
+    input clk
+    );
+    
+    reg [6:0] shift_reg;
+    always @(posedge clk) begin
+        shift_reg[6:1] <= shift_reg[5:0];
+        shift_reg[0] <= pb;
+    end
+    
+    assign pb_debounced = shift_reg == 7'b111_1111 ? 1'b1 : 1'b0;
+endmodule
+
+module one_pulse (
+    input wire clk,
+    input wire pb_in,
+    output reg pb_out
+);
+
+	reg pb_in_delay;
+
+	always @(posedge clk) begin
+		if (pb_in == 1'b1 && pb_in_delay == 1'b0) begin
+			pb_out <= 1'b1;
+		end else begin
+			pb_out <= 1'b0;
+		end
+	end
+	
+	always @(posedge clk) begin
+		pb_in_delay <= pb_in;
+	end
 endmodule
