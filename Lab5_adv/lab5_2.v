@@ -328,11 +328,11 @@ module lab5_2 (
                 else next_state <= SHOW;
             end
             GAME: begin
-                if(out_start) next_state <= FINISH;
+                if(win_cnt == 8) next_state <= FINISH;
                 else next_state <= GAME;
             end
             FINISH: begin
-                if(win_cnt == 8) next_state <= INIT;
+                if(out_start) next_state <= INIT;
                 else next_state <= FINISH;
             end
             default: next_state <= next_state;
