@@ -452,6 +452,7 @@ module lab5_2 (
         .rst(rst),
         .start(out_start),
         .hint(hint),
+        .cur_state(state),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .img_flip(img_flip),
@@ -490,13 +491,14 @@ module mem_addr_gen(
     input rst,
     input start,
     input hint,
+    input [1:0] cur_state,
     input wire [9:0] h_cnt,
     input wire [9:0] v_cnt,
     input [15:0] img_flip,
     output reg [3:0] img_select,
     output reg [16:0] pixel_addr
 );
-
+    parameter GAME = 2;
     wire [9:0] x = h_cnt >> 1;
     wire [9:0] y = v_cnt >> 1;
 
@@ -511,7 +513,7 @@ module mem_addr_gen(
     reg [6:0] img_y;
     always @(*) begin
         img_x = x % 80;
-        if(hint) img_y = y % 60;
+        if(hint && cur_state == GAME) img_y = y % 60;
         else if(img_flip[img_select] == 1 && !hint) img_y = 59 - (y % 60);
         else img_y = y % 60;
         pixel_addr = img_x + img_y * 80;
