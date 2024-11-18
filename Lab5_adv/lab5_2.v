@@ -346,7 +346,6 @@ module lab5_2 (
 
     integer i;
     reg valid_input;
-    reg need_reset;
     always @(posedge clk) begin
         if(state == INIT) begin
             for(i = 0; i < 16; i = i + 1) begin
@@ -387,28 +386,22 @@ module lab5_2 (
                 img_flip[i] <= img_flip[i];
             end
             if(!hint) begin
-                if(need_reset) begin
-                    for(i = 0 ;i < 16; i = i + 1)begin
-                        is_show[i] <= 1'b0;
-                    end
-                    need_reset <= 0;
-                end
-                else if(key_down[last_change] && last_change == ENTER && !valid_input) begin
+                if(key_down[last_change] && last_change == ENTER && !valid_input) begin
                     for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
                     valid_input <= 1;
                 end
-                else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid_input) begin
+                else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid_input && is_good[pre_key_num] == 1'b0) begin
                     is_show[pre_key_num] <= 1'b1;
                     img_flip[pre_key_num] <= ~img_flip[pre_key_num];
                     valid_input <= 0;
                 end
-                else if(key_down[last_change] && key_down[prev_change] && prev_change == LEFT_SHIFT && last_change != prev_change && valid_input) begin
+                else if(key_down[last_change] && key_down[prev_change] && prev_change == LEFT_SHIFT && last_change != prev_change && valid_input && is_good[key_num] == 1'b0) begin
                     is_show[key_num] <= 1'b1;
                     img_flip[key_num] <= ~img_flip[key_num];
                     valid_input <= 0;
                 end
                 else if(key_down[last_change] && key_down[prev_change] && prev_change != last_change && valid_input) begin
-                    if(key_num <= 15 && key_num >= 0 && pre_key_num <= 15 && pre_key_num >= 0) begin
+                    if(key_num <= 15 && key_num >= 0 && pre_key_num <= 15 && pre_key_num >= 0 && is_good[pre_key_num] == 1'b0 && is_good[key_num] == 1'b0) begin
                         is_show[key_num] <= 1'b1;
                         is_show[pre_key_num] <= 1'b1;
                         valid_input <= 0;
@@ -419,12 +412,6 @@ module lab5_2 (
                         end
                     end
                 end
-            end
-            else if(hint) begin
-                for (i = 0; i < 16; i = i + 1) begin
-                    is_show[i] <= 1'b1;
-                end
-                need_reset <= 1;
             end
         end
         else if(state == FINISH) begin
@@ -446,7 +433,7 @@ module lab5_2 (
     assign cur_state = status;
     always @(posedge clk) begin
         for(j = 0 ; j < 16; j = j + 1) begin
-            if(is_good[j] == 1'b1 || is_show[j] == 1'b1) begin
+            if(is_good[j] == 1'b1 || is_show[j] == 1'b1 || hint) begin
                 img_pixel_data[j] <= pixel_original_data[j];
             end
             else img_pixel_data[j] <= 12'h000;        
@@ -521,7 +508,7 @@ module mem_addr_gen(
     always @(*) begin
         img_x = x % 80;
         if(hint) img_y = y % 60;
-        else if(img_flip[img_select] == 1 && !hint) img_y = (59 - y + 60) % 60;
+        else if(img_flip[img_select] == 1 && !hint) img_y = 59 - (y % 60);
         else img_y = y % 60;
         pixel_addr = img_x + img_y * 80;
     end
