@@ -121,14 +121,70 @@ module lab5_2 (
         .dina(data[11:0]),
         .douta(pixel_original_data[7])
     );
-    assign pixel_original_data[8] = pixel_original_data[0];
-    assign pixel_original_data[9] = pixel_original_data[1];
-    assign pixel_original_data[10] = pixel_original_data[2];
-    assign pixel_original_data[11] = pixel_original_data[3];
-    assign pixel_original_data[12] = pixel_original_data[4];
-    assign pixel_original_data[13] = pixel_original_data[5];
-    assign pixel_original_data[14] = pixel_original_data[6];
-    assign pixel_original_data[15] = pixel_original_data[7];
+
+    blk_mem_gen_1 blk_mem_gen_9_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[8])
+    );
+
+    blk_mem_gen_2 blk_mem_gen_10_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[9])
+    );
+
+    blk_mem_gen_3 blk_mem_gen_11_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[10])
+    );
+
+    blk_mem_gen_4 blk_mem_gen_12_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[11])
+    );
+
+    blk_mem_gen_5 blk_mem_gen_13_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[12])
+    );
+
+    blk_mem_gen_6 blk_mem_gen_14_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[13])
+    );
+
+    blk_mem_gen_7 blk_mem_gen_15_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[14])
+    );
+
+    blk_mem_gen_8 blk_mem_gen_16_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[15])
+    );
 
     parameter [11:0] img_pos [0:15] = {
         12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7, 12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7
@@ -276,7 +332,7 @@ module lab5_2 (
                 else next_state <= GAME;
             end
             FINISH: begin
-                if(out_start) next_state <= INIT;
+                if(win_cnt == 8) next_state <= INIT;
                 else next_state <= FINISH;
             end
             default: next_state <= next_state;
@@ -356,7 +412,7 @@ module lab5_2 (
                         is_show[key_num] <= 1'b1;
                         is_show[pre_key_num] <= 1'b1;
                         valid_input <= 0;
-                        if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == img_flip[pre_key_num]) begin
+                        if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == 0 && img_flip[pre_key_num] == 0) begin
                             is_good[key_num] <= 1'b1;
                             is_good[pre_key_num] <= 1'b1;
                             win_cnt <= win_cnt + 1;
@@ -464,7 +520,8 @@ module mem_addr_gen(
     reg [6:0] img_y;
     always @(*) begin
         img_x = x % 80;
-        if(img_flip[img_select] == 1) img_y = (59 - y + 60) % 60;
+        if(hint) img_y = y % 60;
+        else if(img_flip[img_select] == 1 && !hint) img_y = (59 - y + 60) % 60;
         else img_y = y % 60;
         pixel_addr = img_x + img_y * 80;
     end
