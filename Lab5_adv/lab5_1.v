@@ -132,7 +132,7 @@ module mem_addr_gen(
             run_y <= 0;
         end
         else if(en) begin
-            if(dir) begin
+            if(!dir) begin
                 run_x <= run_x + 1;
                 run_y <= run_y - 1;
                 if(run_x == 319) run_x <= 0;
