@@ -437,7 +437,7 @@ module lab5_2 (
     assign cur_state = status;
     always @(posedge clk) begin
         for(j = 0 ; j < 16; j = j + 1) begin
-            if(is_good[j] == 1'b1 || is_show[j] == 1'b1 || hint) begin
+            if(is_good[j] == 1'b1 || is_show[j] == 1'b1 || (hint && state == GAME)) begin
                 img_pixel_data[j] <= pixel_original_data[j];
             end
             else img_pixel_data[j] <= 12'h000;        
@@ -513,9 +513,17 @@ module mem_addr_gen(
     reg [6:0] img_y;
     always @(*) begin
         img_x = x % 80;
-        if(hint && cur_state == GAME) img_y = y % 60;
-        else if(img_flip[img_select] == 1 && !hint) img_y = 59 - (y % 60);
-        else img_y = y % 60;
+        if(cur_state != GAME) begin
+            if(img_flip[img_select] == 1) img_y = 59 - (y % 60);
+            else img_y = y % 60;
+        end
+        else if(cur_state == GAME) begin
+            if(hint) img_y = y % 60;
+            else begin
+               if(img_flip[img_select] == 1) img_y = 59 - (y % 60);
+                else img_y = y % 60; 
+            end
+        end
         pixel_addr = img_x + img_y * 80;
     end
     
