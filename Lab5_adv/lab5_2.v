@@ -322,7 +322,7 @@ module lab5_2 (
             end
         end
         else if(state == GAME) begin
-            valid_input <= valid_input
+            valid_input <= valid_input;
             win_cnt <= win_cnt;
             pass <= 0;
             for(i = 0; i < 16; i = i + 1) begin
@@ -434,7 +434,7 @@ module lab5_2 (
         endcase
     end
 
-    assign {vgaRed, vgaGreen, vgaBlue} = (valid == 1'b1) ? pixel : 12'h000;
+    assign {vgaRed, vgaGreen, vgaBlue} = (valid_key == 1'b1) ? pixel : 12'h000;
 
 endmodule
 
