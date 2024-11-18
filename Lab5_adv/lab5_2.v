@@ -317,6 +317,7 @@ module lab5_2 (
     end
 
     reg [5:0] win_cnt;
+    reg time_to_go;
     always @(*) begin
         case (state)
             INIT: begin
@@ -328,7 +329,7 @@ module lab5_2 (
                 else next_state <= SHOW;
             end
             GAME: begin
-                if(win_cnt == 8) next_state <= FINISH;
+                if(time_to_go) next_state <= FINISH;
                 else next_state <= GAME;
             end
             FINISH: begin
@@ -356,6 +357,7 @@ module lab5_2 (
             win_cnt <= 6'd0;
             valid_input <= 1;
             pass <= 0;
+            time_to_go <= 0;
         end
         else if(state == SHOW) begin
             for(i = 0; i < 16; i = i + 1) begin
@@ -380,6 +382,7 @@ module lab5_2 (
             valid_input <= valid_input;
             win_cnt <= win_cnt;
             pass <= 0;
+            time_to_go <= time_to_go;
             for(i = 0; i < 16; i = i + 1) begin
                 is_good[i] <= is_good[i];
                 is_show[i] <= is_show[i];
@@ -389,6 +392,7 @@ module lab5_2 (
                 if(key_down[last_change] && last_change == ENTER && !valid_input) begin
                     for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
                     valid_input <= 1;
+                    if(win_cnt == 8) time_to_go <= 1;
                 end
                 else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid_input && is_good[pre_key_num] == 1'b0) begin
                     is_show[pre_key_num] <= 1'b1;
