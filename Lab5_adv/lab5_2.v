@@ -10,9 +10,8 @@ module lab5_2 (
     output wire [3:0] vgaBlue,
     output wire hsync,
     output wire vsync,
-    output wire [4:0] key,
+    output wire key,
     output wire [1:0] cur_state,
-    output wire flip,
     output reg pass
 );
     wire [11:0] data;
@@ -192,7 +191,7 @@ module lab5_2 (
 
     reg is_show [15:0];
     reg is_good [15:0];
-    assign key = {valid_input, is_show[3], is_show[2], is_show[1], is_show[0]};
+    assign key = valid_input;
 
     // keyboard
     reg [4:0] key_num;
@@ -303,7 +302,6 @@ module lab5_2 (
 
     reg [11:0] img_pixel_data [0:15];
     reg [15:0] img_flip;
-    assign flip = img_flip[0];
     parameter INIT = 0;
     parameter SHOW = 1;
     parameter GAME = 2;
