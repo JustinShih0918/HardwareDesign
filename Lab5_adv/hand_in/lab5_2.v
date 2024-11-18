@@ -1,0 +1,545 @@
+module lab5_2 (
+    input wire clk,
+    input wire rst,
+    input wire start,
+    input wire hint,
+    inout wire PS2_CLK,
+    inout wire PS2_DATA,
+    output wire [3:0] vgaRed,
+    output wire [3:0] vgaGreen,
+    output wire [3:0] vgaBlue,
+    output wire hsync,
+    output wire vsync,
+    output wire key,
+    output wire [1:0] cur_state,
+    output reg pass
+);
+    wire [11:0] data;
+    wire clk_25MHz;
+    wire clk_22;
+    wire [16:0] pixel_addr;
+    wire [11:0] pixel_original_data [0:15];
+    reg [11:0] pixel;
+    wire [3:0] img_select;
+    wire valid_key;
+    wire [9:0] h_cnt; //640
+    wire [9:0] v_cnt;  //480
+
+    wire dp_start;
+    debounce dp_inst(
+        .pb_debounced(dp_start),
+        .pb(start),
+        .clk(clk)
+    );
+
+    wire out_start;
+    one_pulse op_inst(
+        .clk(clk),
+        .pb_in(dp_start),
+        .pb_out(out_start)
+    );
+
+
+    vga_controller vga_inst(
+        .pclk(clk_25MHz),
+        .reset(rst),
+        .hsync(hsync),
+        .vsync(vsync),
+        .valid(valid_key),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt)
+    );
+
+    clock_divider clk_wiz_0_inst(
+        .clk(clk),
+        .clk1(clk_25MHz),
+        .clk22(clk_22)
+    );
+
+    // memory modules
+    blk_mem_gen_1 blk_mem_gen_1_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[0])
+    );
+
+    blk_mem_gen_2 blk_mem_gen_2_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[1])
+    );
+
+    blk_mem_gen_3 blk_mem_gen_3_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[2])
+    );
+
+    blk_mem_gen_4 blk_mem_gen_4_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[3])
+    );
+
+    blk_mem_gen_5 blk_mem_gen_5_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[4])
+    );
+
+    blk_mem_gen_6 blk_mem_gen_6_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[5])
+    );
+
+    blk_mem_gen_7 blk_mem_gen_7_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[6])
+    );
+
+    blk_mem_gen_8 blk_mem_gen_8_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[7])
+    );
+
+    blk_mem_gen_1 blk_mem_gen_9_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[8])
+    );
+
+    blk_mem_gen_2 blk_mem_gen_10_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[9])
+    );
+
+    blk_mem_gen_3 blk_mem_gen_11_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[10])
+    );
+
+    blk_mem_gen_4 blk_mem_gen_12_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[11])
+    );
+
+    blk_mem_gen_5 blk_mem_gen_13_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[12])
+    );
+
+    blk_mem_gen_6 blk_mem_gen_14_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[13])
+    );
+
+    blk_mem_gen_7 blk_mem_gen_15_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[14])
+    );
+
+    blk_mem_gen_8 blk_mem_gen_16_inst(
+        .clka(clk_25MHz),
+        .wea(0),
+        .addra(pixel_addr),
+        .dina(data[11:0]),
+        .douta(pixel_original_data[15])
+    );
+
+    parameter [11:0] img_pos [0:15] = {
+        12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7, 12'd0, 12'd1, 12'd2, 12'd3, 12'd4, 12'd5, 12'd6, 12'd7
+    };
+
+    reg is_show [15:0];
+    reg is_good [15:0];
+    assign key = valid_input;
+
+    // keyboard
+    reg [4:0] key_num;
+    reg [4:0] pre_key_num;
+    wire [511:0] key_down;
+    wire [8:0] last_change;
+    reg [8:0] prev_change;
+    reg delay_prev;
+    
+    wire been_ready;
+    parameter [8:0] key_code [0:17] = {
+        // 1 -> 16
+        9'b0_0001_0110,
+        // 2 -> 1E
+        9'b0_0001_1110,
+        // 3 -> 26
+        9'b0_0010_0110,
+        // 4 -> 25
+        9'b0_0010_0101,
+        // Q -> 15
+        9'b0_0001_0101,
+        // W -> 1D
+        9'b0_0001_1101,
+        // E -> 24
+        9'b0_0010_0100,
+        // R -> 2D
+        9'b0_0010_1101,
+        // A -> 1C
+        9'b0_0001_1100,
+        // S -> 1B
+        9'b0_0001_1011,
+        // D -> 23
+        9'b0_0010_0011,
+        // F -> 2B
+        9'b0_0010_1011,
+        // Z -> 1A
+        9'b0_0001_1010,
+        // X -> 22
+        9'b0_0010_0010,
+        // C -> 21
+        9'b0_0010_0001,
+        // V -> 2A
+        9'b0_0010_1010,
+        // left shift -> 12
+        9'b0_0001_0010,
+        // Enter -> 5A
+        9'b0_0101_1010
+    };
+    parameter ENTER = 9'b0_0101_1010;
+    parameter LEFT_SHIFT = 9'b0_0001_0010;
+    always @(*) begin
+        case (last_change)
+            key_code[0] : key_num = 5'b00000;
+            key_code[1] : key_num = 5'b00001;
+            key_code[2] : key_num = 5'b00010;
+            key_code[3] : key_num = 5'b00011;
+            key_code[4] : key_num = 5'b00100;
+            key_code[5] : key_num = 5'b00101;
+            key_code[6] : key_num = 5'b00110;
+            key_code[7] : key_num = 5'b00111;
+            key_code[8] : key_num = 5'b01000;
+            key_code[9] : key_num = 5'b01001;
+            key_code[10] : key_num = 5'b01010;
+            key_code[11] : key_num = 5'b01011;
+            key_code[12] : key_num = 5'b01100;
+            key_code[13] : key_num = 5'b01101;
+            key_code[14] : key_num = 5'b01110;
+            key_code[15] : key_num = 5'b01111;
+            key_code[16] : key_num = 5'b01111; // left shift
+            key_code[17] : key_num = 5'b10000; // enter
+            default: key_num = 5'b11111;
+        endcase
+    end
+
+    always @(*) begin
+        case (prev_change)
+            key_code[0] : pre_key_num = 5'b00000;
+            key_code[1] : pre_key_num = 5'b00001;
+            key_code[2] : pre_key_num = 5'b00010;
+            key_code[3] : pre_key_num = 5'b00011;
+            key_code[4] : pre_key_num = 5'b00100;
+            key_code[5] : pre_key_num = 5'b00101;
+            key_code[6] : pre_key_num = 5'b00110;
+            key_code[7] : pre_key_num = 5'b00111;
+            key_code[8] : pre_key_num = 5'b01000;
+            key_code[9] : pre_key_num = 5'b01001;
+            key_code[10] : pre_key_num = 5'b01010;
+            key_code[11] : pre_key_num = 5'b01011;
+            key_code[12] : pre_key_num = 5'b01100;
+            key_code[13] : pre_key_num = 5'b01101;
+            key_code[14] : pre_key_num = 5'b01110;
+            key_code[15] : pre_key_num = 5'b01111;
+            key_code[16] : pre_key_num = 5'b01111; // left shift
+            key_code[17] : pre_key_num = 5'b10000; // enter
+            default: pre_key_num = 5'b11111;
+        endcase
+    end
+
+    KeyboardDecoder key_de(
+        .key_down(key_down),
+        .last_change(last_change),
+        .key_valid(been_ready),
+        .PS2_DATA(PS2_DATA),
+        .PS2_CLK(PS2_CLK),
+        .rst(out_rst),
+        .clk(clk)
+    );
+
+    reg [11:0] img_pixel_data [0:15];
+    reg [15:0] img_flip;
+    parameter INIT = 0;
+    parameter SHOW = 1;
+    parameter GAME = 2;
+    parameter FINISH = 3;
+
+    reg [1:0] state, next_state;
+    
+    always @(posedge clk, posedge rst) begin
+        if(rst) state <= INIT;
+        else state <= next_state;
+    end
+
+    reg [5:0] win_cnt;
+    reg time_to_go;
+    always @(*) begin
+        case (state)
+            INIT: begin
+                if(out_start) next_state <= SHOW;
+                else next_state <= INIT;
+            end
+            SHOW: begin
+                if(out_start) next_state <= GAME;
+                else next_state <= SHOW;
+            end
+            GAME: begin
+                if(time_to_go) next_state <= FINISH;
+                else next_state <= GAME;
+            end
+            FINISH: begin
+                if(out_start) next_state <= INIT;
+                else next_state <= FINISH;
+            end
+            default: next_state <= next_state;
+        endcase
+    end
+
+    // control block
+    always @(posedge clk) begin
+        prev_change <= last_change;
+    end
+
+    integer i;
+    reg valid_input;
+    always @(posedge clk) begin
+        if(state == INIT) begin
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b0;
+                is_good[i] <= 1'b0;
+                img_flip[i] <= 1'b0;
+            end
+            win_cnt <= 6'd0;
+            valid_input <= 1;
+            pass <= 0;
+            time_to_go <= 0;
+        end
+        else if(state == SHOW) begin
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b1;
+                is_good[i] <= 1'b0;
+                if(i == 0 || i == 1 || i == 13 || i == 14) img_flip[i] <= 1'b1;
+                else img_flip[i] <= 1'b0;
+            end
+            win_cnt <= 6'd0;
+            valid_input <= 1;
+            pass <= 0;
+            if(out_start) begin
+                for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b0;
+                is_good[i] <= 1'b0;
+                if(i == 0 || i == 1 || i == 13 || i == 14) img_flip[i] <= 1'b1;
+                else img_flip[i] <= 1'b0;
+            end
+            end
+        end
+        else if(state == GAME) begin
+            valid_input <= valid_input;
+            win_cnt <= win_cnt;
+            pass <= 0;
+            time_to_go <= time_to_go;
+            for(i = 0; i < 16; i = i + 1) begin
+                is_good[i] <= is_good[i];
+                is_show[i] <= is_show[i];
+                img_flip[i] <= img_flip[i];
+            end
+            if(!hint) begin
+                if(key_down[last_change] && last_change == ENTER && !valid_input) begin
+                    for(i = 0 ; i < 16; i = i + 1) is_show[i] <= 1'b0;
+                    valid_input <= 1;
+                    if(win_cnt == 8) time_to_go <= 1;
+                end
+                else if(key_down[last_change] && key_down[prev_change] && last_change == LEFT_SHIFT && last_change != prev_change && valid_input && is_good[pre_key_num] == 1'b0) begin
+                    is_show[pre_key_num] <= 1'b1;
+                    img_flip[pre_key_num] <= ~img_flip[pre_key_num];
+                    valid_input <= 0;
+                end
+                else if(key_down[last_change] && key_down[prev_change] && prev_change == LEFT_SHIFT && last_change != prev_change && valid_input && is_good[key_num] == 1'b0) begin
+                    is_show[key_num] <= 1'b1;
+                    img_flip[key_num] <= ~img_flip[key_num];
+                    valid_input <= 0;
+                end
+                else if(key_down[last_change] && key_down[prev_change] && prev_change != last_change && valid_input) begin
+                    if(key_num <= 15 && key_num >= 0 && pre_key_num <= 15 && pre_key_num >= 0 && is_good[pre_key_num] == 1'b0 && is_good[key_num] == 1'b0) begin
+                        is_show[key_num] <= 1'b1;
+                        is_show[pre_key_num] <= 1'b1;
+                        valid_input <= 0;
+                        if(img_pos[key_num] == img_pos[pre_key_num] && img_flip[key_num] == 0 && img_flip[pre_key_num] == 0) begin
+                            is_good[key_num] <= 1'b1;
+                            is_good[pre_key_num] <= 1'b1;
+                            win_cnt <= win_cnt + 1;
+                        end
+                    end
+                end
+            end
+        end
+        else if(state == FINISH) begin
+            pass <= 1;
+            for(i = 0; i < 16; i = i + 1) begin
+                is_show[i] <= 1'b1;
+                is_good[i] <= 1'b1;
+            end
+            win_cnt <= 6'd0;
+            valid_input <= 1;
+        end
+    end
+    
+    
+
+    // display block
+    integer j;
+    reg [1:0] status;
+    assign cur_state = state;
+    always @(posedge clk) begin
+        for(j = 0 ; j < 16; j = j + 1) begin
+            if(is_good[j] == 1'b1 || is_show[j] == 1'b1 || (hint && state == GAME)) begin
+                img_pixel_data[j] <= pixel_original_data[j];
+            end
+            else img_pixel_data[j] <= 12'h000;        
+        end 
+        status[0] <= is_show[2];
+        status[1] <= is_show[3];
+    end
+
+
+    mem_addr_gen mem_addr_gen_inst(
+        .clk(clk_25MHz),
+        .rst(rst),
+        .start(out_start),
+        .hint(hint),
+        .cur_state(state),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .img_flip(img_flip),
+        .img_select(img_select),
+        .pixel_addr(pixel_addr)
+    );
+
+    always @(*) begin
+        case (img_select)
+            4'b0000 : pixel = img_pixel_data[0];
+            4'b0001 : pixel = img_pixel_data[1];
+            4'b0010 : pixel = img_pixel_data[2];
+            4'b0011 : pixel = img_pixel_data[3];
+            4'b0100 : pixel = img_pixel_data[4];
+            4'b0101 : pixel = img_pixel_data[5];
+            4'b0110 : pixel = img_pixel_data[6];
+            4'b0111 : pixel = img_pixel_data[7];
+            4'b1000 : pixel = img_pixel_data[8];
+            4'b1001 : pixel = img_pixel_data[9];
+            4'b1010 : pixel = img_pixel_data[10];
+            4'b1011 : pixel = img_pixel_data[11];
+            4'b1100 : pixel = img_pixel_data[12];
+            4'b1101 : pixel = img_pixel_data[13];
+            4'b1110 : pixel = img_pixel_data[14];
+            4'b1111 : pixel = img_pixel_data[15];
+            default: pixel = 12'h000;
+        endcase
+    end
+
+    assign {vgaRed, vgaGreen, vgaBlue} = (valid_key == 1'b1) ? pixel : 12'h000;
+
+endmodule
+
+module mem_addr_gen(
+    input clk,
+    input rst,
+    input start,
+    input hint,
+    input [1:0] cur_state,
+    input wire [9:0] h_cnt,
+    input wire [9:0] v_cnt,
+    input [15:0] img_flip,
+    output reg [3:0] img_select,
+    output reg [16:0] pixel_addr
+);
+    parameter GAME = 2;
+    wire [9:0] x = h_cnt >> 1;
+    wire [9:0] y = v_cnt >> 1;
+
+    wire [1:0] grid_col = x/80;
+    wire [1:0] grid_row = y/60;
+
+    always @(*) begin
+        img_select = grid_row * 4 + grid_col;
+    end
+
+    reg [6:0] img_x;
+    reg [6:0] img_y;
+    always @(*) begin
+        img_x = x % 80;
+        if(cur_state != GAME) begin
+            if(img_flip[img_select] == 1) img_y = 59 - (y % 60);
+            else img_y = y % 60;
+        end
+        else if(cur_state == GAME) begin
+            if(hint) img_y = y % 60;
+            else begin
+               if(img_flip[img_select] == 1) img_y = 59 - (y % 60);
+                else img_y = y % 60; 
+            end
+        end
+        pixel_addr = img_x + img_y * 80;
+    end
+    
+endmodule
+
+module clock_divider(clk1, clk, clk22);
+    input clk;
+    output clk1;
+    output clk22;
+    reg [21:0] num;
+    wire [21:0] next_num;
+
+    always @(posedge clk) begin
+    num <= next_num;
+    end
+
+    assign next_num = num + 1'b1;
+    assign clk1 = num[1];
+    assign clk22 = num[21];
+endmodule
+
