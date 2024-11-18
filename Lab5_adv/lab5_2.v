@@ -434,7 +434,7 @@ module lab5_2 (
     // display block
     integer j;
     reg [1:0] status;
-    assign cur_state = status;
+    assign cur_state = state;
     always @(posedge clk) begin
         for(j = 0 ; j < 16; j = j + 1) begin
             if(is_good[j] == 1'b1 || is_show[j] == 1'b1 || (hint && state == GAME)) begin
