@@ -14,15 +14,18 @@ module lab6_advanced(
     output right_pwm /// sample code: right motor
     // You may modify or add more input/ouput yourself.
 );
+    wire [1:0] state;
+    wire left_pwm, right_pwm;
+    wire [19:0] distance;
     // We have connected the motor and sonic_top modules in the template file for you.
     // TODO: control the motors with the information you get from ultrasonic sensor and 3-way track sensor.
     motor A(
         .clk(clk),
         .rst(rst),
-        .mode(mode),
+        .mode(state),
         .pwm({left_pwm, right_pwm})
-        ///.l_IN({IN1, IN2}),
-        ///.r_IN({IN3, IN4})
+        // .l_IN({IN1, IN2}),
+        // .r_IN({IN3, IN4})
     );
 
     sonic_top B(
