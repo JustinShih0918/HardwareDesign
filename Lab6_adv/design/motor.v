@@ -34,26 +34,14 @@ module motor(
             LEFT: begin // left
                 left_motor = 10'd450;
                 right_motor = 10'd750;
-                if(recovery) begin
-                    left_motor = 10'd450;
-                    right_motor = 10'd450;
-                end
             end
             RIGHT: begin // right
                 left_motor = 10'd750;
                 right_motor = 10'd450;
-                if(recovery) begin
-                    left_motor = 10'd450;
-                    right_motor = 10'd450;
-                end
             end
             STRAIGHT: begin // mid
                 left_motor = 10'd750;
                 right_motor = 10'd750;
-                if(recovery) begin
-                    left_motor = 10'd450;
-                    right_motor = 10'd450;
-                end
             end
             BACK: begin
                 left_motor = 10'd750;

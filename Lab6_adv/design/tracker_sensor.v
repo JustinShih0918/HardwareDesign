@@ -18,9 +18,6 @@ module tracker_sensor(clk, reset, left_track, right_track, mid_track, move, reco
     reg state, next_state;
     reg need_recovery;
     assign recovery = state;
-    
-    wire clk_28;
-    clock_divider #(28) clk_divider(clk, clk_28);
 
     always @(posedge clk) begin
         if(reset) state <= NORMAL;
@@ -37,9 +34,17 @@ module tracker_sensor(clk, reset, left_track, right_track, mid_track, move, reco
     assign LMR = {left_track, mid_track, right_track};
 
     // need_recovery will be 1 when LMR is 3'b111 for 1 second
-    always @(posedge clk_28) begin
-        if(LMR == 3'b111) need_recovery <= 1;
-        else need_recovery <= 0;
+    reg [27:0] cnt;
+    always @(posedge clk) begin
+        if(LMR == 3'b111 && cnt != 27'b111_1111_1111_1111_1111_1111_1111 && need_recovery == 0) cnt = cnt + 1;
+        else if(LMR == 3'b111 && cnt == 27'b111_1111_1111_1111_1111_1111_1111) begin
+            need_recovery = 1;
+            cnt = cnt;
+        end
+        else if(LMR != 3'b111) begin
+            need_recovery = 0;
+            cnt <= 29'd0;
+        end
     end
 
     reg do_recovery;
