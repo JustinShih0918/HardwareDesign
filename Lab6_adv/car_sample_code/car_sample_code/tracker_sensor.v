@@ -21,7 +21,7 @@ module tracker_sensor(clk, reset, left_signal, right_signal, mid_signal, state);
     always@(*) begin
         case(LMR)
         3'b001: next_state = turn_right;
-        3'b010: next_state = go_straight; //the case when the line is to thin
+        3'b010: next_state = go_straight; //the case when the line is too thin
         3'b011: next_state = turn_right;
         3'b100: next_state = turn_left;
         3'b101: next_state = go_straight; //impossible case

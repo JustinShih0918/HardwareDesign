@@ -5,9 +5,9 @@ module motor(
     input clk,
     input rst,
     input [1:0]mode,
-    output [1:0]pwm,
-    output [1:0]r_IN,
-    output [1:0]l_IN
+    output [1:0]pwm
+    ///output [1:0]r_IN,
+    ///output [1:0]l_IN
 );
 
     reg [9:0]left_motor, right_motor;
@@ -19,7 +19,28 @@ module motor(
     assign pwm = {left_pwm,right_pwm};
 
     // TODO: trace the rest of motor.v and control the speed and direction of the two motors
-    
+    /// not sure
+    always @(*) begin
+        case(mode)
+            2'b00: begin // right
+                left_motor = 10'd0;
+                right_motor = 10'd1023;
+            end
+            2'b01: begin // left
+                left_motor = 10'd1023;
+                right_motor = 10'd0;
+            end
+            2'b10: begin // mid
+                left_motor = 10'd1023;
+                right_motor = 10'd1023;
+            end
+            default: begin
+                left_motor = left_motor;
+                right_motor = right_motor;
+            end
+        endcase
+    end
+    ///
 
     
 endmodule
@@ -60,6 +81,12 @@ module PWM_gen (
         end else if (count < count_max) begin
             count <= count + 1;
             // TODO: set <PWM> accordingly
+            ///
+            if(count < count_duty)
+                PWM <= 1;
+            else
+                PWM <= 0;
+            ///
         end else begin
             count <= 0;
             PWM <= 0;

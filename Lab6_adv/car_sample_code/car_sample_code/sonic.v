@@ -20,7 +20,7 @@ module sonic_top(clk, rst, Echo, Trig, stop);
         else stop <= next_stop;
     end
     always @(*) begin
-        if (dis < 20'd4000) next_stop = 1'b1; // dis 的單位到底是什麼??
+        if (dis < 20'd4000) next_stop = 1'b1;
         else next_stop = 1'b0;
     end
     ///
@@ -32,9 +32,9 @@ module PosCounter(clk, rst, echo, distance_count);
     input clk, rst, echo;
     output[19:0] distance_count;
 
-    parameter S0 = 2'b00; //等待觸發
-    parameter S1 = 2'b01; //超聲波傳送中
-    parameter S2 = 2'b10; //等待接收
+    parameter S0 = 2'b00;
+    parameter S1 = 2'b01; 
+    parameter S2 = 2'b10;
     
     wire start, finish;
     reg[1:0] curr_state, next_state;
@@ -54,7 +54,7 @@ module PosCounter(clk, rst, echo, distance_count);
             echo_reg1 <= echo;   
             echo_reg2 <= echo_reg1; 
             count <= next_count;
-            distance_register <= next_distance;//直到S2distance_reg才會更新成next_distance
+            distance_register <= next_distance;
             curr_state <= next_state;
         end
     end
@@ -71,7 +71,7 @@ module PosCounter(clk, rst, echo, distance_count);
                     next_count = 20'b0;//reset
                 end
             end
-            S1: begin//超聲波傳送中
+            S1: begin
                 next_distance = distance_register;//keep 'distance register'
                 if (finish) begin
                     next_state = S2;
@@ -81,8 +81,8 @@ module PosCounter(clk, rst, echo, distance_count);
                     next_count = (count > 20'd600_000) ? count : count + 1'b1;//counter goes up while under maximum value
                 end 
             end
-            S2: begin//等待接收
-                next_distance = count;//count為此次超聲波往返的總時間，會被存入distance register中
+            S2: begin
+                next_distance = count;
                 next_count = 20'b0;
                 next_state = S0;
             end
