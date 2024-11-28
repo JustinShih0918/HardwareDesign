@@ -21,7 +21,6 @@ module lab6_advanced(
     // You may modify or add more input/ouput yourself.
 );
     wire [1:0] state;
-    wire left_pwm, right_pwm;
     wire [19:0] distance;
     assign cur_state = state;
     assign LMR = {left_track, mid_track, right_track};
@@ -31,9 +30,10 @@ module lab6_advanced(
         .clk(clk),
         .rst(rst),
         .mode(state),
-        .pwm({left_pwm, right_pwm})
-        // .l_IN({IN1, IN2}),
-        // .r_IN({IN3, IN4})
+        .dist(distance),
+        .pwm({left_pwm, right_pwm}),
+        .l_IN({IN1, IN2}),
+        .r_IN({IN3, IN4})
     );
 
     sonic_top B(
@@ -45,8 +45,6 @@ module lab6_advanced(
     );
 
     ///
-    assign {IN1, IN2} = (distance < 20'd3000) ? 2'b00 : 2'b01;
-    assign {IN3, IN4} = (distance < 20'd3000) ? 2'b00 : 2'b01; 
 
     tracker_sensor C(
         .clk(clk), 
@@ -64,6 +62,6 @@ module lab6_advanced(
         .nums(distance[15:0]),
         .rst(rst),
         .clk(clk)
-    )
+    );
 
 endmodule

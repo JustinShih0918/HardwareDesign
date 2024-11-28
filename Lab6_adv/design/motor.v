@@ -5,9 +5,10 @@ module motor(
     input clk,
     input rst,
     input [1:0] mode,
-    output [1:0] pwm
-    // output [1:0]r_IN,
-    // output [1:0]l_IN
+    input [19:0] dist,
+    output [1:0] pwm,
+    output [1:0] l_IN,
+    output [1:0] r_IN
 );
     parameter LEFT = 2'b00;
     parameter RIGHT = 2'b01;
@@ -15,31 +16,55 @@ module motor(
 
     reg [9:0]left_motor, right_motor;
     wire left_pwm, right_pwm;
+    reg [1:0] next_r_IN, next_l_IN;
 
     motor_pwm m0(clk, rst, left_motor, left_pwm);
     motor_pwm m1(clk, rst, right_motor, right_pwm);
 
     assign pwm = {left_pwm,right_pwm};
+    assign l_IN = (dist < 20'd3000) ? 2'b00 : next_l_IN;
+    assign r_IN = (dist < 20'd3000) ? 2'b00 : next_r_IN; 
 
     // TODO: trace the rest of motor.v and control the speed and direction of the two motors
     /// not sure
     always @(*) begin
         case(mode)
             LEFT: begin // left
-                left_motor = 10'd0;
-                right_motor = 10'd1023;
+                left_motor = 10'd256;
+                right_motor = 10'd768;
             end
             RIGHT: begin // right
-                left_motor = 10'd1023;
-                right_motor = 10'd0;
+                left_motor = 10'd768;
+                right_motor = 10'd256;
             end
             STRAIGHT: begin // mid
-                left_motor = 10'd1023;
-                right_motor = 10'd1023;
+                left_motor = 10'd768;
+                right_motor = 10'd768;
             end
             default: begin
                 left_motor = left_motor;
                 right_motor = right_motor;
+            end
+        endcase
+    end
+
+    always @(*) begin
+        case(mode)
+            LEFT: begin // left
+                next_l_IN = 2'b01;
+                next_r_IN = 2'b10;
+            end
+            RIGHT: begin // right
+                next_l_IN = 2'b10;
+                next_r_IN = 2'b01;
+            end
+            STRAIGHT: begin // mid
+                next_l_IN = 2'b10;
+                next_r_IN = 2'b10;
+            end
+            default: begin
+                next_l_IN = next_l_IN;
+                next_r_IN = next_r_IN;
             end
         endcase
     end
