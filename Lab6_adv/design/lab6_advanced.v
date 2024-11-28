@@ -7,7 +7,7 @@ module lab6_advanced(
     input mid_track,
     input enable,
     // for debugging
-    output [1:0] cur_state,
+    output [1:0] cur_move,
     output [2:0] LMR,
     output [6:0] display,
     output [3:0] digit,
@@ -22,9 +22,9 @@ module lab6_advanced(
     output right_pwm /// sample code: right motor
     // You may modify or add more input/ouput yourself.
 );
-    wire [1:0] state, prev_state;
+    wire [1:0] move;
     wire [19:0] distance;
-    assign cur_state = state;
+    assign cur_move = move;
     assign LMR = {left_track, mid_track, right_track};
     wire tmp_in1, tmp_in2, tmp_in3, tmp_in4;
     assign IN1 = (enable) ? 0 : tmp_in1;
@@ -36,7 +36,7 @@ module lab6_advanced(
     motor A(
         .clk(clk),
         .rst(rst),
-        .mode(state),
+        .mode(move),
         .dist(distance),
         .recovery(recovery),
         .pwm({left_pwm, right_pwm}),
@@ -60,8 +60,7 @@ module lab6_advanced(
         .left_track(left_track), 
         .right_track(right_track),
         .mid_track(mid_track), 
-        .state(state),
-        .prev_state(prev_state),
+        .move(move),
         .recovery(recovery)
     );
     ///
