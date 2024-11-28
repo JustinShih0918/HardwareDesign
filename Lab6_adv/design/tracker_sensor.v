@@ -1,89 +1,71 @@
-module tracker_sensor(clk, reset, left_track, right_track, mid_track, move, recovery);
+module tracker_sensor(clk, reset, left_track, right_track, mid_track, state, prev_state, recovery);
     input clk;
     input reset;
     input left_track, right_track, mid_track;
-    output reg [1:0] move;
+    output reg [1:0] state;
+    output reg [1:0] prev_state;
     output wire recovery;
 
     // TODO: Receive three tracks and make your own policy.
-    // Hint: You can use output move to change your action.
+    // Hint: You can use output state to change your action.
     parameter LEFT = 2'b00;
     parameter RIGHT = 2'b01;
     parameter STRAIGHT = 2'b10;
     parameter BACK = 2'b11;
-    parameter NORMAL = 0;
-    parameter RECOVERY = 1;
 
-    reg [1:0] next_move, recover_move;
-    reg state, next_state;
-    reg need_recovery;
-    assign recovery = state;
-    
-    wire clk_28;
-    clock_divider #(28) clk_divider(clk, clk_28);
-
+    reg [1:0] next_state;
     always @(posedge clk) begin
-        if(reset) state <= NORMAL;
-        else state <= next_state;
-    end
-
-    always @(posedge clk) begin
-        if(reset) move <= STRAIGHT;
-        else if(state == NORMAL) move <= next_move;
-        else if(state == RECOVERY) move <= recover_move;
+        if(reset) begin
+            state <= STRAIGHT;
+        end
+        else begin
+            state <= next_state;
+        end
     end
 
     wire [2:0] LMR;
     assign LMR = {left_track, mid_track, right_track};
-
-    // need_recovery will be 1 when LMR is 3'b111 for 1 second
-    always @(posedge clk_28) begin
-        if(LMR == 3'b111) need_recovery <= 1;
-        else need_recovery <= 0;
+    reg loss_track;
+    reg need_recover;
+    reg [26:0] cnt;
+    assign recovery = 0;
+    always @(posedge clk) begin
+        if(LMR == 3'b111 && loss_track == 0) cnt <= cnt + 1;
+        else cnt <= 27'd0;
     end
 
-    reg do_recovery;
     always @(posedge clk) begin
-        if(need_recovery && LMR == 3'b111) do_recovery <= 1;
-        else do_recovery <= 0;
+        if(cnt == 27'b111_1111_1111_1111_1111_1111_1111 && loss_track == 0) need_recover <= 1;
+        else if(loss_track == 1) need_recover <= 0;
+    end
+
+    always @(posedge clk) begin
+        if(reset) begin
+            prev_state <= STRAIGHT;
+            loss_track <= 0;
+        end
+        else if(LMR == 3'b111 && loss_track == 0 && need_recover) begin
+            prev_state <= state;
+            loss_track <= 1;
+        end
+        else if(LMR != 3'b111 && loss_track == 1) begin
+            loss_track <= 0;
+            prev_state <= prev_state;
+        end
     end
 
     always @(*) begin
-        case (state)
-            NORMAL: begin
-                if(do_recovery) next_state = RECOVERY;
-                else next_state = NORMAL;
-            end 
-            RECOVERY: begin
-                if(!do_recovery) next_state = NORMAL;
-                else next_state = RECOVERY;
-            end
+        case(LMR)
+            3'b001: next_state = LEFT;
+            3'b011: next_state = LEFT;
+            3'b100: next_state = RIGHT;
+            3'b101: next_state = STRAIGHT;
+            3'b110: next_state = RIGHT;
+            /*3'b111: begin
+                next_state = BACK;
+            end*/
             default: next_state = state;
         endcase
-    end
-
-
-    always @(*) begin
-        next_move = next_move;
-        recover_move = recover_move;
-        if(state == NORMAL) begin
-            case(LMR)
-                3'b001: next_move = LEFT;
-                3'b011: next_move = LEFT;
-                3'b100: next_move = RIGHT;
-                3'b101: next_move = STRAIGHT;
-                3'b110: next_move = RIGHT;
-                default: next_move = move;
-            endcase
-        end
-        else begin
-            case (next_move)
-                LEFT: recover_move = RIGHT;
-                RIGHT: recover_move = LEFT;
-                STRAIGHT: recover_move = BACK;
-                default: recover_move = BACK;
-            endcase
-        end
     end
 
 endmodule
