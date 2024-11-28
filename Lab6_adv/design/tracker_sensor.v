@@ -20,12 +20,12 @@ module tracker_sensor(clk, reset, left_track, right_track, mid_track, state);
     assign LMR = {left_track, mid_track, right_track};
     always @(*) begin
         case(LMR)
-            3'b001: next_state = RIGHT;
+            3'b001: next_state = LEFT;
             3'b010: next_state = STRAIGHT;
-            3'b011: next_state = RIGHT;
-            3'b100: next_state = LEFT;
+            3'b011: next_state = LEFT;
+            3'b100: next_state = RIGHT;
             3'b101: next_state = STRAIGHT;
-            3'b110: next_state = LEFT;
+            3'b110: next_state = RIGHT;
             3'b111: next_state = STRAIGHT;
             default: next_state = state;
         endcase
