@@ -5,6 +5,12 @@ module lab6_advanced(
     input left_track,
     input right_track,
     input mid_track,
+    // for debugging
+    output [1:0] cur_state,
+    output [2:0] LMR,
+    output [6:0] display,
+    output [3:0] digit,
+    //
     output trig,
     output IN1, /// sample code: left[0]
     output IN2, /// sample code: left[1]
@@ -17,6 +23,8 @@ module lab6_advanced(
     wire [1:0] state;
     wire left_pwm, right_pwm;
     wire [19:0] distance;
+    assign cur_state = state;
+    assign LMR = {left_track, mid_track, right_track};
     // We have connected the motor and sonic_top modules in the template file for you.
     // TODO: control the motors with the information you get from ultrasonic sensor and 3-way track sensor.
     motor A(
@@ -49,5 +57,13 @@ module lab6_advanced(
         .state(state)
     );
     ///
+
+    SevenSegment s(
+        .display(display),
+        .digit(digit),
+        .nums(distance[15:0]),
+        .rst(rst),
+        .clk(clk)
+    )
 
 endmodule
