@@ -1,9 +1,10 @@
-module tracker_sensor(clk, reset, left_track, right_track, mid_track, state, prev_state);
+module tracker_sensor(clk, reset, left_track, right_track, mid_track, state, prev_state, recovery);
     input clk;
     input reset;
     input left_track, right_track, mid_track;
     output reg [1:0] state;
     output reg [1:0] prev_state;
+    output wire recovery;
 
     // TODO: Receive three tracks and make your own policy.
     // Hint: You can use output state to change your action.
@@ -26,15 +27,15 @@ module tracker_sensor(clk, reset, left_track, right_track, mid_track, state, pre
     assign LMR = {left_track, mid_track, right_track};
     reg loss_track;
     reg need_recover;
-    reg [25:0] cnt;
-
+    reg [26:0] cnt;
+    assign recovery = 0;
     always @(posedge clk) begin
         if(LMR == 3'b111 && loss_track == 0) cnt <= cnt + 1;
-        else cnt <= 0;
+        else cnt <= 27'd0;
     end
 
     always @(posedge clk) begin
-        if(cnt == 26'b11_1111_1111_1111_1111_1111_1111 && loss_track == 0) need_recover <= 1;
+        if(cnt == 27'b111_1111_1111_1111_1111_1111_1111 && loss_track == 0) need_recover <= 1;
         else if(loss_track == 1) need_recover <= 0;
     end
 
@@ -60,13 +61,9 @@ module tracker_sensor(clk, reset, left_track, right_track, mid_track, state, pre
             3'b100: next_state = RIGHT;
             3'b101: next_state = STRAIGHT;
             3'b110: next_state = RIGHT;
-            3'b111: begin
-                if(prev_state == RIGHT && loss_track) next_state = LEFT;
-                else if(prev_state == LEFT && loss_track) next_state = RIGHT;
-                else if(prev_state == STRAIGHT && loss_track) next_state = BACK;
-                else if(prev_state == BACK && loss_track) next_state = STRAIGHT;
-                else next_state = state;
-            end
+            /*3'b111: begin
+                next_state = BACK;
+            end*/
             default: next_state = state;
         endcase
     end

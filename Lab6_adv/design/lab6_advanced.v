@@ -11,6 +11,7 @@ module lab6_advanced(
     output [2:0] LMR,
     output [6:0] display,
     output [3:0] digit,
+    output recovery,
     //
     output trig,
     output IN1, /// sample code: left[0]
@@ -37,6 +38,7 @@ module lab6_advanced(
         .rst(rst),
         .mode(state),
         .dist(distance),
+        .recovery(recovery),
         .pwm({left_pwm, right_pwm}),
         .l_IN({tmp_in1, tmp_in2}),
         .r_IN({tmp_in3, tmp_in4})
@@ -59,7 +61,8 @@ module lab6_advanced(
         .right_track(right_track),
         .mid_track(mid_track), 
         .state(state),
-        .prev_state(prev_state)
+        .prev_state(prev_state),
+        .recovery(recovery)
     );
     ///
 

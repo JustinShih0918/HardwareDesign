@@ -6,6 +6,7 @@ module motor(
     input rst,
     input [1:0] mode,
     input [19:0] dist,
+    input recovery,
     output [1:0] pwm,
     output [1:0] l_IN,
     output [1:0] r_IN
@@ -31,20 +32,32 @@ module motor(
     always @(*) begin
         case(mode)
             LEFT: begin // left
-                left_motor = 10'd768;
-                right_motor = 10'd768;
+                left_motor = 10'd450;
+                right_motor = 10'd750;
+                if(recovery) begin
+                    left_motor = 10'd450;
+                    right_motor = 10'd450;
+                end
             end
             RIGHT: begin // right
-                left_motor = 10'd768;
-                right_motor = 10'd768;
+                left_motor = 10'd750;
+                right_motor = 10'd450;
+                if(recovery) begin
+                    left_motor = 10'd450;
+                    right_motor = 10'd450;
+                end
             end
             STRAIGHT: begin // mid
-                left_motor = 10'd768;
-                right_motor = 10'd768;
+                left_motor = 10'd750;
+                right_motor = 10'd750;
+                if(recovery) begin
+                    left_motor = 10'd450;
+                    right_motor = 10'd450;
+                end
             end
             BACK: begin
-                left_motor = 10'd500;
-                right_motor = 10'd500;
+                left_motor = 10'd750;
+                right_motor = 10'd750;
             end
             default: begin
                 left_motor = left_motor;
@@ -57,12 +70,12 @@ module motor(
     always @(*) begin
         case(mode)
             LEFT: begin // left
-                next_l_IN = 2'b10;
-                next_r_IN = 2'b10;
-            end
-            RIGHT: begin // right
                 next_l_IN = 2'b01;
                 next_r_IN = 2'b01;
+            end
+            RIGHT: begin // right
+                next_l_IN = 2'b10;
+                next_r_IN = 2'b10;
             end
             STRAIGHT: begin // mid
                 next_l_IN = 2'b10;
