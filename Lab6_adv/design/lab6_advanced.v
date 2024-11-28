@@ -5,6 +5,7 @@ module lab6_advanced(
     input left_track,
     input right_track,
     input mid_track,
+    input enable,
     // for debugging
     output [1:0] cur_state,
     output [2:0] LMR,
@@ -20,10 +21,15 @@ module lab6_advanced(
     output right_pwm /// sample code: right motor
     // You may modify or add more input/ouput yourself.
 );
-    wire [1:0] state;
+    wire [1:0] state, prev_state;
     wire [19:0] distance;
     assign cur_state = state;
     assign LMR = {left_track, mid_track, right_track};
+    wire tmp_in1, tmp_in2, tmp_in3, tmp_in4;
+    assign IN1 = (enable) ? 0 : tmp_in1;
+    assign IN2 = (enable) ? 0 : tmp_in2;
+    assign IN3 = (enable) ? 0 : tmp_in3;
+    assign IN4 = (enable) ? 0 : tmp_in4;
     // We have connected the motor and sonic_top modules in the template file for you.
     // TODO: control the motors with the information you get from ultrasonic sensor and 3-way track sensor.
     motor A(
@@ -32,8 +38,8 @@ module lab6_advanced(
         .mode(state),
         .dist(distance),
         .pwm({left_pwm, right_pwm}),
-        .l_IN({IN1, IN2}),
-        .r_IN({IN3, IN4})
+        .l_IN({tmp_in1, tmp_in2}),
+        .r_IN({tmp_in3, tmp_in4})
     );
 
     sonic_top B(
@@ -52,7 +58,8 @@ module lab6_advanced(
         .left_track(left_track), 
         .right_track(right_track),
         .mid_track(mid_track), 
-        .state(state)
+        .state(state),
+        .prev_state(prev_state)
     );
     ///
 

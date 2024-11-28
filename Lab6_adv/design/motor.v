@@ -13,6 +13,7 @@ module motor(
     parameter LEFT = 2'b00;
     parameter RIGHT = 2'b01;
     parameter STRAIGHT = 2'b10;
+    parameter BACK = 2'b11;
 
     reg [9:0]left_motor, right_motor;
     wire left_pwm, right_pwm;
@@ -30,16 +31,20 @@ module motor(
     always @(*) begin
         case(mode)
             LEFT: begin // left
-                left_motor = 10'd256;
+                left_motor = 10'd768;
                 right_motor = 10'd768;
             end
             RIGHT: begin // right
                 left_motor = 10'd768;
-                right_motor = 10'd256;
+                right_motor = 10'd768;
             end
             STRAIGHT: begin // mid
                 left_motor = 10'd768;
                 right_motor = 10'd768;
+            end
+            BACK: begin
+                left_motor = 10'd500;
+                right_motor = 10'd500;
             end
             default: begin
                 left_motor = left_motor;
@@ -48,18 +53,23 @@ module motor(
         endcase
     end
 
+    // left 10 forward, right 01 forward
     always @(*) begin
         case(mode)
             LEFT: begin // left
-                next_l_IN = 2'b01;
+                next_l_IN = 2'b10;
                 next_r_IN = 2'b10;
             end
             RIGHT: begin // right
-                next_l_IN = 2'b10;
+                next_l_IN = 2'b01;
                 next_r_IN = 2'b01;
             end
             STRAIGHT: begin // mid
                 next_l_IN = 2'b10;
+                next_r_IN = 2'b01;
+            end
+            BACK: begin
+                next_l_IN = 2'b01;
                 next_r_IN = 2'b10;
             end
             default: begin
