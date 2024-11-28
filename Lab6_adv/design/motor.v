@@ -4,11 +4,14 @@
 module motor(
     input clk,
     input rst,
-    input [1:0]mode,
-    output [1:0]pwm
-    ///output [1:0]r_IN,
-    ///output [1:0]l_IN
+    input [1:0] mode,
+    output [1:0] pwm
+    // output [1:0]r_IN,
+    // output [1:0]l_IN
 );
+    parameter LEFT = 2'b00;
+    parameter RIGHT = 2'b01;
+    parameter STRAIGHT = 2'b10;
 
     reg [9:0]left_motor, right_motor;
     wire left_pwm, right_pwm;
@@ -22,15 +25,15 @@ module motor(
     /// not sure
     always @(*) begin
         case(mode)
-            2'b00: begin // right
+            LEFT: begin // left
                 left_motor = 10'd0;
                 right_motor = 10'd1023;
             end
-            2'b01: begin // left
+            RIGHT: begin // right
                 left_motor = 10'd1023;
                 right_motor = 10'd0;
             end
-            2'b10: begin // mid
+            STRAIGHT: begin // mid
                 left_motor = 10'd1023;
                 right_motor = 10'd1023;
             end
