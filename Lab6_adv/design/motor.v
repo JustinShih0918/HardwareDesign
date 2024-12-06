@@ -32,16 +32,16 @@ module motor(
     always @(*) begin
         case(mode)
             LEFT: begin // left
-                left_motor = 10'd450;
-                right_motor = 10'd750;
+                left_motor = 10'd700;
+                right_motor = 10'd850;
             end
             RIGHT: begin // right
-                left_motor = 10'd750;
-                right_motor = 10'd450;
+                left_motor = 10'd850;
+                right_motor = 10'd700;
             end
             STRAIGHT: begin // mid
-                left_motor = 10'd750;
-                right_motor = 10'd750;
+                left_motor = 10'd850;
+                right_motor = 10'd850;
             end
             BACK: begin
                 left_motor = 10'd750;
